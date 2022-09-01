@@ -23,7 +23,7 @@ class BASNET(BASNet):
     """BASNet model interface"""
 
     def __init__(self, device='cpu',
-                 input_tensor_size: Union[List[int], int] = 320,
+                 input_image_size: Union[List[int], int] = 320,
                  batch_size: int = 10,
                  load_pretrained: bool = True):
         """
@@ -31,7 +31,7 @@ class BASNET(BASNet):
 
             Args:
                 device: processing device
-                input_tensor_size: input image size
+                input_image_size: input image size
                 batch_size: the number of images that the neural network processes in one run
                 load_pretrained: loading pretrained model
 
@@ -39,10 +39,10 @@ class BASNET(BASNet):
         super(BASNET, self).__init__(n_channels=3, n_classes=1)
         self.device = device
         self.batch_size = batch_size
-        if isinstance(input_tensor_size, list):
-            self.input_image_size = input_tensor_size[:2]
+        if isinstance(input_image_size, list):
+            self.input_image_size = input_image_size[:2]
         else:
-            self.input_image_size = (input_tensor_size, input_tensor_size)
+            self.input_image_size = (input_image_size, input_image_size)
         self.to(device)
         if load_pretrained:
             self.load_state_dict(torch.load(basnet_pretrained(), map_location=self.device))

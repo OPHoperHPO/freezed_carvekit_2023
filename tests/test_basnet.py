@@ -11,7 +11,7 @@ from carvekit.ml.wrap.basnet import BASNET
 
 
 def test_init():
-    BASNET(input_tensor_size=[320, 320], load_pretrained=True)
+    BASNET(input_image_size=[320, 320], load_pretrained=True)
     BASNET(load_pretrained=False)
 
 

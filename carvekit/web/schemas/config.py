@@ -18,7 +18,7 @@ class AuthConfig(BaseModel):
 
 class MLConfig(BaseModel):
     """Config for ml part of framework"""
-    segmentation_network: Literal["u2net", "deeplabv3", "basnet"] = "u2net"
+    segmentation_network: Literal["u2net", "deeplabv3", "basnet", "tracer_b7"] = "tracer_b7"
     """Segmentation Network"""
     preprocessing_method: Literal["none", "stub"] = "none"
     """Pre-processing Method"""
@@ -30,7 +30,7 @@ class MLConfig(BaseModel):
     """Batch size for segmentation network"""
     batch_size_matting: int = 1
     """Batch size for matting network"""
-    seg_mask_size: int = 320
+    seg_mask_size: int = 640
     """The size of the input image for the segmentation neural network."""
     matting_mask_size: int = 2048
     """The size of the input image for the matting neural network."""

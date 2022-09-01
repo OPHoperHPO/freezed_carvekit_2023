@@ -13,14 +13,22 @@ import tqdm
 
 MODELS_URLS = {
     "basnet.pth":
-        "https://huggingface.co/anodev/basnet-universal/resolve/870becbdb364fda6d8fdb2c10b072542f8d08701/basnet.pth",
+        "https://huggingface.co/anodev/basnet-universal/resolve/870becbdb364fda6d8fdb2c10b072542f8d08701/"
+        "basnet.pth",
     "deeplab.pth":
-        "https://huggingface.co/anodev/deeplabv3-resnet101/resolve/d504005392fc877565afdf58aad0cd524682d2b0/deeplab.pth",
+        "https://huggingface.co/anodev/deeplabv3-resnet101/resolve/d504005392fc877565afdf58aad0cd524682d2b0/"
+        "deeplab.pth",
     "fba_matting.pth":
         "https://huggingface.co/anodev/fba/resolve/a5d3457df0fb9c88ea19ed700d409756ca2069d1/fba_matting.pth",
     "u2net.pth":
-        "https://huggingface.co/anodev/u2net-universal/resolve/10305d785481cf4b2eee1d447c39cd6e5f43d74b/full_weights"
-        ".pth",
+        "https://huggingface.co/anodev/u2net-universal/resolve/10305d785481cf4b2eee1d447c39cd6e5f43d74b/"
+        "full_weights.pth",
+    "tracer_b7.pth":
+        "https://huggingface.co/anodev/tracer_b7/resolve/d8a8fd9e7b3fa0d2f1506fe7242966b34381e9c5/"
+        "tracer_b7.pth",
+    "tracer_hair.pth":
+        "https://huggingface.co/anodev/tracer_b7/resolve/d8a8fd9e7b3fa0d2f1506fe7242966b34381e9c5/"
+        "tracer_b7.pth",   # TODO don't forget change this link!!
 }
 
 MODELS_CHECKSUMS = {
@@ -35,6 +43,10 @@ MODELS_CHECKSUMS = {
     "u2net.pth":
         "16f8125e2fedd8c85db0e001ee15338b4aa2fda77bab8ba70c25e"
         "bea1533fda5ee70a909b934a9bd495b432cef89d629f00a07858a517742476fa8b346de24f7",
+    "tracer_b7.pth": "c439c5c12d4d43d5f9be9ec61e68b2e54658a541bccac2577ef5a54fb252b6e8415d41f7e"
+                     "c2487033d0c02b4dd08367958e4e62091318111c519f93e2632be7b",
+    "tracer_hair.pth": "5c2fb9973fc42fa6208920ffa9ac233cc2ea9f770b24b4a96969d3449aed7ac89e6d37e"
+                       "e486a13e63be5499f2df6ccef1109e9e8797d1326207ac89b2f39a7cf"
 
 }
 

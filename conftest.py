@@ -87,7 +87,7 @@ def deeplabv3_model() -> Callable[[], DeepLabV3]:
 @pytest.fixture()
 def basnet_model() -> Callable[[], BASNET]:
     return lambda: BASNET(device='cuda' if torch.cuda.is_available() else 'cpu',
-                          input_tensor_size=320,
+                          input_image_size=320,
                           batch_size=10,
                           load_pretrained=True)
 

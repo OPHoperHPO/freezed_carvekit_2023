@@ -6,7 +6,56 @@ License: Apache License 2.0
 
 import random
 import warnings
+from typing import Union
+
 import torch
+from torch import autocast
+
+
+class EmptyAutocast(object):
+    """
+    Empty class for disable any autocasting.
+    """
+
+    def __enter__(self):
+        return None
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        return
+
+    def __call__(self, func):
+        return
+
+
+def get_precision_autocast(device="cpu", fp16=True, override_dtype=None) -> Union[EmptyAutocast, autocast]:
+    """
+    Returns precision and autocast settings for given device and fp16 settings.
+    Args:
+        device: Device to get precision and autocast settings for.
+        fp16: Whether to use fp16 precision.
+        override_dtype: Override dtype for autocast.
+
+    Returns:
+        Autocast object
+    """
+    dtype = torch.float32
+    if device == "cpu" and fp16:
+        warnings.warn("Accuracy BFP16 has experimental support on the CPU. "
+                      "This may result in an unexpected reduction in quality.")
+        dtype = torch.bfloat16  # Using bfloat16 for CPU, since autocast is not supported for float16
+    if "cuda" in device and fp16:
+        dtype = torch.float16
+
+    if override_dtype is not None:
+        dtype = override_dtype
+
+    if dtype == torch.float32 and device == "cpu":
+        return EmptyAutocast()
+
+    return torch.autocast(
+        device_type=device,
+        dtype=dtype,
+        enabled=True)
 
 
 def fix_seed(seed=42):

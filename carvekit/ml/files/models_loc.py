@@ -44,6 +44,24 @@ def fba_pretrained() -> pathlib.Path:
     return check_for_exists(checkpoints_dir.joinpath('fba_matting/fba_matting.pth'))
 
 
+def tracer_b7_pretrained() -> pathlib.Path:
+    """ Returns TRACER with EfficientNet v1 b7 encoder pretrained model location
+
+    Returns:
+        pathlib.Path to model location
+    """
+    return check_for_exists(checkpoints_dir.joinpath('tracer_b7/tracer_b7.pth'))
+
+
+def tracer_hair_pretrained() -> pathlib.Path:
+    """ Returns TRACER with EfficientNet v1 b7 encoder model for hair segmentation location
+
+    Returns:
+        pathlib.Path to model location
+    """
+    return check_for_exists(checkpoints_dir.joinpath('tracer_hair/tracer_hair.pth'))
+
+
 def download_all():
     u2net_full_pretrained()
     fba_pretrained()

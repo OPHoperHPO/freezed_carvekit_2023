@@ -9,6 +9,7 @@ from carvekit.ml.wrap.fba_matting import FBAMatting
 from carvekit.ml.wrap.u2net import U2NET
 from carvekit.ml.wrap.deeplab_v3 import DeepLabV3
 from carvekit.ml.wrap.basnet import BASNET
+from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
 
 from carvekit.pipelines.postprocessing import MattingMethod
 from carvekit.pipelines.preprocessing import PreprocessingStub
@@ -59,11 +60,15 @@ def init_interface(config: Union[WebAPIConfig, MLConfig]) -> Interface:
     elif config.segmentation_network == "basnet":
         seg_net = BASNET(device=config.device,
                          batch_size=config.batch_size_seg,
-                         input_tensor_size=config.seg_mask_size)
+                         input_image_size=config.seg_mask_size)
+    elif config.segmentation_network == "tracer_b7":
+        seg_net = TracerUniversalB7(device=config.device,
+                                    batch_size=config.batch_size_seg,
+                                    input_image_size=config.seg_mask_size)
     else:
-        seg_net = U2NET(device=config.device,
-                        batch_size=config.batch_size_seg,
-                        input_image_size=config.seg_mask_size)
+        seg_net = TracerUniversalB7(device=config.device,
+                                    batch_size=config.batch_size_seg,
+                                    input_image_size=config.seg_mask_size)
 
     if config.preprocessing_method == "stub":
         preprocessing = PreprocessingStub()

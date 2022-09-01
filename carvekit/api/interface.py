@@ -11,6 +11,7 @@ from PIL import Image
 from carvekit.ml.wrap.basnet import BASNET
 from carvekit.ml.wrap.deeplab_v3 import DeepLabV3
 from carvekit.ml.wrap.u2net import U2NET
+from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
 from carvekit.pipelines.preprocessing import PreprocessingStub
 from carvekit.pipelines.postprocessing import MattingMethod
 from carvekit.utils.image_utils import load_image
@@ -20,7 +21,7 @@ from carvekit.utils.pool_utils import thread_pool_processing
 
 class Interface:
     def __init__(self,
-                 seg_pipe: Union[U2NET, BASNET, DeepLabV3],
+                 seg_pipe: Union[U2NET, BASNET, DeepLabV3, TracerUniversalB7],
                  pre_pipe: Optional[Union[PreprocessingStub]] = None,
                  post_pipe: Optional[Union[MattingMethod]] = None,
                  device="cpu"):

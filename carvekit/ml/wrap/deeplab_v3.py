@@ -28,7 +28,7 @@ class DeepLabV3:
 
             Args:
                 device: processing device
-                input_tensor_size: input image size
+                input_image_size: input image size
                 batch_size: the number of images that the neural network processes in one run
                 load_pretrained: loading pretrained model
 

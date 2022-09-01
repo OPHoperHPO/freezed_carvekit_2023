@@ -29,6 +29,7 @@ Automated high-quality background removal framework for an image using neural ne
 - High Quality
 - Batch Processing
 - NVIDIA CUDA and CPU processing
+- FP16 inference: Fast inference with low memory usage
 - Easy inference
 - 100% remove.bg compatible FastAPI HTTP API 
 - Removes background from hairs
@@ -42,6 +43,7 @@ It can be briefly described as
 3. Using machine learning technology, the background of the image is removed
 4. Image post-processing to improve the quality of the processed image
 ## 🎓 Implemented Neural Networks:
+* [Tracer-B7](https://github.com/Karel911/TRACER)
 * [U^2-net](https://github.com/NathanUA/U-2-Net)
 * [BASNet](https://github.com/NathanUA/BASNet)
 * [DeepLabV3](https://github.com/tensorflow/models/tree/master/research/deeplab)
@@ -87,12 +89,12 @@ import PIL.Image
 
 from carvekit.api.interface import Interface
 from carvekit.ml.wrap.fba_matting import FBAMatting
-from carvekit.ml.wrap.u2net import U2NET
+from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
 from carvekit.pipelines.postprocessing import MattingMethod
 from carvekit.pipelines.preprocessing import PreprocessingStub
 from carvekit.trimap.generator import TrimapGenerator
 
-u2net = U2NET(device='cpu',
+seg_net = TracerUniversalB7(device='cpu',
               batch_size=1)
 
 fba = FBAMatting(device='cpu',
@@ -109,7 +111,7 @@ postprocessing = MattingMethod(matting_module=fba,
 
 interface = Interface(pre_pipe=preprocessing,
                       post_pipe=postprocessing,
-                      seg_pipe=u2net)
+                      seg_pipe=seg_net)
 
 image = PIL.Image.open('tests/data/cat.jpg')
 cat_wo_bg = interface([image])[0]
@@ -132,7 +134,7 @@ Options:
   -o ./2.png                   Path to output file or dir
   --pre none                   Preprocessing method
   --post fba                   Postprocessing method.
-  --net u2net                  Segmentation Network
+  --net tracer_b7              Segmentation Network
   --recursive                  Enables recursive search for images in a folder
   --batch_size 10              Batch Size for list of images to be loaded to
                                RAM
@@ -143,7 +145,7 @@ Options:
   --batch_size_mat 1           Batch size for list of images to be processed
                                by matting network
 
-  --seg_mask_size 320          The size of the input image for the
+  --seg_mask_size 640          The size of the input image for the
                                segmentation neural network.
 
   --matting_mask_size 2048     The size of the input image for the matting

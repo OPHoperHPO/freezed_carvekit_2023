@@ -15,7 +15,7 @@ from carvekit.utils.fs_utils import save_file
 @click.option('-o', default="none", type=str, help="Path to output file or dir")
 @click.option('--pre', default='none', type=str, help='Preprocessing method')
 @click.option('--post', default='fba', type=str, help='Postprocessing method.')
-@click.option('--net', default='u2net', type=str, help='Segmentation Network')
+@click.option('--net', default='tracer_b7', type=str, help='Segmentation Network')
 @click.option('--recursive', default=False, type=bool, help='Enables recursive search for images in a folder')
 @click.option('--batch_size', default=10, type=int, help='Batch Size for list of images to be loaded to RAM')
 @click.option('--batch_size_seg', default=5, type=int,
@@ -23,7 +23,7 @@ from carvekit.utils.fs_utils import save_file
                    'network')
 @click.option('--batch_size_mat', default=1, type=int, help='Batch size for list of images to be processed by matting '
                                                             'network')
-@click.option('--seg_mask_size', default=320, type=int,
+@click.option('--seg_mask_size', default=640, type=int,
               help='The size of the input image for the segmentation neural network.')
 @click.option('--matting_mask_size', default=2048, type=int,
               help='The size of the input image for the matting neural network.')
