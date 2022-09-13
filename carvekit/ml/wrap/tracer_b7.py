@@ -29,7 +29,7 @@ class TracerUniversalB7(TracerDecoder):
                  input_image_size: Union[List[int], int] = 640,
                  batch_size: int = 4,
                  load_pretrained: bool = True,
-                 fp16: bool = True,
+                 fp16: bool = False,
                  model_path: Union[str, pathlib.Path] = tracer_b7_pretrained()):
         """
             Initialize the U2NET model

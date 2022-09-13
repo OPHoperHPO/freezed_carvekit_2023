@@ -29,10 +29,12 @@ from carvekit.utils.fs_utils import save_file
               help='The size of the input image for the matting neural network.')
 @click.option('--device', default="cpu", type=str,
               help='Processing Device.')
+@click.option('--fp16', default=False, type=bool,
+              help='Enables mixed precision processing.')
 def removebg(i: str, o: str, pre: str, post: str, net: str, recursive: bool,
              batch_size: int, batch_size_seg: int, batch_size_mat: int, seg_mask_size: int,
              matting_mask_size: int,
-             device: str):
+             device: str, fp16: bool):
     out_path = Path(o)
     input_path = Path(i)
     if input_path.is_dir():
@@ -53,7 +55,8 @@ def removebg(i: str, o: str, pre: str, post: str, net: str, recursive: bool,
         batch_size_seg=batch_size_seg,
         batch_size_matting=batch_size_mat,
         seg_mask_size=seg_mask_size,
-        matting_mask_size=matting_mask_size
+        matting_mask_size=matting_mask_size,
+        fp16=fp16
     )
 
     interface = init_interface(interface_config)

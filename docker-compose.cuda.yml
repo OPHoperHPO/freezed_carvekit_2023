@@ -16,7 +16,7 @@ services:
       - CARVEKIT_BATCH_SIZE_MATTING=1  # Number of images processed per one matting nn call. NOT USED IF WEB API IS USED
       - CARVEKIT_SEG_MASK_SIZE=640  # The size of the input image for the segmentation neural network.
       - CARVEKIT_MATTING_MASK_SIZE=2048   # The size of the input image for the matting neural network.
-
+      - CARVEKIT_FP16=0 # Enables FP16 mode
       - CARVEKIT_AUTH_ENABLE=1  # Enables authentication by tokens
       # Tokens will be generated automatically every time the container is restarted if these ENV is not set.
       #- CARVEKIT_ADMIN_TOKEN=admin

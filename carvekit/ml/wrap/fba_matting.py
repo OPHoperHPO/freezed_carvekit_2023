@@ -32,7 +32,7 @@ class FBAMatting(FBA):
                  batch_size: int = 2,
                  encoder="resnet50_GN_WS",
                  load_pretrained: bool = True,
-                 fp16: bool = True):
+                 fp16: bool = False):
         """
             Initialize the FBAMatting model
 

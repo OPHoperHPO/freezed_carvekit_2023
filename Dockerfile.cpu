@@ -43,6 +43,7 @@ ENV CARVEKIT_BATCH_SIZE_MATTING '1'
 ENV CARVEKIT_SEG_MASK_SIZE '640'
 ENV CARVEKIT_MATTING_MASK_SIZE '2048'
 ENV CARVEKIT_AUTH_ENABLE '1'
+ENV CARVEKIT_FP16 '0'
 
 # Tokens will be generated automatically every time the container is restarted if ENV is not set.
 

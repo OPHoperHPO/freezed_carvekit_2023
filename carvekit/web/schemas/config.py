@@ -34,6 +34,8 @@ class MLConfig(BaseModel):
     """The size of the input image for the segmentation neural network."""
     matting_mask_size: int = 2048
     """The size of the input image for the matting neural network."""
+    fp16: bool = False
+    """Use half precision for inference"""
 
     @validator('seg_mask_size')
     def seg_mask_size_validator(cls, value: int, values):

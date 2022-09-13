@@ -30,7 +30,8 @@ def init_config() -> WebAPIConfig:
                    batch_size_seg=int(getenv('CARVEKIT_BATCH_SIZE_SEG', default_config.ml.batch_size_seg)),
                    batch_size_matting=int(getenv('CARVEKIT_BATCH_SIZE_MATTING', default_config.ml.batch_size_matting)),
                    seg_mask_size=int(getenv('CARVEKIT_SEG_MASK_SIZE', default_config.ml.seg_mask_size)),
-                   matting_mask_size=int(getenv('CARVEKIT_MATTING_MASK_SIZE', default_config.ml.matting_mask_size))
+                   matting_mask_size=int(getenv('CARVEKIT_MATTING_MASK_SIZE', default_config.ml.matting_mask_size)),
+                   fp16=bool(int(getenv('CARVEKIT_FP16', default_config.ml.fp16))),
                ), auth=AuthConfig(
                 auth=bool(int(getenv('CARVEKIT_AUTH_ENABLE', default_config.auth.auth))),
                 admin_token=getenv('CARVEKIT_ADMIN_TOKEN', default_config.auth.admin_token),
@@ -52,23 +53,28 @@ def init_interface(config: Union[WebAPIConfig, MLConfig]) -> Interface:
     if config.segmentation_network == "u2net":
         seg_net = U2NET(device=config.device,
                         batch_size=config.batch_size_seg,
-                        input_image_size=config.seg_mask_size)
+                        input_image_size=config.seg_mask_size,
+                        fp16=config.fp16)
     elif config.segmentation_network == "deeplabv3":
         seg_net = DeepLabV3(device=config.device,
                             batch_size=config.batch_size_seg,
-                            input_image_size=config.seg_mask_size)
+                            input_image_size=config.seg_mask_size,
+                            fp16=config.fp16)
     elif config.segmentation_network == "basnet":
         seg_net = BASNET(device=config.device,
                          batch_size=config.batch_size_seg,
-                         input_image_size=config.seg_mask_size)
+                         input_image_size=config.seg_mask_size,
+                         fp16=config.fp16)
     elif config.segmentation_network == "tracer_b7":
         seg_net = TracerUniversalB7(device=config.device,
                                     batch_size=config.batch_size_seg,
-                                    input_image_size=config.seg_mask_size)
+                                    input_image_size=config.seg_mask_size,
+                                    fp16=config.fp16)
     else:
         seg_net = TracerUniversalB7(device=config.device,
                                     batch_size=config.batch_size_seg,
-                                    input_image_size=config.seg_mask_size)
+                                    input_image_size=config.seg_mask_size,
+                                    fp16=config.fp16)
 
     if config.preprocessing_method == "stub":
         preprocessing = PreprocessingStub()
@@ -80,7 +86,8 @@ def init_interface(config: Union[WebAPIConfig, MLConfig]) -> Interface:
     if config.postprocessing_method == "fba":
         fba = FBAMatting(device=config.device,
                          batch_size=config.batch_size_matting,
-                         input_tensor_size=config.matting_mask_size)
+                         input_tensor_size=config.matting_mask_size,
+                         fp16=config.fp16)
         trimap_generator = TrimapGenerator()
         postprocessing = MattingMethod(device=config.device,
                                        matting_module=fba,

@@ -24,7 +24,7 @@ class DeepLabV3:
                  batch_size: int = 10,
                  input_image_size: Union[List[int], int] = 512,
                  load_pretrained: bool = True,
-                 fp16: bool = True):
+                 fp16: bool = False):
         """
             Initialize the DeepLabV3 model
 

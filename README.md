@@ -24,7 +24,6 @@
 ## 📄 Description:  
 Automated high-quality background removal framework for an image using neural networks.
 
-
 ## 🎆 Features:  
 - High Quality
 - Batch Processing
@@ -43,11 +42,12 @@ It can be briefly described as
 3. Using machine learning technology, the background of the image is removed
 4. Image post-processing to improve the quality of the processed image
 ## 🎓 Implemented Neural Networks:
-* [Tracer-B7](https://github.com/Karel911/TRACER)
-* [U^2-net](https://github.com/NathanUA/U-2-Net)
-* [BASNet](https://github.com/NathanUA/BASNet)
-* [DeepLabV3](https://github.com/tensorflow/models/tree/master/research/deeplab)
-
+|   Networks    |                   Target                    |             Accuracy             |
+|:-------------:|:-------------------------------------------:|:--------------------------------:|
+| **Tracer-B7** | **General** (objects, people, animals, etc) | **90%** (mean F1-Score, DUTS-TE) |
+|    U^2-net    | **Hairs** (hairs, people, animals, objects) |   80% (mean F1-Score, DUTS-TE)   |
+|    BASNet     |        **General** (people, objects)        |   80% (mean F1-Score, DUTS-TE)   |
+|   DeepLabV3   |         People, Animals, Cars, etc          |  67.4% (mean IoU, COCO val2017)  |
 
 ## 🖼️ Image pre-processing and post-processing methods:
 ### 🔍 Preprocessing methods:
@@ -76,7 +76,7 @@ from carvekit.api.high import HiInterface
 
 interface = HiInterface(batch_size_seg=5, batch_size_matting=1,
                                device='cuda' if torch.cuda.is_available() else 'cpu',
-                               seg_mask_size=320, matting_mask_size=2048)
+                               seg_mask_size=320, matting_mask_size=2048, fp16=False)
 images_without_background = interface(['./tests/data/cat.jpg'])                               
 cat_wo_bg = images_without_background[0]
 cat_wo_bg.save('2.png')
@@ -152,7 +152,9 @@ Options:
                                neural network.
 
   --device cpu                 Processing Device.
+  --fp16                       Enables mixed precision processing. Use only with CUDA. CPU support is experimental!
   --help                       Show this message and exit.
+
 
 ````
 ## 📦 Running the Framework / FastAPI HTTP API server via Docker:
@@ -197,15 +199,15 @@ See `docker-compose.<device>.yml` for more information. \
 ## 💵 Support
   You can thank me for developing this project and buy me a small cup of coffee ☕
 
-| Blockchain |            Cryptocurrency           |          Network          |                                              Wallet                                             |
+| Blockchain |            Cryptocurrency           |          Network          |                                             Wallet                                              |
 |:----------:|:-----------------------------------:|:-------------------------:|:-----------------------------------------------------------------------------------------------:|
-|  Ethereum  | ETH / USDT / USDC / BNB / Dogecoin  |          Mainnet          |                            0x7Ab1B8015020242D2a9bC48F09b2F34b994bc2F8                           |
-|  Ethereum  |  ETH / USDT / USDC / BNB / Dogecoin | BSC (Binance Smart Chain) |                            0x7Ab1B8015020242D2a9bC48F09b2F34b994bc2F8                           |
-|   Bitcoin  |                 BTC                 |             -             |                            bc1qmf4qedujhhvcsg8kxpg5zzc2s3jvqssmu7mmhq                           |
-|    ZCash   |                 ZEC                 |             -             |                               t1d7b9WxdboGFrcVVHG2ZuwWBgWEKhNUbtm                               |
-|    Tron    |                 TRX                 |             -             |                                TH12CADSqSTcNZPvG77GVmYKAe4nrrJB5X                               |
+|  Ethereum  | ETH / USDT / USDC / BNB / Dogecoin  |          Mainnet          |                           0x7Ab1B8015020242D2a9bC48F09b2F34b994bc2F8                            |
+|  Ethereum  | ETH / USDT / USDC / BNB / Dogecoin  | BSC (Binance Smart Chain) |                           0x7Ab1B8015020242D2a9bC48F09b2F34b994bc2F8                            |
+|  Bitcoin   |                 BTC                 |             -             |                           bc1qmf4qedujhhvcsg8kxpg5zzc2s3jvqssmu7mmhq                            |
+|   ZCash    |                 ZEC                 |             -             |                               t1d7b9WxdboGFrcVVHG2ZuwWBgWEKhNUbtm                               |
+|    Tron    |                 TRX                 |             -             |                               TH12CADSqSTcNZPvG77GVmYKAe4nrrJB5X                                |
 |   Monero   |                 XMR                 |          Mainnet          | 48w2pDYgPtPenwqgnNneEUC9Qt1EE6eD5MucLvU3FGpY3SABudDa4ce5bT1t32oBwchysRCUimCkZVsD1HQRBbxVLF9GTh3 |
-|     TON    |                 TON                 |             -             |                         EQCznqTdfOKI3L06QX-3Q802tBL0ecSWIKfkSjU-qsoy0CWE                        |
+|    TON     |                 TON                 |             -             |                        EQCznqTdfOKI3L06QX-3Q802tBL0ecSWIKfkSjU-qsoy0CWE                         |
 ## 📧 __Feedback__
 I will be glad to receive feedback on the project and suggestions for integration.
 

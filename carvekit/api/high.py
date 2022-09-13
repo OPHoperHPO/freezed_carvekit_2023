@@ -12,7 +12,8 @@ from carvekit.trimap.generator import TrimapGenerator
 
 class HiInterface(Interface):
     def __init__(self, batch_size_seg=2, batch_size_matting=1,
-                 device='cpu', seg_mask_size=640, matting_mask_size=2048):
+                 device='cpu', seg_mask_size=640, matting_mask_size=2048,
+                 fp16=False):
         """
         Initializes High Level interface.
 
@@ -22,6 +23,7 @@ class HiInterface(Interface):
             batch_size_seg: Number of images processed per one segmentation neural network call.
             batch_size_matting: Number of images processed per one matting neural network call.
             device: Processing device
+            fp16: Use half precision. Reduce memory usage and increase speed. Experimental support
 
         Notes:
             Changing seg_mask_size may cause an out-of-memory error if the value is too large, and it may also
@@ -30,8 +32,10 @@ class HiInterface(Interface):
             video memory consume. Also, you can change batch size to accelerate background removal, but it also causes
             extra large video memory consume, if value is too big.
         """
-        self.u2net = TracerUniversalB7(device=device, batch_size=batch_size_seg, input_image_size=seg_mask_size)
-        self.fba = FBAMatting(batch_size=batch_size_matting, device=device, input_tensor_size=matting_mask_size)
+        self.u2net = TracerUniversalB7(device=device, batch_size=batch_size_seg, input_image_size=seg_mask_size,
+                                       fp16=fp16)
+        self.fba = FBAMatting(batch_size=batch_size_matting, device=device, input_tensor_size=matting_mask_size,
+                              fp16=fp16)
         self.trimap_generator = TrimapGenerator()
         super(HiInterface, self).__init__(pre_pipe=None,
                                           seg_pipe=self.u2net,
