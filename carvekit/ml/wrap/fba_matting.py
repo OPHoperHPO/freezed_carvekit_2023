@@ -16,6 +16,7 @@ from carvekit.ml.arch.fba_matting.models import FBA
 from carvekit.ml.arch.fba_matting.transforms import trimap_transform, groupnorm_normalise_image
 from carvekit.ml.files.models_loc import fba_pretrained
 from carvekit.utils.image_utils import convert_image, load_image
+from carvekit.utils.models_utils import get_precision_autocast, cast_network
 from carvekit.utils.pool_utils import batch_generator, thread_pool_processing
 
 __all__ = ["FBAMatting"]
@@ -30,7 +31,8 @@ class FBAMatting(FBA):
                  input_tensor_size: Union[List[int], int] = 2048,
                  batch_size: int = 2,
                  encoder="resnet50_GN_WS",
-                 load_pretrained: bool = True):
+                 load_pretrained: bool = True,
+                 fp16: bool = True):
         """
             Initialize the FBAMatting model
 
@@ -40,9 +42,11 @@ class FBAMatting(FBA):
                 batch_size: the number of images that the neural network processes in one run
                 encoder: neural network encoder head
                 load_pretrained: loading pretrained model
+                fp16: use half precision
 
         """
         super(FBAMatting, self).__init__(encoder=encoder)
+        self.fp16 = fp16
         self.device = device
         self.batch_size = batch_size
         if isinstance(input_tensor_size, list):
@@ -142,34 +146,37 @@ class FBAMatting(FBA):
             raise ValueError("Len of specified arrays of images and trimaps should be equal!")
 
         collect_masks = []
-        for idx_batch in batch_generator(range(len(images)), self.batch_size):
-            inpt_images = thread_pool_processing(lambda x: convert_image(load_image(images[x])),
-                                                 idx_batch)
+        autocast, dtype = get_precision_autocast(device=self.device, fp16=self.fp16)
+        with autocast:
+            cast_network(self, dtype)
+            for idx_batch in batch_generator(range(len(images)), self.batch_size):
+                inpt_images = thread_pool_processing(lambda x: convert_image(load_image(images[x])),
+                                                     idx_batch)
 
-            inpt_trimaps = thread_pool_processing(lambda x: convert_image(load_image(trimaps[x]), mode="L"),
-                                                  idx_batch)
+                inpt_trimaps = thread_pool_processing(lambda x: convert_image(load_image(trimaps[x]), mode="L"),
+                                                      idx_batch)
 
-            inpt_img_batches = thread_pool_processing(self.data_preprocessing, inpt_images)
-            inpt_trimaps_batches = thread_pool_processing(self.data_preprocessing, inpt_trimaps)
+                inpt_img_batches = thread_pool_processing(self.data_preprocessing, inpt_images)
+                inpt_trimaps_batches = thread_pool_processing(self.data_preprocessing, inpt_trimaps)
 
-            inpt_img_batches_transformed = torch.vstack([i[1] for i in inpt_img_batches])
-            inpt_img_batches = torch.vstack([i[0] for i in inpt_img_batches])
+                inpt_img_batches_transformed = torch.vstack([i[1] for i in inpt_img_batches])
+                inpt_img_batches = torch.vstack([i[0] for i in inpt_img_batches])
 
-            inpt_trimaps_transformed = torch.vstack([i[1] for i in inpt_trimaps_batches])
-            inpt_trimaps_batches = torch.vstack([i[0] for i in inpt_trimaps_batches])
+                inpt_trimaps_transformed = torch.vstack([i[1] for i in inpt_trimaps_batches])
+                inpt_trimaps_batches = torch.vstack([i[0] for i in inpt_trimaps_batches])
 
-            with torch.no_grad():
-                inpt_img_batches = inpt_img_batches.to(self.device)
-                inpt_trimaps_batches = inpt_trimaps_batches.to(self.device)
-                inpt_img_batches_transformed = inpt_img_batches_transformed.to(self.device)
-                inpt_trimaps_transformed = inpt_trimaps_transformed.to(self.device)
+                with torch.no_grad():
+                    inpt_img_batches = inpt_img_batches.to(self.device)
+                    inpt_trimaps_batches = inpt_trimaps_batches.to(self.device)
+                    inpt_img_batches_transformed = inpt_img_batches_transformed.to(self.device)
+                    inpt_trimaps_transformed = inpt_trimaps_transformed.to(self.device)
 
-                output = super(FBAMatting, self).__call__(inpt_img_batches, inpt_trimaps_batches,
-                                                          inpt_img_batches_transformed, inpt_trimaps_transformed)
-                output_cpu = output.cpu()
-                del inpt_img_batches, inpt_trimaps_batches, \
-                    inpt_img_batches_transformed, inpt_trimaps_transformed, output
-            masks = thread_pool_processing(lambda x: self.data_postprocessing(output_cpu[x], inpt_trimaps[x]),
-                                           range(len(inpt_images)))
-            collect_masks += masks
-        return collect_masks
+                    output = super(FBAMatting, self).__call__(inpt_img_batches, inpt_trimaps_batches,
+                                                              inpt_img_batches_transformed, inpt_trimaps_transformed)
+                    output_cpu = output.cpu()
+                    del inpt_img_batches, inpt_trimaps_batches, \
+                        inpt_img_batches_transformed, inpt_trimaps_transformed, output
+                masks = thread_pool_processing(lambda x: self.data_postprocessing(output_cpu[x], inpt_trimaps[x]),
+                                               range(len(inpt_images)))
+                collect_masks += masks
+            return collect_masks

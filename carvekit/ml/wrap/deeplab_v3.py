@@ -13,6 +13,7 @@ from torchvision import transforms
 from torchvision.models.segmentation import deeplabv3_resnet101
 from carvekit.ml.files.models_loc import deeplab_pretrained
 from carvekit.utils.image_utils import convert_image, load_image
+from carvekit.utils.models_utils import get_precision_autocast, cast_network
 from carvekit.utils.pool_utils import batch_generator, thread_pool_processing
 
 __all__ = ["DeepLabV3"]
@@ -22,7 +23,8 @@ class DeepLabV3:
     def __init__(self, device='cpu',
                  batch_size: int = 10,
                  input_image_size: Union[List[int], int] = 512,
-                 load_pretrained: bool = True):
+                 load_pretrained: bool = True,
+                 fp16: bool = True):
         """
             Initialize the DeepLabV3 model
 
@@ -31,6 +33,7 @@ class DeepLabV3:
                 input_image_size: input image size
                 batch_size: the number of images that the neural network processes in one run
                 load_pretrained: loading pretrained model
+                fp16: use half precision
 
         """
         self.device = device
@@ -44,6 +47,7 @@ class DeepLabV3:
         else:
             self.input_image_size = (input_image_size, input_image_size)
         self.network.eval()
+        self.fp16 = fp16
         self.data_preprocessing = transforms.Compose([
             transforms.ToTensor(),
             transforms.Resize(self.input_image_size),
@@ -91,13 +95,16 @@ class DeepLabV3:
 
         """
         collect_masks = []
-        for image_batch in batch_generator(images, self.batch_size):
-            images = thread_pool_processing(lambda x: convert_image(load_image(x)), image_batch)
-            batches = thread_pool_processing(self.data_preprocessing, images)
-            with torch.no_grad():
-                masks = [self.network(i.to(self.device).unsqueeze(0))['out'][0].argmax(0).byte().cpu() for i in batches]
-                del batches
-            masks = thread_pool_processing(lambda x: self.data_postprocessing(masks[x], images[x]),
-                                           range(len(images)))
-            collect_masks += masks
+        autocast, dtype = get_precision_autocast(device=self.device, fp16=self.fp16)
+        with autocast:
+            cast_network(self.network, dtype)
+            for image_batch in batch_generator(images, self.batch_size):
+                images = thread_pool_processing(lambda x: convert_image(load_image(x)), image_batch)
+                batches = thread_pool_processing(self.data_preprocessing, images)
+                with torch.no_grad():
+                    masks = [self.network(i.to(self.device).unsqueeze(0))['out'][0].argmax(0).byte().cpu() for i in batches]
+                    del batches
+                masks = thread_pool_processing(lambda x: self.data_postprocessing(masks[x], images[x]),
+                                               range(len(images)))
+                collect_masks += masks
         return collect_masks

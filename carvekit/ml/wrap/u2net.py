@@ -26,7 +26,8 @@ class U2NET(U2NETArchitecture):
                  device='cpu',
                  input_image_size: Union[List[int], int] = 320,
                  batch_size: int = 10,
-                 load_pretrained: bool = True):
+                 load_pretrained: bool = True,
+                 fp16: bool = False):
         """
             Initialize the U2NET model
 
@@ -36,6 +37,7 @@ class U2NET(U2NETArchitecture):
                 input_image_size: input image size
                 batch_size: the number of images that the neural network processes in one run
                 load_pretrained: loading pretrained model
+                fp16: use fp16 precision // not supported at this moment.
 
         """
         super(U2NET, self).__init__(cfg_type=layers_cfg, out_ch=1)

@@ -6,7 +6,7 @@ License: Apache License 2.0
 
 import random
 import warnings
-from typing import Union
+from typing import Union, Tuple, Any
 
 import torch
 from torch import autocast
@@ -27,7 +27,8 @@ class EmptyAutocast(object):
         return
 
 
-def get_precision_autocast(device="cpu", fp16=True, override_dtype=None) -> Union[EmptyAutocast, autocast]:
+def get_precision_autocast(device="cpu", fp16=True, override_dtype=None) \
+        -> Union[Tuple[EmptyAutocast, Union[torch.dtype, Any]], Tuple[autocast, Union[torch.dtype, Any]]]:
     """
     Returns precision and autocast settings for given device and fp16 settings.
     Args:
@@ -36,26 +37,48 @@ def get_precision_autocast(device="cpu", fp16=True, override_dtype=None) -> Unio
         override_dtype: Override dtype for autocast.
 
     Returns:
-        Autocast object
+        Autocast object, dtype
     """
     dtype = torch.float32
+    cache_enabled = None
+
     if device == "cpu" and fp16:
         warnings.warn("Accuracy BFP16 has experimental support on the CPU. "
                       "This may result in an unexpected reduction in quality.")
         dtype = torch.bfloat16  # Using bfloat16 for CPU, since autocast is not supported for float16
+
     if "cuda" in device and fp16:
         dtype = torch.float16
+        cache_enabled = True
 
     if override_dtype is not None:
         dtype = override_dtype
 
     if dtype == torch.float32 and device == "cpu":
-        return EmptyAutocast()
+        return EmptyAutocast(), dtype
 
     return torch.autocast(
         device_type=device,
         dtype=dtype,
-        enabled=True)
+        enabled=True,
+        cache_enabled=cache_enabled), dtype
+
+
+def cast_network(network: torch.nn.Module, dtype: torch.dtype):
+    """Cast network to given dtype
+
+    Args:
+        network: Network to be casted
+        dtype: Dtype to cast network to
+    """
+    if dtype == torch.float16:
+        network.half()
+    elif dtype == torch.bfloat16:
+        network.bfloat16()
+    elif dtype == torch.float32:
+        network.float()
+    else:
+        raise ValueError(f"Unknown dtype {dtype}")
 
 
 def fix_seed(seed=42):

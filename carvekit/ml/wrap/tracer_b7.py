@@ -14,7 +14,7 @@ from PIL import Image
 from carvekit.ml.arch.tracerb7.tracer import TracerDecoder
 from carvekit.ml.arch.tracerb7.efficientnet import EfficientEncoderB7
 from carvekit.ml.files.models_loc import tracer_b7_pretrained, tracer_hair_pretrained
-from carvekit.utils.models_utils import get_precision_autocast
+from carvekit.utils.models_utils import get_precision_autocast, cast_network
 from carvekit.utils.image_utils import load_image, convert_image
 from carvekit.utils.pool_utils import thread_pool_processing, batch_generator
 
@@ -29,7 +29,7 @@ class TracerUniversalB7(TracerDecoder):
                  input_image_size: Union[List[int], int] = 640,
                  batch_size: int = 4,
                  load_pretrained: bool = True,
-                 fp16: bool = False,
+                 fp16: bool = True,
                  model_path: Union[str, pathlib.Path] = tracer_b7_pretrained()):
         """
             Initialize the U2NET model
@@ -115,7 +115,9 @@ class TracerUniversalB7(TracerDecoder):
 
         """
         collect_masks = []
-        with get_precision_autocast(device=self.device, fp16=self.fp16):
+        autocast, dtype = get_precision_autocast(device=self.device, fp16=self.fp16)
+        with autocast:
+            cast_network(self, dtype)
             for image_batch in batch_generator(images, self.batch_size):
                 images = thread_pool_processing(lambda x: convert_image(load_image(x)), image_batch)
                 batches = torch.vstack(thread_pool_processing(self.data_preprocessing, images))
