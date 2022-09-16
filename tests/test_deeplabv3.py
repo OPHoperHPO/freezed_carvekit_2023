@@ -18,18 +18,24 @@ def test_init():
 
 
 def test_preprocessing(deeplabv3_model, converted_pil_image, black_image_pil):
-    deeplabv3_model = deeplabv3_model()
+    deeplabv3_model = deeplabv3_model(False)
     assert isinstance(deeplabv3_model.data_preprocessing(converted_pil_image), torch.FloatTensor) is True
     assert isinstance(deeplabv3_model.data_preprocessing(black_image_pil), torch.FloatTensor) is True
 
 
 def test_postprocessing(deeplabv3_model, converted_pil_image, black_image_pil):
-    deeplabv3_model = deeplabv3_model()
+    deeplabv3_model = deeplabv3_model(False)
     assert isinstance(deeplabv3_model.data_postprocessing(torch.ones((320, 320), dtype=torch.float64),
                                                           converted_pil_image), Image.Image)
 
 
 def test_seg(deeplabv3_model, image_pil, image_str, image_path, black_image_pil):
-    deeplabv3_model = deeplabv3_model()
+    deeplabv3_model = deeplabv3_model(False)
+    deeplabv3_model([image_pil])
+    deeplabv3_model([image_pil, image_str, image_path, black_image_pil])
+
+
+def test_seg_with_fp12(deeplabv3_model, image_pil, image_str, image_path, black_image_pil):
+    deeplabv3_model = deeplabv3_model(True)
     deeplabv3_model([image_pil])
     deeplabv3_model([image_pil, image_str, image_path, black_image_pil])

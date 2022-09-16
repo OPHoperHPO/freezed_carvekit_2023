@@ -34,18 +34,24 @@ def test_init():
 
 
 def test_preprocessing(u2net_model, converted_pil_image, black_image_pil):
-    u2net_model = u2net_model()
+    u2net_model = u2net_model(False)
     assert isinstance(u2net_model.data_preprocessing(converted_pil_image), torch.FloatTensor) is True
     assert isinstance(u2net_model.data_preprocessing(black_image_pil), torch.FloatTensor) is True
 
 
 def test_postprocessing(u2net_model, converted_pil_image, black_image_pil):
-    u2net_model = u2net_model()
+    u2net_model = u2net_model(False)
     assert isinstance(u2net_model.data_postprocessing(torch.ones((1, 320, 320), dtype=torch.float64),
                                                       converted_pil_image), Image.Image)
 
 
 def test_seg(u2net_model, image_pil, image_str, image_path, black_image_pil):
-    u2net_model = u2net_model()
+    u2net_model = u2net_model(False)
+    u2net_model([image_pil])
+    u2net_model([image_pil, image_str, image_path, black_image_pil])
+
+
+def test_seg_with_fp12(u2net_model, image_pil, image_str, image_path, black_image_pil):
+    u2net_model = u2net_model(True)
     u2net_model([image_pil])
     u2net_model([image_pil, image_str, image_path, black_image_pil])

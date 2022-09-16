@@ -25,12 +25,14 @@ from carvekit.ml.wrap.deeplab_v3 import DeepLabV3
 
 
 @pytest.fixture()
-def u2net_model() -> Callable[[], U2NET]:
-    return lambda: U2NET(layers_cfg="full",
-                         device='cuda' if torch.cuda.is_available() else 'cpu',
-                         input_image_size=320,
-                         batch_size=10,
-                         load_pretrained=True)
+def u2net_model() -> Callable[[bool], U2NET]:
+    return lambda fb16: U2NET(layers_cfg="full",
+                              device='cuda' if torch.cuda.is_available() else 'cpu',
+                              input_image_size=320,
+                              batch_size=10,
+                              load_pretrained=True,
+                              fp16=fb16
+                              )
 
 
 @pytest.fixture()
@@ -70,26 +72,29 @@ def interface_instance(u2net_model, preprocessing_stub_instance,
 
 
 @pytest.fixture()
-def fba_model() -> Callable[[], FBAMatting]:
-    return lambda: FBAMatting(device='cuda' if torch.cuda.is_available() else 'cpu',
-                              input_tensor_size=1024,
-                              batch_size=2,
-                              load_pretrained=True)
+def fba_model() -> Callable[[bool], FBAMatting]:
+    return lambda fp16: FBAMatting(device='cuda' if torch.cuda.is_available() else 'cpu',
+                                   input_tensor_size=1024,
+                                   batch_size=2,
+                                   load_pretrained=True,
+                                   fp16=fp16)
 
 
 @pytest.fixture()
-def deeplabv3_model() -> Callable[[], DeepLabV3]:
-    return lambda: DeepLabV3(device='cuda' if torch.cuda.is_available() else 'cpu',
-                             batch_size=10,
-                             load_pretrained=True)
+def deeplabv3_model() -> Callable[[bool], DeepLabV3]:
+    return lambda fp16: DeepLabV3(device='cuda' if torch.cuda.is_available() else 'cpu',
+                                  batch_size=10,
+                                  load_pretrained=True,
+                                  fp16=fp16)
 
 
 @pytest.fixture()
-def basnet_model() -> Callable[[], BASNET]:
-    return lambda: BASNET(device='cuda' if torch.cuda.is_available() else 'cpu',
-                          input_image_size=320,
-                          batch_size=10,
-                          load_pretrained=True)
+def basnet_model() -> Callable[[bool], BASNET]:
+    return lambda fp16: BASNET(device='cuda' if torch.cuda.is_available() else 'cpu',
+                               input_image_size=320,
+                               batch_size=10,
+                               load_pretrained=True,
+                               fp16=fp16)
 
 
 @pytest.fixture()
