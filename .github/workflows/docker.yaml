@@ -24,15 +24,15 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          file: {context}/Dockerfile.cpu
+          file: "{context}/Dockerfile.cpu"
           tags: |
             anodev/carvekit:latest-cpu
-            anodev/carvekit:${{ env-release_version }}-cpu
+            anodev/carvekit:${{ envюrelease_version }}-cpu
       - name: Build and push cuda
         uses: docker/build-push-action@v3
         with:
           push: true
-          file: {context}/Dockerfile.cuda
+          file: "{context}/Dockerfile.cuda"
           tags: |
             anodev/carvekit:latest-cuda
             anodev/carvekit:${{ env-release_version }}-cuda
