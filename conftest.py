@@ -22,11 +22,22 @@ from carvekit.ml.wrap.u2net import U2NET
 from carvekit.ml.wrap.basnet import BASNET
 from carvekit.ml.wrap.fba_matting import FBAMatting
 from carvekit.ml.wrap.deeplab_v3 import DeepLabV3
+from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
 
 
 @pytest.fixture()
 def u2net_model() -> Callable[[bool], U2NET]:
     return lambda fb16: U2NET(layers_cfg="full",
+                              device='cuda' if torch.cuda.is_available() else 'cpu',
+                              input_image_size=320,
+                              batch_size=10,
+                              load_pretrained=True,
+                              fp16=fb16
+                              )
+
+@pytest.fixture()
+def tracer_model() -> Callable[[bool], TracerUniversalB7]:
+    return lambda fb16: TracerUniversalB7(
                               device='cuda' if torch.cuda.is_available() else 'cpu',
                               input_image_size=320,
                               batch_size=10,
