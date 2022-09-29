@@ -100,7 +100,7 @@ class CachedDownloader:
         """Download model from any source if not cached. Returns path if cached"""
 
     def __call__(self, file_name: str):
-        self.download_model(file_name)
+        return self.download_model(file_name)
 
 
 class HuggingFaceCompatibleDownloader(CachedDownloader, ABC):
