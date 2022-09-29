@@ -34,7 +34,7 @@ def test_download_model():
 
 
 def test_sha512():
-    hh = checkpoints_dir / 'basnet' / 'basnet.pth'
+    hh = checkpoints_dir / 'basnet-universal' / 'basnet.pth'
     hh.write_text('1234')
     assert sha512_checksum_calc(hh) == "d404559f602eab6fd602ac7680dacbfaadd13630335e951f097a" \
                                        "f3900e9de176b6db28512f2e000" \
@@ -42,7 +42,7 @@ def test_sha512():
 
 
 def test_check_model():
-    invalid_hash_file = checkpoints_dir / 'basnet' / 'basnet.pth'
+    invalid_hash_file = checkpoints_dir / 'basnet-universal' / 'basnet.pth'
     invalid_hash_file.write_text('1234')
     downloader('basnet.pth')
     assert sha512_checksum_calc(invalid_hash_file) != "d404559f602eab6fd602ac7680dacbfaadd13630335e951f097a" \
