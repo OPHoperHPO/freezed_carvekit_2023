@@ -6,29 +6,51 @@ License: Apache License 2.0
 import hashlib
 import os
 import warnings
+from abc import ABCMeta, abstractmethod, abstractproperty, ABC
 from pathlib import Path
+from typing import Optional
 
 import requests
 import tqdm
 
 MODELS_URLS = {
     "basnet.pth":
-        "https://huggingface.co/anodev/basnet-universal/resolve/870becbdb364fda6d8fdb2c10b072542f8d08701/"
-        "basnet.pth",
+        {
+            "repository": "Carve/basnet-universal",
+            "revision": "870becbdb364fda6d8fdb2c10b072542f8d08701",
+            "filename": "basnet.pth"
+        },
     "deeplab.pth":
-        "https://huggingface.co/anodev/deeplabv3-resnet101/resolve/d504005392fc877565afdf58aad0cd524682d2b0/"
-        "deeplab.pth",
+        {
+            "repository": "Carve/deeplabv3-resnet101",
+            "revision": "d504005392fc877565afdf58aad0cd524682d2b0",
+            "filename": "deeplab.pth"
+        },
     "fba_matting.pth":
-        "https://huggingface.co/anodev/fba/resolve/a5d3457df0fb9c88ea19ed700d409756ca2069d1/fba_matting.pth",
+        {
+            "repository": "Carve/fba",
+            "revision": "a5d3457df0fb9c88ea19ed700d409756ca2069d1",
+            "filename": "fba_matting.pth"
+        },
     "u2net.pth":
-        "https://huggingface.co/anodev/u2net-universal/resolve/10305d785481cf4b2eee1d447c39cd6e5f43d74b/"
-        "full_weights.pth",
+        {
+            "repository": "Carve/u2net-universal",
+            "revision": "10305d785481cf4b2eee1d447c39cd6e5f43d74b",
+            "filename": "full_weights.pth"
+        },
     "tracer_b7.pth":
-        "https://huggingface.co/anodev/tracer_b7/resolve/d8a8fd9e7b3fa0d2f1506fe7242966b34381e9c5/"
-        "tracer_b7.pth",
+        {
+            "repository": "Carve/tracer_b7",
+            "revision": "d8a8fd9e7b3fa0d2f1506fe7242966b34381e9c5",
+            "filename": "tracer_b7.pth"
+        },
     "tracer_hair.pth":
-        "https://huggingface.co/anodev/tracer_b7/resolve/d8a8fd9e7b3fa0d2f1506fe7242966b34381e9c5/"
-        "tracer_b7.pth",   # TODO don't forget change this link!!
+        {
+            "repository": "Carve/tracer_b7",
+            "revision": "d8a8fd9e7b3fa0d2f1506fe7242966b34381e9c5",
+            "filename": "tracer_b7.pth"  # TODO don't forget change this link!!
+
+        },
 }
 
 MODELS_CHECKSUMS = {
@@ -51,37 +73,94 @@ MODELS_CHECKSUMS = {
 }
 
 
-def download_model(path: Path) -> Path:
-    """ Downloads model from repo.
+class CachedDownloader:
+    __metaclass__ = ABCMeta
 
-    Args:
-        path (pathlib.Path): Path to file
+    @property
+    @abstractmethod
+    def fallback_downloader(self) -> Optional["CachedDownloader"]:
+        pass
 
-    Returns:
-         Path if exists
-
-    Raises:
-        FileNotFoundError: if model checkpoint is not exists in known checkpoints models
-        ConnectionError: if the model cannot be loaded from the URL.
-    """
-    if path.name in MODELS_URLS:
-        model_url = MODELS_URLS[path.name]
-        path.parent.mkdir(parents=True, exist_ok=True)
+    def download_model(self, file_name: str) -> Path:
         try:
-            r = requests.get(model_url, stream=True)
-            if r.status_code == 200:
-                with path.absolute().open('wb') as f:
-                    r.raw.decode_content = True
-                    for chunk in tqdm.tqdm(r, desc="Downloading " + path.name + ' model', colour='blue'):
-                        f.write(chunk)
+            return self.download_model_base(file_name)
         except BaseException as e:
-            if path.exists():
-                os.remove(path)
-            raise ConnectionError(f"Exception caused when downloading model! "
-                                  f"Model name: {path.name}. Exception: {str(e)}")
+            if self.fallback_downloader is not None:
+                warnings.warn(f"Failed to download model from {self.__class__.__name__} downloader."
+                              f" Trying to download from {self.fallback_downloader.__class__.__name__} downloader.")
+                self.fallback_downloader.download_model(file_name)
+            else:
+                warnings.warn(f"Failed to download model from {self.__class__.__name__} downloader."
+                              f" No fallback downloader available.")
+                raise e
+
+    @abstractmethod
+    def download_model_base(self, file_name: str) -> Path:
+        """Download model from any source is nt cached. Returns path if cached"""
+
+    def __call__(self, file_name: str):
+        self.download_model(file_name)
+
+
+class HuggingFaceCompatibleDownloader(CachedDownloader, ABC):
+
+    def __init__(self, base_url: str = "https://huggingface.co", fallback_downloader: Optional["CachedDownloader"] = None):
+        from carvekit.ml.files import checkpoints_dir
+        self.cache_dir = checkpoints_dir
+        self.base_url = base_url
+        self._fallback_downloader = fallback_downloader
+
+    @property
+    def fallback_downloader(self) -> Optional["CachedDownloader"]:
+        return self._fallback_downloader
+
+    def check_for_existence(self, file_name: str) -> Optional[Path]:
+        if file_name not in MODELS_URLS.keys():
+            raise FileNotFoundError("Unknown model!")
+        path = self.cache_dir / MODELS_URLS[file_name]["repository"].split("/")[1] / file_name
+
+        if not path.exists():
+            return None
+
+        if MODELS_CHECKSUMS[path.name] != sha512_checksum_calc(path):
+            warnings.warn(f"Invalid checksum for model {path.name}. Downloading correct model!")
+            os.remove(path)
+            return None
         return path
-    else:
-        raise FileNotFoundError("Unknown model!")
+
+    def download_model_base(self, file_name: str) -> Path:
+        cached_path = self.check_for_existence(file_name)
+        if cached_path is not None:
+            return cached_path
+        else:
+            cached_path = self.cache_dir / MODELS_URLS[file_name]["repository"].split("/")[1] / file_name
+            cached_path.parent.mkdir(parents=True, exist_ok=True)
+            url = MODELS_URLS[file_name]
+            hugging_face_url = f"{self.base_url}/{url['repository']}/resolve/{url['revision']}/{url['filename']}"
+
+            try:
+                r = requests.get(hugging_face_url, stream=True)
+                if r.status_code < 400:
+                    with open(cached_path, 'wb') as f:
+                        r.raw.decode_content = True
+                        for chunk in tqdm.tqdm(r, desc="Downloading " + cached_path.name + ' model', colour='blue'):
+                            f.write(chunk)
+                else:
+                    if r.status_code == 404:
+                        raise FileNotFoundError(f"Model {file_name} not found!")
+                    else:
+                        raise ConnectionError(f"Error {r.status_code} while downloading model {file_name}!")
+            except BaseException as e:
+                if cached_path.exists():
+                    os.remove(cached_path)
+                raise ConnectionError(f"Exception caught when downloading model! "
+                                      f"Model name: {cached_path.name}. Exception: {str(e)}.")
+            return cached_path
+
+
+downloader: CachedDownloader = HuggingFaceCompatibleDownloader(base_url="https://cdn.carve.photo")
+fallback_downloader: CachedDownloader = HuggingFaceCompatibleDownloader()
+downloader._fallback_downloader = fallback_downloader
 
 
 def sha512_checksum_calc(file: Path) -> str:
@@ -99,47 +178,3 @@ def sha512_checksum_calc(file: Path) -> str:
         for chunk in iter(lambda: f.read(4096), b""):
             dd.update(chunk)
     return dd.hexdigest()
-
-
-def check_model(path: Path) -> bool:
-    """ Verifies model checksums and existence in the file system
-
-    Args:
-        path: Path to the model
-
-    Returns:
-        True if all is okay and False if not
-
-    Raises:
-        FileNotFoundError: if model checkpoint is not exists in known checkpoints models
-    """
-    if path.exists():
-        if path.name in MODELS_URLS:
-            if MODELS_CHECKSUMS[path.name] != sha512_checksum_calc(path):
-                warnings.warn(f"Invalid checksum for model {path.name}. Downloading correct model!")
-                os.remove(path)
-                return False
-            return True
-        else:
-            raise FileNotFoundError("Unknown model!")
-    else:
-        return False
-
-
-def check_for_exists(path: Path) -> Path:
-    """ Checks for checkpoint path exists
-
-    Args:
-        path (pathlib.Path): Path to file
-
-    Returns:
-         Path if exists
-
-    Raises:
-        FileNotFoundError: if model checkpoint is not exists in known checkpoints models
-        ConnectionError: if the model cannot be loaded from the URL.
-    """
-    if not check_model(path):
-        download_model(path)
-
-    return path

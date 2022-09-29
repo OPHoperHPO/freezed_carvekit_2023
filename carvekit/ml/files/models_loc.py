@@ -5,7 +5,7 @@ License: Apache License 2.0
 """
 import pathlib
 from carvekit.ml.files import checkpoints_dir
-from carvekit.utils.download_models import check_for_exists
+from carvekit.utils.download_models import check_for_exists, downloader
 
 
 def u2net_full_pretrained() -> pathlib.Path:
@@ -14,7 +14,7 @@ def u2net_full_pretrained() -> pathlib.Path:
     Returns:
         pathlib.Path to model location
     """
-    return check_for_exists(checkpoints_dir.joinpath('u2net/u2net.pth'))
+    return downloader('u2net.pth')
 
 
 def basnet_pretrained() -> pathlib.Path:
@@ -23,7 +23,7 @@ def basnet_pretrained() -> pathlib.Path:
     Returns:
         pathlib.Path to model location
     """
-    return check_for_exists(checkpoints_dir.joinpath('basnet/basnet.pth'))
+    return downloader('basnet.pth')
 
 
 def deeplab_pretrained() -> pathlib.Path:
@@ -32,7 +32,7 @@ def deeplab_pretrained() -> pathlib.Path:
     Returns:
         pathlib.Path to model location
     """
-    return check_for_exists(checkpoints_dir.joinpath('deeplab/deeplab.pth'))
+    return downloader('deeplab.pth')
 
 
 def fba_pretrained() -> pathlib.Path:
@@ -41,7 +41,7 @@ def fba_pretrained() -> pathlib.Path:
     Returns:
         pathlib.Path to model location
     """
-    return check_for_exists(checkpoints_dir.joinpath('fba_matting/fba_matting.pth'))
+    return downloader('fba_matting.pth')
 
 
 def tracer_b7_pretrained() -> pathlib.Path:
@@ -50,7 +50,7 @@ def tracer_b7_pretrained() -> pathlib.Path:
     Returns:
         pathlib.Path to model location
     """
-    return check_for_exists(checkpoints_dir.joinpath('tracer_b7/tracer_b7.pth'))
+    return downloader('tracer_b7.pth')
 
 
 def tracer_hair_pretrained() -> pathlib.Path:
@@ -59,7 +59,7 @@ def tracer_hair_pretrained() -> pathlib.Path:
     Returns:
         pathlib.Path to model location
     """
-    return check_for_exists(checkpoints_dir.joinpath('tracer_hair/tracer_hair.pth'))
+    return downloader('tracer_hair.pth')
 
 
 def download_all():
