@@ -5,7 +5,7 @@ License: Apache License 2.0
 """
 import pathlib
 from carvekit.ml.files import checkpoints_dir
-from carvekit.utils.download_models import check_for_exists, downloader
+from carvekit.utils.download_models import downloader
 
 
 def u2net_full_pretrained() -> pathlib.Path:
