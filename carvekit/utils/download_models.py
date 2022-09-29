@@ -6,9 +6,10 @@ License: Apache License 2.0
 import hashlib
 import os
 import warnings
-from abc import ABCMeta, abstractmethod, abstractproperty, ABC
+from abc import ABCMeta, abstractmethod, ABC
 from pathlib import Path
 from typing import Optional
+from carvekit.ml.files import checkpoints_dir
 
 import requests
 import tqdm
@@ -96,7 +97,7 @@ class CachedDownloader:
 
     @abstractmethod
     def download_model_base(self, file_name: str) -> Path:
-        """Download model from any source is nt cached. Returns path if cached"""
+        """Download model from any source if not cached. Returns path if cached"""
 
     def __call__(self, file_name: str):
         self.download_model(file_name)
@@ -105,7 +106,6 @@ class CachedDownloader:
 class HuggingFaceCompatibleDownloader(CachedDownloader, ABC):
 
     def __init__(self, base_url: str = "https://huggingface.co", fallback_downloader: Optional["CachedDownloader"] = None):
-        from carvekit.ml.files import checkpoints_dir
         self.cache_dir = checkpoints_dir
         self.base_url = base_url
         self._fallback_downloader = fallback_downloader
@@ -158,7 +158,7 @@ class HuggingFaceCompatibleDownloader(CachedDownloader, ABC):
             return cached_path
 
 
-downloader: CachedDownloader = HuggingFaceCompatibleDownloader(base_url="https://cdn.carve.photo")
+downloader: CachedDownloader = HuggingFaceCompatibleDownloader(base_url="https://cdn.carve.photos")
 fallback_downloader: CachedDownloader = HuggingFaceCompatibleDownloader()
 downloader._fallback_downloader = fallback_downloader
 
