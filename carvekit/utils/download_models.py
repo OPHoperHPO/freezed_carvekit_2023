@@ -89,7 +89,7 @@ class CachedDownloader:
             if self.fallback_downloader is not None:
                 warnings.warn(f"Failed to download model from {self.__class__.__name__} downloader."
                               f" Trying to download from {self.fallback_downloader.__class__.__name__} downloader.")
-                self.fallback_downloader.download_model(file_name)
+                return self.fallback_downloader.download_model(file_name)
             else:
                 warnings.warn(f"Failed to download model from {self.__class__.__name__} downloader."
                               f" No fallback downloader available.")
