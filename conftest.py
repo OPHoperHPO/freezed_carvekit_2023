@@ -63,7 +63,7 @@ def preprocessing_stub_instance() -> Callable[[], PreprocessingStub]:
 
 @pytest.fixture()
 def matting_method_instance(fba_model, trimap_instance):
-    return lambda: MattingMethod(matting_module=fba_model(), trimap_generator=trimap_instance(), device="cpu")
+    return lambda: MattingMethod(matting_module=fba_model(False), trimap_generator=trimap_instance(), device="cpu")
 
 
 @pytest.fixture()
@@ -76,7 +76,7 @@ def high_interface_instance() -> Callable[[], HiInterface]:
 @pytest.fixture()
 def interface_instance(u2net_model, preprocessing_stub_instance,
                        matting_method_instance) -> Callable[[], Interface]:
-    return lambda: Interface(u2net_model(),
+    return lambda: Interface(u2net_model(False),
                              pre_pipe=preprocessing_stub_instance(),
                              post_pipe=matting_method_instance(),
                              device='cuda' if torch.cuda.is_available() else 'cpu')

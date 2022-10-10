@@ -14,7 +14,7 @@ def test_init(available_models):
     models, pre_pipes, post_pipes = available_models
     devices = ["cpu", "cuda"]
     for model in models:
-        mdl = model()
+        mdl = model(False)
         for pre_pipe in pre_pipes:
             pre = pre_pipe() if pre_pipe is not None else pre_pipe
             for post_pipe in post_pipes:
@@ -33,7 +33,7 @@ def test_init(available_models):
 def test_seg(image_pil, image_str, image_path, available_models):
     models, pre_pipes, post_pipes = available_models
     for model in models:
-        mdl = model()
+        mdl = model(False)
         for pre_pipe in pre_pipes:
             pre = pre_pipe() if pre_pipe is not None else pre_pipe
             for post_pipe in post_pipes:

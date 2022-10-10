@@ -8,7 +8,7 @@ import pytest
 from pathlib import Path
 from carvekit.utils.download_models import sha512_checksum_calc
 from carvekit.ml.files.models_loc import u2net_full_pretrained, fba_pretrained, deeplab_pretrained, basnet_pretrained, \
-    download_all, checkpoints_dir, downloader
+    download_all, checkpoints_dir, downloader, tracer_b7_pretrained
 from carvekit.utils.models_utils import fix_seed, suppress_warnings
 
 
@@ -55,3 +55,4 @@ def test_check_for_exists():
     assert fba_pretrained().exists()
     assert deeplab_pretrained().exists()
     assert basnet_pretrained().exists()
+    assert tracer_b7_pretrained().exists()

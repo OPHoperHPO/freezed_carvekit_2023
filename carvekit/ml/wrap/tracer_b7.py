@@ -31,7 +31,7 @@ class TracerUniversalB7(TracerDecoder):
                  batch_size: int = 4,
                  load_pretrained: bool = True,
                  fp16: bool = False,
-                 model_path: Union[str, pathlib.Path] = tracer_b7_pretrained()):
+                 model_path: Union[str, pathlib.Path] = None):
         """
             Initialize the U2NET model
 
@@ -44,6 +44,8 @@ class TracerUniversalB7(TracerDecoder):
                 fp16: use fp16 precision
 
         """
+        if model_path is None:
+            model_path = tracer_b7_pretrained()
         super(TracerUniversalB7, self).__init__(encoder=EfficientEncoderB7(),
                                                 rfb_channel=[32, 64, 128],
                                                 features_channels=[48, 80, 224, 640])
@@ -143,7 +145,9 @@ class TracerHair(TracerUniversalB7):
                  batch_size: int = 4,
                  load_pretrained: bool = True,
                  fp16: bool = False,
-                 model_path: Union[str, pathlib.Path] = tracer_hair_pretrained()):
+                 model_path: Union[str, pathlib.Path] = None):
+        if model_path is None:
+            model_path = tracer_hair_pretrained()
         warnings.warn('TracerHair has not public model yet. Don\'t use it!', UserWarning)
         super(TracerHair, self).__init__(device=device,
                                          input_image_size=input_image_size,

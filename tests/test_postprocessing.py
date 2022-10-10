@@ -8,7 +8,7 @@ from carvekit.pipelines.postprocessing import MattingMethod
 
 
 def test_init(fba_model, trimap_instance):
-    fba_model = fba_model()
+    fba_model = fba_model(False)
     trimap_instance = trimap_instance()
     MattingMethod(fba_model, trimap_instance, "cpu")
     MattingMethod(fba_model, trimap_instance, device="cuda")
