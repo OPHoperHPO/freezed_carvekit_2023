@@ -74,6 +74,23 @@ MODELS_CHECKSUMS = {
 }
 
 
+def sha512_checksum_calc(file: Path) -> str:
+    """
+    Calculates the SHA512 hash digest of a file on fs
+
+    Args:
+        file: Path to the file
+
+    Returns:
+        SHA512 hash digest of a file.
+    """
+    dd = hashlib.sha512()
+    with file.open("rb") as f:
+        for chunk in iter(lambda: f.read(4096), b""):
+            dd.update(chunk)
+    return dd.hexdigest()
+
+
 class CachedDownloader:
     __metaclass__ = ABCMeta
 
@@ -105,10 +122,10 @@ class CachedDownloader:
 
 class HuggingFaceCompatibleDownloader(CachedDownloader, ABC):
 
-    def __init__(self, base_url: str = "https://huggingface.co", fallback_downloader: Optional["CachedDownloader"] = None):
+    def __init__(self, base_url: str = "https://huggingface.co", fb_downloader: Optional["CachedDownloader"] = None):
         self.cache_dir = checkpoints_dir
         self.base_url = base_url
-        self._fallback_downloader = fallback_downloader
+        self._fallback_downloader = fb_downloader
 
     @property
     def fallback_downloader(self) -> Optional["CachedDownloader"]:
@@ -161,20 +178,3 @@ class HuggingFaceCompatibleDownloader(CachedDownloader, ABC):
 downloader: CachedDownloader = HuggingFaceCompatibleDownloader(base_url="https://cdn.carve.photos")
 fallback_downloader: CachedDownloader = HuggingFaceCompatibleDownloader()
 downloader._fallback_downloader = fallback_downloader
-
-
-def sha512_checksum_calc(file: Path) -> str:
-    """
-    Calculates the SHA512 hash digest of a file on fs
-
-    Args:
-        file: Path to the file
-
-    Returns:
-        SHA512 hash digest of a file.
-    """
-    dd = hashlib.sha512()
-    with file.open("rb") as f:
-        for chunk in iter(lambda: f.read(4096), b""):
-            dd.update(chunk)
-    return dd.hexdigest()

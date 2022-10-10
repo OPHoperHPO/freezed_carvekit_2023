@@ -48,7 +48,7 @@ It can be briefly described as
 |    U^2-net    | **Hairs** (hairs, people, animals, objects) |   80% (mean F1-Score, DUTS-TE)   |
 |    BASNet     |        **General** (people, objects)        |   80% (mean F1-Score, DUTS-TE)   |
 |   DeepLabV3   |         People, Animals, Cars, etc          |  67.4% (mean IoU, COCO val2017)  |
-
+> Use U2-Net for hairs and Tracer-B7 for general images.
 ## 🖼️ Image pre-processing and post-processing methods:
 ### 🔍 Preprocessing methods:
 * `none` - No preprocessing methods used.
@@ -155,11 +155,11 @@ Options:
 
 ````
 ## 📦 Running the Framework / FastAPI HTTP API server via Docker:
-
-Our docker images are available on [Docker Hub](https://hub.docker.com/r/anodev/carvekit).
-Version tags are the same as the releases of the project with suffixes `-cpu` and `-cuda` for CPU and CUDA versions respectively.
-
 Using the API via docker is a **fast** and non-complex way to have a working API.\
+
+> **Our docker images are available on [Docker Hub](https://hub.docker.com/r/anodev/carvekit).** \
+> Version tags are the same as the releases of the project with suffixes `-cpu` and `-cuda` for CPU and CUDA versions respectively.
+
 **This HTTP API is 100% compatible with remove.bg API clients.** 
 <p align="center"> 
 <img src="docs/imgs/screenshot/frontend.png"> 

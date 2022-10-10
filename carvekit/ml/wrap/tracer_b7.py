@@ -4,6 +4,7 @@ Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
 License: Apache License 2.0
 """
 import pathlib
+import warnings
 from typing import List, Union
 import PIL.Image
 import numpy as np
@@ -143,6 +144,7 @@ class TracerHair(TracerUniversalB7):
                  load_pretrained: bool = True,
                  fp16: bool = False,
                  model_path: Union[str, pathlib.Path] = tracer_hair_pretrained()):
+        warnings.warn('TracerHair has not public model yet. Don\'t use it!', UserWarning)
         super(TracerHair, self).__init__(device=device,
                                          input_image_size=input_image_size,
                                          batch_size=batch_size,

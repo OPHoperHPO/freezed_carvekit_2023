@@ -11,8 +11,6 @@ from PIL import Image
 __all__ = ["PreprocessingStub"]
 
 
-
-
 class PreprocessingStub:
     """Stub for future preprocessing methods"""
 

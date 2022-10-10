@@ -67,3 +67,4 @@ def download_all():
     fba_pretrained()
     deeplab_pretrained()
     basnet_pretrained()
+    tracer_b7_pretrained()
