@@ -147,6 +147,16 @@ Options:
 
   --matting_mask_size 2048     The size of the input image for the matting
                                neural network.
+  --trimap_dilation 30       The size of the offset radius from the
+                                  object mask in pixels when forming an
+                                  unknown area
+  --trimap_erosion 5        The number of iterations of erosion that the
+                                  object's mask will be subjected to before
+                                  forming an unknown area
+  --trimap_prob_threshold 231
+                                  Probability threshold at which the
+                                  prob_filter and prob_as_unknown_area
+                                  operations will be applied
 
   --device cpu                 Processing Device.
   --fp16                       Enables mixed precision processing. Use only with CUDA. CPU support is experimental!

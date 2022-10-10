@@ -32,6 +32,11 @@ def init_config() -> WebAPIConfig:
                    seg_mask_size=int(getenv('CARVEKIT_SEG_MASK_SIZE', default_config.ml.seg_mask_size)),
                    matting_mask_size=int(getenv('CARVEKIT_MATTING_MASK_SIZE', default_config.ml.matting_mask_size)),
                    fp16=bool(int(getenv('CARVEKIT_FP16', default_config.ml.fp16))),
+                   trimap_prob_threshold=int(getenv('CARVEKIT_TRIMAP_PROB_THRESHOLD',
+                                                      default_config.ml.trimap_prob_threshold)),
+                   trimap_dilation=int(getenv('CARVEKIT_TRIMAP_DILATION', default_config.ml.trimap_dilation)),
+                   trimap_erosion=int(getenv('CARVEKIT_TRIMAP_EROSION', default_config.ml.trimap_erosion)),
+
                ), auth=AuthConfig(
                 auth=bool(int(getenv('CARVEKIT_AUTH_ENABLE', default_config.auth.auth))),
                 admin_token=getenv('CARVEKIT_ADMIN_TOKEN', default_config.auth.admin_token),
@@ -88,7 +93,9 @@ def init_interface(config: Union[WebAPIConfig, MLConfig]) -> Interface:
                          batch_size=config.batch_size_matting,
                          input_tensor_size=config.matting_mask_size,
                          fp16=config.fp16)
-        trimap_generator = TrimapGenerator()
+        trimap_generator = TrimapGenerator(prob_threshold=config.trimap_prob_threshold,
+                                           kernel_size=config.trimap_dilation,
+                                           erosion_iters=config.trimap_erosion)
         postprocessing = MattingMethod(device=config.device,
                                        matting_module=fba,
                                        trimap_generator=trimap_generator)

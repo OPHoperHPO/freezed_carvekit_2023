@@ -36,6 +36,12 @@ class MLConfig(BaseModel):
     """The size of the input image for the matting neural network."""
     fp16: bool = False
     """Use half precision for inference"""
+    trimap_dilation: int = 30
+    """Dilation size for trimap"""
+    trimap_erosion: int = 5
+    """Erosion levels for trimap"""
+    trimap_prob_threshold: int = 231
+    """Probability threshold for trimap generation"""
 
     @validator('seg_mask_size')
     def seg_mask_size_validator(cls, value: int, values):

@@ -27,6 +27,13 @@ from carvekit.utils.fs_utils import save_file
               help='The size of the input image for the segmentation neural network.')
 @click.option('--matting_mask_size', default=2048, type=int,
               help='The size of the input image for the matting neural network.')
+@click.option('--trimap_dilation', default=30, type=int, help='The size of the offset radius from the object mask in '
+                                                              'pixels when forming an unknown area')
+@click.option('--trimap_erosion', default=5, type=int, help="The number of iterations of erosion that the object's "
+                                                            "mask will be subjected to before forming an unknown area")
+@click.option('--trimap_prob_threshold', default=231, type=int, help='Probability threshold at which the prob_filter '
+                                                                     'and prob_as_unknown_area operations will be '
+                                                                     'applied')
 @click.option('--device', default="cpu", type=str,
               help='Processing Device.')
 @click.option('--fp16', default=False, type=bool,
@@ -34,7 +41,8 @@ from carvekit.utils.fs_utils import save_file
 def removebg(i: str, o: str, pre: str, post: str, net: str, recursive: bool,
              batch_size: int, batch_size_seg: int, batch_size_mat: int, seg_mask_size: int,
              matting_mask_size: int,
-             device: str, fp16: bool):
+             device: str, fp16: bool,
+             trimap_dilation: int, trimap_erosion: int, trimap_prob_threshold: int):
     out_path = Path(o)
     input_path = Path(i)
     if input_path.is_dir():
@@ -56,7 +64,10 @@ def removebg(i: str, o: str, pre: str, post: str, net: str, recursive: bool,
         batch_size_matting=batch_size_mat,
         seg_mask_size=seg_mask_size,
         matting_mask_size=matting_mask_size,
-        fp16=fp16
+        fp16=fp16,
+        trimap_dilation=trimap_dilation,
+        trimap_erosion=trimap_erosion,
+        trimap_prob_threshold=trimap_prob_threshold
     )
 
     interface = init_interface(interface_config)

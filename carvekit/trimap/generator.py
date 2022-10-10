@@ -9,7 +9,7 @@ from carvekit.trimap.add_ops import prob_filter, prob_as_unknown_area
 
 
 class TrimapGenerator(CV2TrimapGenerator):
-    def __init__(self, prob_threshold: float = 231, kernel_size: int = 30, erosion_iters: int = 5):
+    def __init__(self, prob_threshold: int = 231, kernel_size: int = 30, erosion_iters: int = 5):
         """
         Initialize a TrimapGenerator instance
 
