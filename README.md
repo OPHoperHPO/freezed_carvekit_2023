@@ -77,7 +77,7 @@ interface = HiInterface(object_type="hairs-like",  # Can be "object" or "hairs-l
                         batch_size_seg=5,
                         batch_size_matting=1,
                         device='cuda' if torch.cuda.is_available() else 'cpu',
-                        seg_mask_size=640,
+                        seg_mask_size=640, # Use 640 for Tracer B7 and 320 for U2Net
                         matting_mask_size=2048,
                         trimap_prob_threshold=231,
                         trimap_dilation=30,
@@ -154,7 +154,7 @@ Options:
                                by matting network
 
   --seg_mask_size 640          The size of the input image for the
-                               segmentation neural network.
+                               segmentation neural network. Use 640 for Tracer B7 and 320 for U2Net
 
   --matting_mask_size 2048     The size of the input image for the matting
                                neural network.
