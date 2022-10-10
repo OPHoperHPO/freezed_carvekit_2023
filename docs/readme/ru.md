@@ -72,12 +72,21 @@
 import torch
 from carvekit.api.high import HiInterface
 
-interface = HiInterface(batch_size_seg=5, batch_size_matting=1,
-                               device='cuda' if torch.cuda.is_available() else 'cpu',
-                               seg_mask_size=320, matting_mask_size=2048)
-images_without_background = interface(['./tests/data/cat.jpg'])                               
+# Check doc strings for more information
+interface = HiInterface(object_type="hairs-like",  # Can be "object" or "hairs-like".
+                        batch_size_seg=5,
+                        batch_size_matting=1,
+                        device='cuda' if torch.cuda.is_available() else 'cpu',
+                        seg_mask_size=640,
+                        matting_mask_size=2048,
+                        trimap_prob_threshold=231,
+                        trimap_dilation=30,
+                        trimap_erosion_iters=5,
+                        fp16=False)
+images_without_background = interface(['./tests/data/cat.jpg'])
 cat_wo_bg = images_without_background[0]
 cat_wo_bg.save('2.png')
+
                    
 ```
 
@@ -87,12 +96,13 @@ import PIL.Image
 
 from carvekit.api.interface import Interface
 from carvekit.ml.wrap.fba_matting import FBAMatting
-from carvekit.ml.wrap.u2net import U2NET
+from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
 from carvekit.pipelines.postprocessing import MattingMethod
 from carvekit.pipelines.preprocessing import PreprocessingStub
 from carvekit.trimap.generator import TrimapGenerator
 
-u2net = U2NET(device='cpu',
+# Check doc strings for more information
+seg_net = TracerUniversalB7(device='cpu',
               batch_size=1)
 
 fba = FBAMatting(device='cpu',
@@ -109,7 +119,7 @@ postprocessing = MattingMethod(matting_module=fba,
 
 interface = Interface(pre_pipe=preprocessing,
                       post_pipe=postprocessing,
-                      seg_pipe=u2net)
+                      seg_pipe=seg_net)
 
 image = PIL.Image.open('tests/data/cat.jpg')
 cat_wo_bg = interface([image])[0]
