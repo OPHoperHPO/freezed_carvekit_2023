@@ -156,6 +156,9 @@ Options:
 ````
 ## 📦 Running the Framework / FastAPI HTTP API server via Docker:
 
+Our docker images are available on [Docker Hub](https://hub.docker.com/r/anodev/carvekit).
+Version tags are the same as the releases of the project with suffixes `-cpu` and `-cuda` for CPU and CUDA versions respectively.
+
 Using the API via docker is a **fast** and non-complex way to have a working API.\
 **This HTTP API is 100% compatible with remove.bg API clients.** 
 <p align="center"> 

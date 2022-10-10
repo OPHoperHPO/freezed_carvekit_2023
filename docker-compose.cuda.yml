@@ -1,8 +1,6 @@
 services:
   carvekit_api:
-    build:
-      dockerfile: Dockerfile.cuda
-      context: .
+    image: anodev/carvekit:latest-cuda
     ports:
       - "5000:5000"  # 5000
     environment:
