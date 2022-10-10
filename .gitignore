@@ -4,3 +4,4 @@ __pycache__
 /tests/tests_temp/
 /.pytest_cache/
 /carvekit.egg-info/
+venv
