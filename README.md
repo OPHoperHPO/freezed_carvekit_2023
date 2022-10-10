@@ -72,12 +72,21 @@ It can be briefly described as
 import torch
 from carvekit.api.high import HiInterface
 
-interface = HiInterface(batch_size_seg=5, batch_size_matting=1,
-                               device='cuda' if torch.cuda.is_available() else 'cpu',
-                               seg_mask_size=320, matting_mask_size=2048, fp16=False)
-images_without_background = interface(['./tests/data/cat.jpg'])                               
+# Check doc strings for more information
+interface = HiInterface(object_type="hairs-like",  # Can be "object" or "hairs-like".
+                        batch_size_seg=5,
+                        batch_size_matting=1,
+                        device='cuda' if torch.cuda.is_available() else 'cpu',
+                        seg_mask_size=640,
+                        matting_mask_size=2048,
+                        trimap_prob_threshold=231,
+                        trimap_dilation=30,
+                        trimap_erosion_iters=5,
+                        fp16=False)
+images_without_background = interface(['./tests/data/cat.jpg'])
 cat_wo_bg = images_without_background[0]
 cat_wo_bg.save('2.png')
+
                    
 ```
 
@@ -92,6 +101,7 @@ from carvekit.pipelines.postprocessing import MattingMethod
 from carvekit.pipelines.preprocessing import PreprocessingStub
 from carvekit.trimap.generator import TrimapGenerator
 
+# Check doc strings for more information
 seg_net = TracerUniversalB7(device='cpu',
               batch_size=1)
 
@@ -132,7 +142,7 @@ Options:
   -o ./2.png                   Path to output file or dir
   --pre none                   Preprocessing method
   --post fba                   Postprocessing method.
-  --net tracer_b7              Segmentation Network
+  --net tracer_b7              Segmentation Network. Check README for more info.
   --recursive                  Enables recursive search for images in a folder
   --batch_size 10              Batch Size for list of images to be loaded to
                                RAM
@@ -211,7 +221,7 @@ See `docker-compose.<device>.yml` for more information. \
 ## 💵 Support
   You can thank me for developing this project and buy me a small cup of coffee ☕
 
-| Blockchain |            Cryptocurrency           |          Network          |                                             Wallet                                              |
+| Blockchain |           Cryptocurrency            |          Network          |                                             Wallet                                              |
 |:----------:|:-----------------------------------:|:-------------------------:|:-----------------------------------------------------------------------------------------------:|
 |  Ethereum  | ETH / USDT / USDC / BNB / Dogecoin  |          Mainnet          |                           0x7Ab1B8015020242D2a9bC48F09b2F34b994bc2F8                            |
 |  Ethereum  | ETH / USDT / USDC / BNB / Dogecoin  | BSC (Binance Smart Chain) |                           0x7Ab1B8015020242D2a9bC48F09b2F34b994bc2F8                            |
