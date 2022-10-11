@@ -22,7 +22,7 @@ __all__ = ["DeepLabV3"]
 class DeepLabV3:
     def __init__(self, device='cpu',
                  batch_size: int = 10,
-                 input_image_size: Union[List[int], int] = 512,
+                 input_image_size: Union[List[int], int] = 1024,
                  load_pretrained: bool = True,
                  fp16: bool = False):
         """
@@ -48,9 +48,8 @@ class DeepLabV3:
             self.input_image_size = (input_image_size, input_image_size)
         self.network.eval()
         self.fp16 = fp16
-        self.data_preprocessing = transforms.Compose([
+        self.transform = transforms.Compose([
             transforms.ToTensor(),
-            transforms.Resize(self.input_image_size),
             transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
         ])
 
@@ -65,6 +64,21 @@ class DeepLabV3:
 
         """
         self.network.to(device)
+
+    def data_preprocessing(self, data: PIL.Image.Image) -> torch.Tensor:
+        """
+            Transform input image to suitable data format for neural network
+
+            Args:
+                data: input image
+
+            Returns:
+                input for neural network
+
+        """
+        copy = data.copy()
+        copy.thumbnail(self.input_image_size, resample=3)
+        return self.transform(copy)
 
     @staticmethod
     def data_postprocessing(data: torch.tensor,
@@ -102,7 +116,8 @@ class DeepLabV3:
                 images = thread_pool_processing(lambda x: convert_image(load_image(x)), image_batch)
                 batches = thread_pool_processing(self.data_preprocessing, images)
                 with torch.no_grad():
-                    masks = [self.network(i.to(self.device).unsqueeze(0))['out'][0].argmax(0).byte().cpu() for i in batches]
+                    masks = [self.network(i.to(self.device).unsqueeze(0))['out'][0].argmax(0).byte().cpu() for i in
+                             batches]
                     del batches
                 masks = thread_pool_processing(lambda x: self.data_postprocessing(masks[x], images[x]),
                                                range(len(images)))

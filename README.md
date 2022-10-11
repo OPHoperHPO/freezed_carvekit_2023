@@ -50,6 +50,13 @@ It can be briefly described as
 |        DeepLabV3        |         People, Animals, Cars, etc          |  67.4% (mean IoU, COCO val2017)  |
 > Use **U2-Net for hairs** and **Tracer-B7 for general images**. \
 > It is very important for final quality! Example images was taken by using U2-Net and FBA post-processing.
+### Recommended parameters for different models
+|  Networks   | Segmentation mask  size | Trimap parameters (dilation, erosion) |
+|:-----------:|:-----------------------:|:-------------------------------------:|
+| `tracer_b7` |           640           |                (30, 5)                |
+|   `u2net`   |           320           |                (30, 5)                |
+|  `basnet`   |           320           |                (30, 5)                |
+| `deeplabv3` |          1024           |               (40, 20)                |
 ## 🖼️ Image pre-processing and post-processing methods:
 ### 🔍 Preprocessing methods:
 * `none` - No preprocessing methods used.
@@ -214,7 +221,6 @@ See `docker-compose.<device>.yml` for more information. \
 ### ☑️ Testing with Docker
 1. Run `docker-compose -f docker-compose.cpu.yml run carvekit_api pytest`  # For testing on CPU
 2. Run `docker-compose -f docker-compose.cuda.yml run carvekit_api pytest`  # For testing on GPU
-
 
 ## 👪 Credits: [More info](docs/CREDITS.md)
 
