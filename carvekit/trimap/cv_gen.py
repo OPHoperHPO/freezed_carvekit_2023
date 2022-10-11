@@ -46,7 +46,7 @@ class CV2TrimapGenerator:
         if self.erosion_iters > 0:
             erosion_kernel = np.ones((3, 3), np.uint8)
             erode = cv2.erode(mask_array, erosion_kernel, iterations=self.erosion_iters)
-            erode = np.where(erode > 0, 255, mask_array)
+            erode = np.where(erode == 0, 0, mask_array)
         else:
             erode = mask_array.copy()
 
@@ -60,3 +60,4 @@ class CV2TrimapGenerator:
         trimap = np.where(trimap == 200, 255, trimap)  # GRAY to WHITE
 
         return PIL.Image.fromarray(trimap).convert("L")
+
