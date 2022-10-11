@@ -48,8 +48,7 @@ It can be briefly described as
 |         U^2-net         | **Hairs** (hairs, people, animals, objects) |  80.4% (mean F1-Score, DUTS-TE)  |
 |         BASNet          |        **General** (people, objects)        |  80.3% (mean F1-Score, DUTS-TE)  |
 |        DeepLabV3        |         People, Animals, Cars, etc          |  67.4% (mean IoU, COCO val2017)  |
-> Use **U2-Net for hairs** and **Tracer-B7 for general images**. \
-> It is very important for final quality! Example images was taken by using U2-Net and FBA post-processing.
+
 ### Recommended parameters for different models
 |  Networks   | Segmentation mask  size | Trimap parameters (dilation, erosion) |
 |:-----------:|:-----------------------:|:-------------------------------------:|
@@ -57,6 +56,11 @@ It can be briefly described as
 |   `u2net`   |           320           |                (30, 5)                |
 |  `basnet`   |           320           |                (30, 5)                |
 | `deeplabv3` |          1024           |               (40, 20)                |
+
+> ### Notes: 
+> 1. The final quality may depend on the resolution of your image, the type of scene or object.
+> 2. Use **U2-Net for hairs** and **Tracer-B7 for general images** and correct parameters. \
+> It is very important for final quality! Example images was taken by using U2-Net and FBA post-processing.
 ## 🖼️ Image pre-processing and post-processing methods:
 ### 🔍 Preprocessing methods:
 * `none` - No preprocessing methods used.
@@ -84,7 +88,7 @@ interface = HiInterface(object_type="hairs-like",  # Can be "object" or "hairs-l
                         batch_size_seg=5,
                         batch_size_matting=1,
                         device='cuda' if torch.cuda.is_available() else 'cpu',
-                        seg_mask_size=640, # Use 640 for Tracer B7 and 320 for U2Net
+                        seg_mask_size=640,  # Use 640 for Tracer B7 and 320 for U2Net
                         matting_mask_size=2048,
                         trimap_prob_threshold=231,
                         trimap_dilation=30,
