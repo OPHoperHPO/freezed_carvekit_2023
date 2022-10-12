@@ -52,9 +52,9 @@ async def removebg(
 
     if image_url:
         if (
-            not image_url.startswith("http://") or
-            not image_url.startswith("https://") or
-            is_loopback(image_url)
+                not (image_url.startswith("http://") or
+                     image_url.startswith("https://")) or
+                is_loopback(image_url)
         ):
             print(f"Possible ssrf attempt to /api/removebg endpoint with image url: {image_url}")
             return JSONResponse(content=error_dict("Invalid image url."),
@@ -130,8 +130,8 @@ async def removebg(
                 return JSONResponse(content=error_dict("Error decode image!"), status_code=400)
         elif parameters.image_url:
             if (
-                    not parameters.image_url.startswith("http://") or
-                    not parameters.image_url.startswith("https://") or
+                    not (parameters.image_url.startswith("http://") or
+                         parameters.image_url.startswith("https://")) or
                     is_loopback(parameters.image_url)
             ):
                 print(f"Possible ssrf attempt to /api/removebg endpoint with image url: {parameters.image_url}")
