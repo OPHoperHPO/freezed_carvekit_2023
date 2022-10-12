@@ -9,10 +9,17 @@ import warnings
 from abc import ABCMeta, abstractmethod, ABC
 from pathlib import Path
 from typing import Optional
+
+import carvekit
 from carvekit.ml.files import checkpoints_dir
 
 import requests
 import tqdm
+
+requests = requests.Session()
+requests.headers.update({
+    "User-Agent": f"Carvekit:{carvekit.version}"
+})
 
 MODELS_URLS = {
     "basnet.pth":
