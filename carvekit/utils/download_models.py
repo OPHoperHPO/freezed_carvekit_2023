@@ -18,7 +18,7 @@ import tqdm
 
 requests = requests.Session()
 requests.headers.update({
-    "User-Agent": f"Carvekit:{carvekit.version}"
+    "User-Agent": f"Carvekit/{carvekit.version}"
 })
 
 MODELS_URLS = {
