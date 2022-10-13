@@ -28,7 +28,7 @@ def to_tensor(x: Any) -> torch.Tensor:
 
 
 def load_image(file: Union[str, pathlib.Path, PIL.Image.Image]) -> PIL.Image.Image:
-    """ Returns a PIL.Image.Image class by string path or pathlib path or PIL.Image.Image instance
+    """Returns a PIL.Image.Image class by string path or pathlib path or PIL.Image.Image instance
 
     Args:
         file: File path or PIL.Image.Image instance
@@ -51,7 +51,7 @@ def load_image(file: Union[str, pathlib.Path, PIL.Image.Image]) -> PIL.Image.Ima
 
 
 def convert_image(image: PIL.Image.Image, mode="RGB") -> PIL.Image.Image:
-    """ Performs image conversion to correct color mode
+    """Performs image conversion to correct color mode
 
     Args:
         image: PIL.Image.Image instance
@@ -86,18 +86,22 @@ def is_image_valid(image: Union[pathlib.Path, PIL.Image.Image]) -> bool:
         elif image.is_dir():
             raise ValueError("File is a directory")
         elif image.suffix.lower() not in ALLOWED_SUFFIXES:
-            raise ValueError(f"Unsupported image format. Supported file formats: {', '.join(ALLOWED_SUFFIXES)}")
+            raise ValueError(
+                f"Unsupported image format. Supported file formats: {', '.join(ALLOWED_SUFFIXES)}"
+            )
     elif isinstance(image, PIL.Image.Image):
         if not (image.size[0] > 32 and image.size[1] > 32):
             raise ValueError("Image should be bigger then (32x32) pixels.")
         elif image.mode not in ["RGB", "RGBA", "L"]:
-            raise ValueError('Wrong image color mode.')
+            raise ValueError("Wrong image color mode.")
     else:
         raise ValueError("Unknown input file type")
     return True
 
 
-def transparency_paste(bg_img: PIL.Image.Image, fg_img: PIL.Image.Image, box=(0, 0)) -> PIL.Image.Image:
+def transparency_paste(
+    bg_img: PIL.Image.Image, fg_img: PIL.Image.Image, box=(0, 0)
+) -> PIL.Image.Image:
     """
     Inserts an image into another image while maintaining transparency.
 
@@ -115,9 +119,14 @@ def transparency_paste(bg_img: PIL.Image.Image, fg_img: PIL.Image.Image, box=(0,
     return new_img
 
 
-def add_margin(pil_img: PIL.Image.Image,
-               top: int, right: int, bottom: int, left: int,
-               color: Tuple[int, int, int, int])->PIL.Image.Image:
+def add_margin(
+    pil_img: PIL.Image.Image,
+    top: int,
+    right: int,
+    bottom: int,
+    left: int,
+    color: Tuple[int, int, int, int],
+) -> PIL.Image.Image:
     """
     Adds margin to the image.
 

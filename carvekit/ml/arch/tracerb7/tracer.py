@@ -17,15 +17,22 @@ from typing import List, Optional, Tuple
 from torch import Tensor
 
 from carvekit.ml.arch.tracerb7.efficientnet import EfficientEncoderB7
-from carvekit.ml.arch.tracerb7.att_modules import RFB_Block, aggregation, ObjectAttention
+from carvekit.ml.arch.tracerb7.att_modules import (
+    RFB_Block,
+    aggregation,
+    ObjectAttention,
+)
 
 
 class TracerDecoder(nn.Module):
     """Tracer Decoder"""
 
-    def __init__(self, encoder: EfficientEncoderB7,
-                 features_channels: Optional[List[int]] = None,
-                 rfb_channel: Optional[List[int]] = None):
+    def __init__(
+        self,
+        encoder: EfficientEncoderB7,
+        features_channels: Optional[List[int]] = None,
+        rfb_channel: Optional[List[int]] = None,
+    ):
         """
         Initialize the tracer decoder.
 
@@ -52,8 +59,12 @@ class TracerDecoder(nn.Module):
         self.agg = aggregation(features_channels)
 
         # Object Attention
-        self.ObjectAttention2 = ObjectAttention(channel=self.features_channels[1], kernel_size=3)
-        self.ObjectAttention1 = ObjectAttention(channel=self.features_channels[0], kernel_size=3)
+        self.ObjectAttention2 = ObjectAttention(
+            channel=self.features_channels[1], kernel_size=3
+        )
+        self.ObjectAttention1 = ObjectAttention(
+            channel=self.features_channels[0], kernel_size=3
+        )
 
     def forward(self, inputs: torch.Tensor) -> Tensor:
         """
@@ -72,14 +83,14 @@ class TracerDecoder(nn.Module):
 
         D_0 = self.agg(x5_rfb, x4_rfb, x3_rfb)
 
-        ds_map0 = F.interpolate(D_0, scale_factor=8, mode='bilinear')
+        ds_map0 = F.interpolate(D_0, scale_factor=8, mode="bilinear")
 
         D_1 = self.ObjectAttention2(D_0, features[1])
-        ds_map1 = F.interpolate(D_1, scale_factor=8, mode='bilinear')
+        ds_map1 = F.interpolate(D_1, scale_factor=8, mode="bilinear")
 
-        ds_map = F.interpolate(D_1, scale_factor=2, mode='bilinear')
+        ds_map = F.interpolate(D_1, scale_factor=2, mode="bilinear")
         D_2 = self.ObjectAttention1(ds_map, features[0])
-        ds_map2 = F.interpolate(D_2, scale_factor=4, mode='bilinear')
+        ds_map2 = F.interpolate(D_2, scale_factor=4, mode="bilinear")
 
         final_map = (ds_map2 + ds_map1 + ds_map0) / 3
 

@@ -67,7 +67,9 @@ class HiInterface(Interface):
                 fp16=fp16,
             )
         else:
-            warnings.warn(f"Unknown object type: {object_type}. Using default object type: object")
+            warnings.warn(
+                f"Unknown object type: {object_type}. Using default object type: object"
+            )
             self.u2net = TracerUniversalB7(
                 device=device,
                 batch_size=batch_size_seg,

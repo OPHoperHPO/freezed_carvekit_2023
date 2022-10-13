@@ -16,6 +16,8 @@ def test_init(fba_model, trimap_instance):
 
 def test_seg(matting_method_instance, image_str, image_path, image_pil):
     matting_method_instance = matting_method_instance()
-    matting_method_instance(images=[image_str, image_path], masks=[image_pil, image_path])
+    matting_method_instance(
+        images=[image_str, image_path], masks=[image_pil, image_path]
+    )
     with pytest.raises(ValueError):
         matting_method_instance(images=[image_str], masks=[image_pil, image_path])

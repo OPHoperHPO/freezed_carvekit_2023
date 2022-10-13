@@ -9,57 +9,57 @@ from carvekit.utils.download_models import downloader
 
 
 def u2net_full_pretrained() -> pathlib.Path:
-    """ Returns u2net pretrained model location
+    """Returns u2net pretrained model location
 
     Returns:
         pathlib.Path to model location
     """
-    return downloader('u2net.pth')
+    return downloader("u2net.pth")
 
 
 def basnet_pretrained() -> pathlib.Path:
-    """ Returns basnet pretrained model location
+    """Returns basnet pretrained model location
 
     Returns:
         pathlib.Path to model location
     """
-    return downloader('basnet.pth')
+    return downloader("basnet.pth")
 
 
 def deeplab_pretrained() -> pathlib.Path:
-    """ Returns basnet pretrained model location
+    """Returns basnet pretrained model location
 
     Returns:
         pathlib.Path to model location
     """
-    return downloader('deeplab.pth')
+    return downloader("deeplab.pth")
 
 
 def fba_pretrained() -> pathlib.Path:
-    """ Returns basnet pretrained model location
+    """Returns basnet pretrained model location
 
     Returns:
         pathlib.Path to model location
     """
-    return downloader('fba_matting.pth')
+    return downloader("fba_matting.pth")
 
 
 def tracer_b7_pretrained() -> pathlib.Path:
-    """ Returns TRACER with EfficientNet v1 b7 encoder pretrained model location
+    """Returns TRACER with EfficientNet v1 b7 encoder pretrained model location
 
     Returns:
         pathlib.Path to model location
     """
-    return downloader('tracer_b7.pth')
+    return downloader("tracer_b7.pth")
 
 
 def tracer_hair_pretrained() -> pathlib.Path:
-    """ Returns TRACER with EfficientNet v1 b7 encoder model for hair segmentation location
+    """Returns TRACER with EfficientNet v1 b7 encoder model for hair segmentation location
 
     Returns:
         pathlib.Path to model location
     """
-    return downloader('tracer_hair.pth')
+    return downloader("tracer_hair.pth")
 
 
 def download_all():

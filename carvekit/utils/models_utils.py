@@ -27,8 +27,12 @@ class EmptyAutocast(object):
         return
 
 
-def get_precision_autocast(device="cpu", fp16=True, override_dtype=None) \
-        -> Union[Tuple[EmptyAutocast, Union[torch.dtype, Any]], Tuple[autocast, Union[torch.dtype, Any]]]:
+def get_precision_autocast(
+    device="cpu", fp16=True, override_dtype=None
+) -> Union[
+    Tuple[EmptyAutocast, Union[torch.dtype, Any]],
+    Tuple[autocast, Union[torch.dtype, Any]],
+]:
     """
     Returns precision and autocast settings for given device and fp16 settings.
     Args:
@@ -43,9 +47,13 @@ def get_precision_autocast(device="cpu", fp16=True, override_dtype=None) \
     cache_enabled = None
 
     if device == "cpu" and fp16:
-        warnings.warn("Accuracy BFP16 has experimental support on the CPU. "
-                      "This may result in an unexpected reduction in quality.")
-        dtype = torch.bfloat16  # Using bfloat16 for CPU, since autocast is not supported for float16
+        warnings.warn(
+            "Accuracy BFP16 has experimental support on the CPU. "
+            "This may result in an unexpected reduction in quality."
+        )
+        dtype = (
+            torch.bfloat16
+        )  # Using bfloat16 for CPU, since autocast is not supported for float16
 
     if "cuda" in device and fp16:
         dtype = torch.float16
@@ -57,11 +65,12 @@ def get_precision_autocast(device="cpu", fp16=True, override_dtype=None) \
     if dtype == torch.float32 and device == "cpu":
         return EmptyAutocast(), dtype
 
-    return torch.autocast(
-        device_type=device,
-        dtype=dtype,
-        enabled=True,
-        cache_enabled=cache_enabled), dtype
+    return (
+        torch.autocast(
+            device_type=device, dtype=dtype, enabled=True, cache_enabled=cache_enabled
+        ),
+        dtype,
+    )
 
 
 def cast_network(network: torch.nn.Module, dtype: torch.dtype):
@@ -102,9 +111,11 @@ def fix_seed(seed=42):
 def suppress_warnings():
     # Suppress PyTorch 1.11.0 warning associated with changing order of args in nn.MaxPool2d layer,
     # since source code is not affected by this issue and there aren't any other correct way to hide this message.
-    warnings.filterwarnings("ignore",
-                            category=UserWarning,
-                            message="Note that order of the arguments: ceil_mode and "
-                                    "return_indices will changeto match the args list "
-                                    "in nn.MaxPool2d in a future release.",
-                            module="torch")
+    warnings.filterwarnings(
+        "ignore",
+        category=UserWarning,
+        message="Note that order of the arguments: ceil_mode and "
+        "return_indices will changeto match the args list "
+        "in nn.MaxPool2d in a future release.",
+        module="torch",
+    )

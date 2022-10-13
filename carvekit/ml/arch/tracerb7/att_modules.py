@@ -21,19 +21,19 @@ class RFB_Block(nn.Module):
             BasicConv2d(in_channel, out_channel, 1),
             BasicConv2d(out_channel, out_channel, kernel_size=(1, 3), padding=(0, 1)),
             BasicConv2d(out_channel, out_channel, kernel_size=(3, 1), padding=(1, 0)),
-            BasicConv2d(out_channel, out_channel, 3, padding=3, dilation=3)
+            BasicConv2d(out_channel, out_channel, 3, padding=3, dilation=3),
         )
         self.branch2 = nn.Sequential(
             BasicConv2d(in_channel, out_channel, 1),
             BasicConv2d(out_channel, out_channel, kernel_size=(1, 5), padding=(0, 2)),
             BasicConv2d(out_channel, out_channel, kernel_size=(5, 1), padding=(2, 0)),
-            BasicConv2d(out_channel, out_channel, 3, padding=5, dilation=5)
+            BasicConv2d(out_channel, out_channel, 3, padding=5, dilation=5),
         )
         self.branch3 = nn.Sequential(
             BasicConv2d(in_channel, out_channel, 1),
             BasicConv2d(out_channel, out_channel, kernel_size=(1, 7), padding=(0, 3)),
             BasicConv2d(out_channel, out_channel, kernel_size=(7, 1), padding=(3, 0)),
-            BasicConv2d(out_channel, out_channel, 3, padding=7, dilation=7)
+            BasicConv2d(out_channel, out_channel, 3, padding=7, dilation=7),
         )
         self.conv_cat = BasicConv2d(4 * out_channel, out_channel, 3, padding=1)
         self.conv_res = BasicConv2d(in_channel, out_channel, 1)
@@ -60,7 +60,11 @@ class GlobalAvgPool(nn.Module):
             in_size = x.size()
             return x.view((in_size[0], in_size[1], -1)).mean(dim=2)
         else:
-            return x.view(x.size(0), x.size(1), -1).mean(-1).view(x.size(0), x.size(1), 1, 1)
+            return (
+                x.view(x.size(0), x.size(1), -1)
+                .mean(-1)
+                .view(x.size(0), x.size(1), 1, 1)
+            )
 
 
 class UnionAttentionModule(nn.Module):
@@ -70,31 +74,74 @@ class UnionAttentionModule(nn.Module):
         self.confidence_ratio = 0.1
         self.bn = nn.BatchNorm2d(n_channels)
         self.norm = nn.Sequential(
-            nn.BatchNorm2d(n_channels),
-            nn.Dropout3d(self.confidence_ratio)
+            nn.BatchNorm2d(n_channels), nn.Dropout3d(self.confidence_ratio)
         )
-        self.channel_q = nn.Conv2d(in_channels=n_channels, out_channels=n_channels, kernel_size=1, stride=1,
-                                   padding=0, bias=False)
-        self.channel_k = nn.Conv2d(in_channels=n_channels, out_channels=n_channels, kernel_size=1, stride=1,
-                                   padding=0, bias=False)
-        self.channel_v = nn.Conv2d(in_channels=n_channels, out_channels=n_channels, kernel_size=1, stride=1,
-                                   padding=0, bias=False)
+        self.channel_q = nn.Conv2d(
+            in_channels=n_channels,
+            out_channels=n_channels,
+            kernel_size=1,
+            stride=1,
+            padding=0,
+            bias=False,
+        )
+        self.channel_k = nn.Conv2d(
+            in_channels=n_channels,
+            out_channels=n_channels,
+            kernel_size=1,
+            stride=1,
+            padding=0,
+            bias=False,
+        )
+        self.channel_v = nn.Conv2d(
+            in_channels=n_channels,
+            out_channels=n_channels,
+            kernel_size=1,
+            stride=1,
+            padding=0,
+            bias=False,
+        )
 
-        self.fc = nn.Conv2d(in_channels=n_channels, out_channels=n_channels, kernel_size=1, stride=1,
-                            padding=0, bias=False)
+        self.fc = nn.Conv2d(
+            in_channels=n_channels,
+            out_channels=n_channels,
+            kernel_size=1,
+            stride=1,
+            padding=0,
+            bias=False,
+        )
 
-        if only_channel_tracing == False:
-            self.spatial_q = nn.Conv2d(in_channels=n_channels, out_channels=1, kernel_size=1, stride=1,
-                                       padding=0, bias=False)
-            self.spatial_k = nn.Conv2d(in_channels=n_channels, out_channels=1, kernel_size=1, stride=1,
-                                       padding=0, bias=False)
-            self.spatial_v = nn.Conv2d(in_channels=n_channels, out_channels=1, kernel_size=1, stride=1,
-                                       padding=0, bias=False)
+        if only_channel_tracing is False:
+            self.spatial_q = nn.Conv2d(
+                in_channels=n_channels,
+                out_channels=1,
+                kernel_size=1,
+                stride=1,
+                padding=0,
+                bias=False,
+            )
+            self.spatial_k = nn.Conv2d(
+                in_channels=n_channels,
+                out_channels=1,
+                kernel_size=1,
+                stride=1,
+                padding=0,
+                bias=False,
+            )
+            self.spatial_v = nn.Conv2d(
+                in_channels=n_channels,
+                out_channels=1,
+                kernel_size=1,
+                stride=1,
+                padding=0,
+                bias=False,
+            )
         self.sigmoid = nn.Sigmoid()
 
     def masking(self, x, mask):
         mask = mask.squeeze(3).squeeze(2)
-        threshold = torch.quantile(mask.float(), self.confidence_ratio, dim=-1, keepdim=True)
+        threshold = torch.quantile(
+            mask.float(), self.confidence_ratio, dim=-1, keepdim=True
+        )
         mask[mask <= threshold] = 0.0
         mask = mask.unsqueeze(2).unsqueeze(3)
         mask = mask.expand(-1, x.shape[1], x.shape[2], x.shape[3]).contiguous()
@@ -147,24 +194,35 @@ class aggregation(nn.Module):
         super(aggregation, self).__init__()
         self.relu = nn.ReLU(True)
 
-        self.upsample = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
+        self.upsample = nn.Upsample(scale_factor=2, mode="bilinear", align_corners=True)
         self.conv_upsample1 = BasicConv2d(channel[2], channel[1], 3, padding=1)
         self.conv_upsample2 = BasicConv2d(channel[2], channel[0], 3, padding=1)
         self.conv_upsample3 = BasicConv2d(channel[1], channel[0], 3, padding=1)
         self.conv_upsample4 = BasicConv2d(channel[2], channel[2], 3, padding=1)
-        self.conv_upsample5 = BasicConv2d(channel[2] + channel[1], channel[2] + channel[1], 3, padding=1)
+        self.conv_upsample5 = BasicConv2d(
+            channel[2] + channel[1], channel[2] + channel[1], 3, padding=1
+        )
 
-        self.conv_concat2 = BasicConv2d((channel[2] + channel[1]), (channel[2] + channel[1]), 3, padding=1)
-        self.conv_concat3 = BasicConv2d((channel[0] + channel[1] + channel[2]),
-                                        (channel[0] + channel[1] + channel[2]), 3, padding=1)
+        self.conv_concat2 = BasicConv2d(
+            (channel[2] + channel[1]), (channel[2] + channel[1]), 3, padding=1
+        )
+        self.conv_concat3 = BasicConv2d(
+            (channel[0] + channel[1] + channel[2]),
+            (channel[0] + channel[1] + channel[2]),
+            3,
+            padding=1,
+        )
 
         self.UAM = UnionAttentionModule(channel[0] + channel[1] + channel[2])
 
     def forward(self, e4, e3, e2):
         e4_1 = e4
         e3_1 = self.conv_upsample1(self.upsample(e4)) * e3
-        e2_1 = self.conv_upsample2(self.upsample(self.upsample(e4))) \
-               * self.conv_upsample3(self.upsample(e3)) * e2
+        e2_1 = (
+            self.conv_upsample2(self.upsample(self.upsample(e4)))
+            * self.conv_upsample3(self.upsample(e3))
+            * e2
+        )
 
         e3_2 = torch.cat((e3_1, self.conv_upsample4(self.upsample(e4_1))), 1)
         e3_2 = self.conv_concat2(e3_2)
@@ -181,7 +239,9 @@ class ObjectAttention(nn.Module):
     def __init__(self, channel, kernel_size):
         super(ObjectAttention, self).__init__()
         self.channel = channel
-        self.DWSConv = DWSConv(channel, channel // 2, kernel=kernel_size, padding=1, kernels_per_layer=1)
+        self.DWSConv = DWSConv(
+            channel, channel // 2, kernel=kernel_size, padding=1, kernels_per_layer=1
+        )
         self.DWConv1 = nn.Sequential(
             DWConv(channel // 2, channel // 2, kernel=1, padding=0, dilation=1),
             BasicConv2d(channel // 2, channel // 8, 1),
@@ -218,7 +278,13 @@ class ObjectAttention(nn.Module):
 
         x = self.DWSConv(x)
         skip = x.clone()
-        x = torch.cat([self.DWConv1(x), self.DWConv2(x), self.DWConv3(x), self.DWConv4(x)], dim=1) + skip
+        x = (
+            torch.cat(
+                [self.DWConv1(x), self.DWConv2(x), self.DWConv3(x), self.DWConv4(x)],
+                dim=1,
+            )
+            + skip
+        )
         x = torch.relu(self.conv1(x))
 
         return x + decoder_map

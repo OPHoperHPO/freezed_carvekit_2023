@@ -22,7 +22,9 @@ class CV2TrimapGenerator:
         self.kernel_size = kernel_size
         self.erosion_iters = erosion_iters
 
-    def __call__(self, original_image: PIL.Image.Image, mask: PIL.Image.Image) -> PIL.Image.Image:
+    def __call__(
+        self, original_image: PIL.Image.Image, mask: PIL.Image.Image
+    ) -> PIL.Image.Image:
         """
         Generates trimap based on predicted object mask to refine object mask borders.
         Based on cv2 erosion algorithm.
@@ -60,4 +62,3 @@ class CV2TrimapGenerator:
         trimap = np.where(trimap == 200, 255, trimap)  # GRAY to WHITE
 
         return PIL.Image.fromarray(trimap).convert("L")
-

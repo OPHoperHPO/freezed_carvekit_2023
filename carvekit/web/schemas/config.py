@@ -7,7 +7,8 @@ from pydantic import BaseModel, validator
 
 
 class AuthConfig(BaseModel):
-    """Config for web api token authentication """
+    """Config for web api token authentication"""
+
     auth: bool = True
     """Enables Token Authentication for API"""
     admin_token: str = secrets.token_hex(32)
@@ -18,7 +19,10 @@ class AuthConfig(BaseModel):
 
 class MLConfig(BaseModel):
     """Config for ml part of framework"""
-    segmentation_network: Literal["u2net", "deeplabv3", "basnet", "tracer_b7"] = "tracer_b7"
+
+    segmentation_network: Literal[
+        "u2net", "deeplabv3", "basnet", "tracer_b7"
+    ] = "tracer_b7"
     """Segmentation Network"""
     preprocessing_method: Literal["none", "stub"] = "none"
     """Pre-processing Method"""
@@ -43,45 +47,48 @@ class MLConfig(BaseModel):
     trimap_prob_threshold: int = 231
     """Probability threshold for trimap generation"""
 
-    @validator('seg_mask_size')
+    @validator("seg_mask_size")
     def seg_mask_size_validator(cls, value: int, values):
         if value > 0:
             return value
         else:
             raise ValueError("Incorrect seg_mask_size!")
 
-    @validator('matting_mask_size')
+    @validator("matting_mask_size")
     def matting_mask_size_validator(cls, value: int, values):
         if value > 0:
             return value
         else:
             raise ValueError("Incorrect matting_mask_size!")
 
-    @validator('batch_size_seg')
+    @validator("batch_size_seg")
     def batch_size_seg_validator(cls, value: int, values):
         if value > 0:
             return value
         else:
             raise ValueError("Incorrect batch size!")
 
-    @validator('batch_size_matting')
-    def batch_size_matting_validator(cls, value: int,values):
+    @validator("batch_size_matting")
+    def batch_size_matting_validator(cls, value: int, values):
         if value > 0:
             return value
         else:
             raise ValueError("Incorrect batch size!")
 
-    @validator('device')
+    @validator("device")
     def device_validator(cls, value):
         if torch.cuda.is_available() is False and "cuda" in value:
-            raise ValueError("GPU is not available, but specified as processing device!")
-        if 'cuda' not in value and "cpu" != value:
+            raise ValueError(
+                "GPU is not available, but specified as processing device!"
+            )
+        if "cuda" not in value and "cpu" != value:
             raise ValueError("Unknown processing device! It should be cpu or cuda!")
         return value
 
 
 class WebAPIConfig(BaseModel):
     """FastAPI app config"""
+
     port: int = 5000
     """Web API port"""
     host: str = "0.0.0.0"

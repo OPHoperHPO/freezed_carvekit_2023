@@ -21,9 +21,13 @@ def test_init(available_models):
                 post = post_pipe() if post_pipe is not None else post_pipe
                 for device in devices:
                     if device == "cuda" and torch.cuda.is_available() is False:
-                        warnings.warn('Cuda GPU is not available! Testing on cuda skipped!')
+                        warnings.warn(
+                            "Cuda GPU is not available! Testing on cuda skipped!"
+                        )
                         continue
-                    inf = Interface(seg_pipe=mdl, post_pipe=post, pre_pipe=pre, device=device)
+                    inf = Interface(
+                        seg_pipe=mdl, post_pipe=post, pre_pipe=pre, device=device
+                    )
                     del inf
                 del post
             del pre
@@ -38,8 +42,12 @@ def test_seg(image_pil, image_str, image_path, available_models):
             pre = pre_pipe() if pre_pipe is not None else pre_pipe
             for post_pipe in post_pipes:
                 post = post_pipe() if post_pipe is not None else post_pipe
-                interface = Interface(seg_pipe=mdl, post_pipe=post, pre_pipe=pre,
-                                      device='cuda' if torch.cuda.is_available() else 'cpu')
+                interface = Interface(
+                    seg_pipe=mdl,
+                    post_pipe=post,
+                    pre_pipe=pre,
+                    device="cuda" if torch.cuda.is_available() else "cpu",
+                )
                 interface([image_pil, image_str, image_path])
                 del post, interface
             del pre

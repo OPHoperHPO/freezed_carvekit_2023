@@ -9,15 +9,15 @@ from typing import Any, Iterable
 
 def thread_pool_processing(func: Any, data: Iterable, workers=18):
     """
-        Passes all iterator data through the given function
+    Passes all iterator data through the given function
 
-        Args:
-            workers: Count of workers.
-            func: function to pass data through
-            data: input iterator
+    Args:
+        workers: Count of workers.
+        func: function to pass data through
+        data: input iterator
 
-        Returns:
-            function return list
+    Returns:
+        function return list
 
     """
     with ThreadPoolExecutor(workers) as p:
@@ -26,15 +26,15 @@ def thread_pool_processing(func: Any, data: Iterable, workers=18):
 
 def batch_generator(iterable, n=1):
     """
-        Splits any iterable into n-size packets
+    Splits any iterable into n-size packets
 
-        Args:
-            iterable: iterator
-            n: size of packets
+    Args:
+        iterable: iterator
+        n: size of packets
 
-        Returns:
-            new n-size packet
+    Returns:
+        new n-size packet
     """
     it = len(iterable)
     for ndx in range(0, it, n):
-        yield iterable[ndx:min(ndx + n, it)]
+        yield iterable[ndx : min(ndx + n, it)]

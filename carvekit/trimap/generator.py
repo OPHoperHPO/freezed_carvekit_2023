@@ -9,7 +9,9 @@ from carvekit.trimap.add_ops import prob_filter, prob_as_unknown_area, post_eros
 
 
 class TrimapGenerator(CV2TrimapGenerator):
-    def __init__(self, prob_threshold: int = 231, kernel_size: int = 30, erosion_iters: int = 5):
+    def __init__(
+        self, prob_threshold: int = 231, kernel_size: int = 30, erosion_iters: int = 5
+    ):
         """
         Initialize a TrimapGenerator instance
 
@@ -38,6 +40,8 @@ class TrimapGenerator(CV2TrimapGenerator):
         """
         filter_mask = prob_filter(mask=mask, prob_threshold=self.prob_threshold)
         trimap = super(TrimapGenerator, self).__call__(original_image, filter_mask)
-        new_trimap = prob_as_unknown_area(trimap=trimap, mask=mask, prob_threshold=self.prob_threshold)
+        new_trimap = prob_as_unknown_area(
+            trimap=trimap, mask=mask, prob_threshold=self.prob_threshold
+        )
         new_trimap = post_erosion(new_trimap, self.__erosion_iters)
         return new_trimap

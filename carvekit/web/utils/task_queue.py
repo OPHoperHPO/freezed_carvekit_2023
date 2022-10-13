@@ -14,6 +14,7 @@ from carvekit.web.other.removebg import process_remove_bg
 
 class MLProcessor(threading.Thread):
     """Simple ml task queue processor"""
+
     def __init__(self, api_config: WebAPIConfig):
         super().__init__()
         self.api_config = api_config
@@ -36,7 +37,9 @@ class MLProcessor(threading.Thread):
                 id = list(self.jobs.keys())[0]
                 data = self.jobs[id]
                 # TODO add pydantic scheme here
-                response = process_remove_bg(self.interface, data[0], data[1], data[2], data[3])
+                response = process_remove_bg(
+                    self.interface, data[0], data[1], data[2], data[3]
+                )
                 self.completed_jobs[id] = [response, time.time()]
                 try:
                     del self.jobs[id]

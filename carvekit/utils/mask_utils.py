@@ -8,10 +8,12 @@ import torch
 from carvekit.utils.image_utils import to_tensor
 
 
-def composite(foreground: PIL.Image.Image,
-              background: PIL.Image.Image,
-              alpha: PIL.Image.Image,
-              device="cpu"):
+def composite(
+    foreground: PIL.Image.Image,
+    background: PIL.Image.Image,
+    alpha: PIL.Image.Image,
+    device="cpu",
+):
     """
     Composites foreground with background by following
     https://pymatting.github.io/intro.html#alpha-matting math formula.
@@ -49,7 +51,9 @@ def composite(foreground: PIL.Image.Image,
     return PIL.Image.fromarray(bg.cpu().numpy()).convert("RGBA")
 
 
-def apply_mask(image: PIL.Image.Image, mask: PIL.Image.Image, device="cpu") -> PIL.Image.Image:
+def apply_mask(
+    image: PIL.Image.Image, mask: PIL.Image.Image, device="cpu"
+) -> PIL.Image.Image:
     """
     Applies mask to foreground.
 

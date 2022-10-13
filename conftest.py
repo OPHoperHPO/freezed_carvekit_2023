@@ -27,23 +27,25 @@ from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
 
 @pytest.fixture()
 def u2net_model() -> Callable[[bool], U2NET]:
-    return lambda fb16: U2NET(layers_cfg="full",
-                              device='cuda' if torch.cuda.is_available() else 'cpu',
-                              input_image_size=320,
-                              batch_size=10,
-                              load_pretrained=True,
-                              fp16=fb16
-                              )
+    return lambda fb16: U2NET(
+        layers_cfg="full",
+        device="cuda" if torch.cuda.is_available() else "cpu",
+        input_image_size=320,
+        batch_size=10,
+        load_pretrained=True,
+        fp16=fb16,
+    )
+
 
 @pytest.fixture()
 def tracer_model() -> Callable[[bool], TracerUniversalB7]:
     return lambda fb16: TracerUniversalB7(
-                              device='cuda' if torch.cuda.is_available() else 'cpu',
-                              input_image_size=320,
-                              batch_size=10,
-                              load_pretrained=True,
-                              fp16=fb16
-                              )
+        device="cuda" if torch.cuda.is_available() else "cpu",
+        input_image_size=320,
+        batch_size=10,
+        load_pretrained=True,
+        fp16=fb16,
+    )
 
 
 @pytest.fixture()
@@ -63,49 +65,66 @@ def preprocessing_stub_instance() -> Callable[[], PreprocessingStub]:
 
 @pytest.fixture()
 def matting_method_instance(fba_model, trimap_instance):
-    return lambda: MattingMethod(matting_module=fba_model(False), trimap_generator=trimap_instance(), device="cpu")
+    return lambda: MattingMethod(
+        matting_module=fba_model(False),
+        trimap_generator=trimap_instance(),
+        device="cpu",
+    )
 
 
 @pytest.fixture()
 def high_interface_instance() -> Callable[[], HiInterface]:
-    return lambda: HiInterface(batch_size_seg=5, batch_size_matting=1,
-                               device='cuda' if torch.cuda.is_available() else 'cpu',
-                               seg_mask_size=320, matting_mask_size=2048)
+    return lambda: HiInterface(
+        batch_size_seg=5,
+        batch_size_matting=1,
+        device="cuda" if torch.cuda.is_available() else "cpu",
+        seg_mask_size=320,
+        matting_mask_size=2048,
+    )
 
 
 @pytest.fixture()
-def interface_instance(u2net_model, preprocessing_stub_instance,
-                       matting_method_instance) -> Callable[[], Interface]:
-    return lambda: Interface(u2net_model(False),
-                             pre_pipe=preprocessing_stub_instance(),
-                             post_pipe=matting_method_instance(),
-                             device='cuda' if torch.cuda.is_available() else 'cpu')
+def interface_instance(
+    u2net_model, preprocessing_stub_instance, matting_method_instance
+) -> Callable[[], Interface]:
+    return lambda: Interface(
+        u2net_model(False),
+        pre_pipe=preprocessing_stub_instance(),
+        post_pipe=matting_method_instance(),
+        device="cuda" if torch.cuda.is_available() else "cpu",
+    )
 
 
 @pytest.fixture()
 def fba_model() -> Callable[[bool], FBAMatting]:
-    return lambda fp16: FBAMatting(device='cuda' if torch.cuda.is_available() else 'cpu',
-                                   input_tensor_size=1024,
-                                   batch_size=2,
-                                   load_pretrained=True,
-                                   fp16=fp16)
+    return lambda fp16: FBAMatting(
+        device="cuda" if torch.cuda.is_available() else "cpu",
+        input_tensor_size=1024,
+        batch_size=2,
+        load_pretrained=True,
+        fp16=fp16,
+    )
 
 
 @pytest.fixture()
 def deeplabv3_model() -> Callable[[bool], DeepLabV3]:
-    return lambda fp16: DeepLabV3(device='cuda' if torch.cuda.is_available() else 'cpu',
-                                  batch_size=10,
-                                  load_pretrained=True,
-                                  fp16=fp16)
+    return lambda fp16: DeepLabV3(
+        device="cuda" if torch.cuda.is_available() else "cpu",
+        batch_size=10,
+        load_pretrained=True,
+        fp16=fp16,
+    )
 
 
 @pytest.fixture()
 def basnet_model() -> Callable[[bool], BASNET]:
-    return lambda fp16: BASNET(device='cuda' if torch.cuda.is_available() else 'cpu',
-                               input_image_size=320,
-                               batch_size=10,
-                               load_pretrained=True,
-                               fp16=fp16)
+    return lambda fp16: BASNET(
+        device="cuda" if torch.cuda.is_available() else "cpu",
+        input_image_size=320,
+        batch_size=10,
+        load_pretrained=True,
+        fp16=fp16,
+    )
 
 
 @pytest.fixture()
@@ -115,17 +134,19 @@ def image_str(image_path) -> str:
 
 @pytest.fixture()
 def image_path() -> Path:
-    return Path(__file__).parent.joinpath('tests').joinpath('data', 'cat.jpg')
+    return Path(__file__).parent.joinpath("tests").joinpath("data", "cat.jpg")
 
 
 @pytest.fixture()
 def image_mask(image_path) -> Image.Image:
-    return Image.open(image_path.with_name('cat_mask').with_suffix(".png"))
+    return Image.open(image_path.with_name("cat_mask").with_suffix(".png"))
 
 
 @pytest.fixture()
 def image_trimap(image_path) -> Image.Image:
-    return Image.open(image_path.with_name('cat_trimap').with_suffix(".png")).convert("L")
+    return Image.open(image_path.with_name("cat_trimap").with_suffix(".png")).convert(
+        "L"
+    )
 
 
 @pytest.fixture()
@@ -144,10 +165,17 @@ def converted_pil_image(image_pil) -> Image.Image:
 
 
 @pytest.fixture()
-def available_models(u2net_model, deeplabv3_model, basnet_model,
-                     preprocessing_stub_instance, matting_method_instance) -> Tuple[
-    List[Union[Callable[[], U2NET], Callable[[], DeepLabV3], Callable[[], BASNET]]], List[
-        Optional[Callable[[], PreprocessingStub]]], List[Union[Optional[Callable[[], MattingMethod]], Any]]]:
+def available_models(
+    u2net_model,
+    deeplabv3_model,
+    basnet_model,
+    preprocessing_stub_instance,
+    matting_method_instance,
+) -> Tuple[
+    List[Union[Callable[[], U2NET], Callable[[], DeepLabV3], Callable[[], BASNET]]],
+    List[Optional[Callable[[], PreprocessingStub]]],
+    List[Union[Optional[Callable[[], MattingMethod]], Any]],
+]:
     models = [u2net_model, deeplabv3_model, basnet_model]
     pre_pipes = [None, preprocessing_stub_instance]
     post_pipes = [None, matting_method_instance]

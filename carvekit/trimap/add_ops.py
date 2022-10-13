@@ -31,7 +31,9 @@ def prob_filter(mask: Image.Image, prob_threshold=231) -> Image.Image:
     return Image.fromarray(mask_array).convert("L")
 
 
-def prob_as_unknown_area(trimap: Image.Image, mask: Image.Image, prob_threshold=255) -> Image.Image:
+def prob_as_unknown_area(
+    trimap: Image.Image, mask: Image.Image, prob_threshold=255
+) -> Image.Image:
     """
     Marks any uncertainty in the seg mask as an unknown region.
 
@@ -78,7 +80,9 @@ def post_erosion(trimap: Image.Image, erosion_iters=1) -> Image.Image:
         without_unknown_area[without_unknown_area == 127] = 0
 
         erosion_kernel = np.ones((3, 3), np.uint8)
-        erode = cv2.erode(without_unknown_area, erosion_kernel, iterations=erosion_iters)
+        erode = cv2.erode(
+            without_unknown_area, erosion_kernel, iterations=erosion_iters
+        )
         erode = np.where(erode == 0, 0, without_unknown_area)
         trimap_array[np.logical_and(erode == 0, without_unknown_area > 0)] = 127
         erode = trimap_array.copy()
