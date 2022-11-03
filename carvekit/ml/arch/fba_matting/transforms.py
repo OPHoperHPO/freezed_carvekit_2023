@@ -19,7 +19,7 @@ def trimap_transform(trimap):
 
     clicks = np.zeros((h, w, 6))
     for k in range(2):
-        if (np.count_nonzero(trimap[:, :, k]) > 0):
+        if np.count_nonzero(trimap[:, :, k]) > 0:
             dt_mask = -dt(1 - trimap[:, :, k]) ** 2
             L = 320
             clicks[:, :, 3 * k] = np.exp(dt_mask / (2 * ((0.02 * L) ** 2)))
@@ -29,15 +29,17 @@ def trimap_transform(trimap):
     return clicks
 
 
-def groupnorm_normalise_image(img, format='nhwc'):
-    '''
-        Accept rgb in range 0,1
-    '''
-    if (format == 'nhwc'):
+def groupnorm_normalise_image(img, format="nhwc"):
+    """
+    Accept rgb in range 0,1
+    """
+    if format == "nhwc":
         for i in range(3):
             img[..., i] = (img[..., i] - group_norm_mean[i]) / group_norm_std[i]
     else:
         for i in range(3):
-            img[..., i, :, :] = (img[..., i, :, :] - group_norm_mean[i]) / group_norm_std[i]
+            img[..., i, :, :] = (
+                img[..., i, :, :] - group_norm_mean[i]
+            ) / group_norm_std[i]
 
     return img

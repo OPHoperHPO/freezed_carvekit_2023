@@ -21,21 +21,25 @@ __all__ = ["U2NET"]
 class U2NET(U2NETArchitecture):
     """U^2-Net model interface"""
 
-    def __init__(self,
-                 layers_cfg="full",
-                 device='cpu',
-                 input_image_size: Union[List[int], int] = 320,
-                 batch_size: int = 10,
-                 load_pretrained: bool = True):
+    def __init__(
+        self,
+        layers_cfg="full",
+        device="cpu",
+        input_image_size: Union[List[int], int] = 320,
+        batch_size: int = 10,
+        load_pretrained: bool = True,
+        fp16: bool = False,
+    ):
         """
-            Initialize the U2NET model
+        Initialize the U2NET model
 
-            Args:
-                layers_cfg: neural network layers configuration
-                device: processing device
-                input_image_size: input image size
-                batch_size: the number of images that the neural network processes in one run
-                load_pretrained: loading pretrained model
+        Args:
+            layers_cfg: neural network layers configuration
+            device: processing device
+            input_image_size: input image size
+            batch_size: the number of images that the neural network processes in one run
+            load_pretrained: loading pretrained model
+            fp16: use fp16 precision // not supported at this moment.
 
         """
         super(U2NET, self).__init__(cfg_type=layers_cfg, out_ch=1)
@@ -47,18 +51,20 @@ class U2NET(U2NETArchitecture):
             self.input_image_size = (input_image_size, input_image_size)
         self.to(device)
         if load_pretrained:
-            self.load_state_dict(torch.load(u2net_full_pretrained(), map_location=self.device))
+            self.load_state_dict(
+                torch.load(u2net_full_pretrained(), map_location=self.device)
+            )
         self.eval()
 
     def data_preprocessing(self, data: PIL.Image.Image) -> torch.FloatTensor:
         """
-            Transform input image to suitable data format for neural network
+        Transform input image to suitable data format for neural network
 
-            Args:
-                data: input image
+        Args:
+            data: input image
 
-            Returns:
-                input for neural network
+        Returns:
+            input for neural network
 
         """
         resized = data.resize(self.input_image_size, resample=3)
@@ -75,18 +81,19 @@ class U2NET(U2NETArchitecture):
         return torch.from_numpy(temp_image).type(torch.FloatTensor)
 
     @staticmethod
-    def data_postprocessing(data: torch.tensor,
-                            original_image: PIL.Image.Image) -> PIL.Image.Image:
+    def data_postprocessing(
+        data: torch.tensor, original_image: PIL.Image.Image
+    ) -> PIL.Image.Image:
         """
-            Transforms output data from neural network to suitable data
-            format for using with other components of this framework.
+        Transforms output data from neural network to suitable data
+        format for using with other components of this framework.
 
-            Args:
-                data: output data from neural network
-                original_image: input image which was used for predicted data
+        Args:
+            data: output data from neural network
+            original_image: input image which was used for predicted data
 
-            Returns:
-                Segmentation mask as PIL Image instance
+        Returns:
+            Segmentation mask as PIL Image instance
 
         """
         data = data.unsqueeze(0)
@@ -99,27 +106,35 @@ class U2NET(U2NETArchitecture):
         mask = mask.resize(original_image.size, resample=3)
         return mask
 
-    def __call__(self, images: List[Union[str, pathlib.Path, PIL.Image.Image]]) -> List[PIL.Image.Image]:
+    def __call__(
+        self, images: List[Union[str, pathlib.Path, PIL.Image.Image]]
+    ) -> List[PIL.Image.Image]:
         """
-            Passes input images though neural network and returns segmentation masks as PIL.Image.Image instances
+        Passes input images though neural network and returns segmentation masks as PIL.Image.Image instances
 
-            Args:
-                images: input images
+        Args:
+            images: input images
 
-            Returns:
-                segmentation masks as for input images, as PIL.Image.Image instances
+        Returns:
+            segmentation masks as for input images, as PIL.Image.Image instances
 
         """
         collect_masks = []
         for image_batch in batch_generator(images, self.batch_size):
-            images = thread_pool_processing(lambda x: convert_image(load_image(x)), image_batch)
-            batches = torch.vstack(thread_pool_processing(self.data_preprocessing, images))
+            images = thread_pool_processing(
+                lambda x: convert_image(load_image(x)), image_batch
+            )
+            batches = torch.vstack(
+                thread_pool_processing(self.data_preprocessing, images)
+            )
             with torch.no_grad():
                 batches = batches.to(self.device)
                 masks, d2, d3, d4, d5, d6, d7 = super(U2NET, self).__call__(batches)
                 masks_cpu = masks.cpu()
                 del d2, d3, d4, d5, d6, d7, batches, masks
-            masks = thread_pool_processing(lambda x: self.data_postprocessing(masks_cpu[x], images[x]),
-                                           range(len(images)))
+            masks = thread_pool_processing(
+                lambda x: self.data_postprocessing(masks_cpu[x], images[x]),
+                range(len(images)),
+            )
             collect_masks += masks
         return collect_masks

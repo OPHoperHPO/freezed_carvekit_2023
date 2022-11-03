@@ -10,8 +10,9 @@ from torchvision import models
 
 def conv3x3(in_planes, out_planes, stride=1):
     """3x3 convolution with padding"""
-    return nn.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
-                     padding=1, bias=False)
+    return nn.Conv2d(
+        in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=False
+    )
 
 
 class BasicBlock(nn.Module):
@@ -92,8 +93,9 @@ class Bottleneck(nn.Module):
         super(Bottleneck, self).__init__()
         self.conv1 = nn.Conv2d(inplanes, planes, kernel_size=1, bias=False)
         self.bn1 = nn.BatchNorm2d(planes)
-        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=stride,
-                               padding=1, bias=False)
+        self.conv2 = nn.Conv2d(
+            planes, planes, kernel_size=3, stride=stride, padding=1, bias=False
+        )
         self.bn2 = nn.BatchNorm2d(planes)
         self.conv3 = nn.Conv2d(planes, planes * 4, kernel_size=1, bias=False)
         self.bn3 = nn.BatchNorm2d(planes * 4)
@@ -176,7 +178,9 @@ class RefUnet(nn.Module):
 
         self.conv_d0 = nn.Conv2d(64, 1, 3, padding=1)
 
-        self.upscore2 = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=False)
+        self.upscore2 = nn.Upsample(
+            scale_factor=2, mode="bilinear", align_corners=False
+        )
 
     def forward(self, x):
         hx = x
@@ -269,7 +273,7 @@ class BASNet(nn.Module):
         self.bn6d_1 = nn.BatchNorm2d(512)
         self.relu6d_1 = nn.ReLU(inplace=True)
 
-        self.conv6d_m = nn.Conv2d(512, 512, 3, dilation=2, padding=2)  ###
+        self.conv6d_m = nn.Conv2d(512, 512, 3, dilation=2, padding=2)
         self.bn6d_m = nn.BatchNorm2d(512)
         self.relu6d_m = nn.ReLU(inplace=True)
 
@@ -282,7 +286,7 @@ class BASNet(nn.Module):
         self.bn5d_1 = nn.BatchNorm2d(512)
         self.relu5d_1 = nn.ReLU(inplace=True)
 
-        self.conv5d_m = nn.Conv2d(512, 512, 3, padding=1)  ###
+        self.conv5d_m = nn.Conv2d(512, 512, 3, padding=1)
         self.bn5d_m = nn.BatchNorm2d(512)
         self.relu5d_m = nn.ReLU(inplace=True)
 
@@ -295,7 +299,7 @@ class BASNet(nn.Module):
         self.bn4d_1 = nn.BatchNorm2d(512)
         self.relu4d_1 = nn.ReLU(inplace=True)
 
-        self.conv4d_m = nn.Conv2d(512, 512, 3, padding=1)  ###
+        self.conv4d_m = nn.Conv2d(512, 512, 3, padding=1)
         self.bn4d_m = nn.BatchNorm2d(512)
         self.relu4d_m = nn.ReLU(inplace=True)
 
@@ -308,7 +312,7 @@ class BASNet(nn.Module):
         self.bn3d_1 = nn.BatchNorm2d(256)
         self.relu3d_1 = nn.ReLU(inplace=True)
 
-        self.conv3d_m = nn.Conv2d(256, 256, 3, padding=1)  ###
+        self.conv3d_m = nn.Conv2d(256, 256, 3, padding=1)
         self.bn3d_m = nn.BatchNorm2d(256)
         self.relu3d_m = nn.ReLU(inplace=True)
 
@@ -322,7 +326,7 @@ class BASNet(nn.Module):
         self.bn2d_1 = nn.BatchNorm2d(128)
         self.relu2d_1 = nn.ReLU(inplace=True)
 
-        self.conv2d_m = nn.Conv2d(128, 128, 3, padding=1)  ###
+        self.conv2d_m = nn.Conv2d(128, 128, 3, padding=1)
         self.bn2d_m = nn.BatchNorm2d(128)
         self.relu2d_m = nn.ReLU(inplace=True)
 
@@ -335,7 +339,7 @@ class BASNet(nn.Module):
         self.bn1d_1 = nn.BatchNorm2d(64)
         self.relu1d_1 = nn.ReLU(inplace=True)
 
-        self.conv1d_m = nn.Conv2d(64, 64, 3, padding=1)  ###
+        self.conv1d_m = nn.Conv2d(64, 64, 3, padding=1)
         self.bn1d_m = nn.BatchNorm2d(64)
         self.relu1d_m = nn.ReLU(inplace=True)
 
@@ -344,11 +348,21 @@ class BASNet(nn.Module):
         self.relu1d_2 = nn.ReLU(inplace=True)
 
         # -------------Bilinear Upsampling--------------
-        self.upscore6 = nn.Upsample(scale_factor=32, mode='bilinear', align_corners=False)  ###
-        self.upscore5 = nn.Upsample(scale_factor=16, mode='bilinear', align_corners=False)
-        self.upscore4 = nn.Upsample(scale_factor=8, mode='bilinear', align_corners=False)
-        self.upscore3 = nn.Upsample(scale_factor=4, mode='bilinear', align_corners=False)
-        self.upscore2 = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=False)
+        self.upscore6 = nn.Upsample(
+            scale_factor=32, mode="bilinear", align_corners=False
+        )
+        self.upscore5 = nn.Upsample(
+            scale_factor=16, mode="bilinear", align_corners=False
+        )
+        self.upscore4 = nn.Upsample(
+            scale_factor=8, mode="bilinear", align_corners=False
+        )
+        self.upscore3 = nn.Upsample(
+            scale_factor=4, mode="bilinear", align_corners=False
+        )
+        self.upscore2 = nn.Upsample(
+            scale_factor=2, mode="bilinear", align_corners=False
+        )
 
         # -------------Side Output--------------
         self.outconvb = nn.Conv2d(512, 1, 3, padding=1)
@@ -452,6 +466,13 @@ class BASNet(nn.Module):
         # -------------Refine Module-------------
         dout = self.refunet(d1)  # 256
 
-        return torch.sigmoid(dout), torch.sigmoid(d1), torch.sigmoid(d2), torch.sigmoid(d3), torch.sigmoid(
-            d4), torch.sigmoid(d5), torch.sigmoid(
-            d6), torch.sigmoid(db)
+        return (
+            torch.sigmoid(dout),
+            torch.sigmoid(d1),
+            torch.sigmoid(d2),
+            torch.sigmoid(d3),
+            torch.sigmoid(d4),
+            torch.sigmoid(d5),
+            torch.sigmoid(d6),
+            torch.sigmoid(db),
+        )

@@ -26,21 +26,31 @@ def handle_response(response, original_image) -> Response:
     response_object = None
     if isinstance(response, dict):
         if response["type"] == "jpg":
-            response_object = Response(content=response["data"][0].read(), media_type='image/jpeg')
+            response_object = Response(
+                content=response["data"][0].read(), media_type="image/jpeg"
+            )
         elif response["type"] == "png":
-            response_object = Response(content=response["data"][0].read(), media_type='image/png')
+            response_object = Response(
+                content=response["data"][0].read(), media_type="image/png"
+            )
         elif response["type"] == "zip":
-            response_object = Response(content=response["data"][0], media_type='application/zip')
-            response_object.headers['Content-Disposition'] = 'attachment; filename=\'no-bg.zip\''
+            response_object = Response(
+                content=response["data"][0], media_type="application/zip"
+            )
+            response_object.headers[
+                "Content-Disposition"
+            ] = "attachment; filename='no-bg.zip'"
 
         # Add headers to output result
-        response_object.headers["X-Credits-Charged"] = '0'
+        response_object.headers["X-Credits-Charged"] = "0"
         response_object.headers["X-Type"] = "other"  # TODO Make support for this
         response_object.headers["X-Max-Width"] = str(original_image.size[0])
         response_object.headers["X-Max-Height"] = str(original_image.size[1])
-        response_object.headers["X-Ratelimit-Limit"] = '500'  # TODO Make ratelimit support
-        response_object.headers["X-Ratelimit-Remaining"] = '500'
-        response_object.headers["X-Ratelimit-Reset"] = '1'
+        response_object.headers[
+            "X-Ratelimit-Limit"
+        ] = "500"  # TODO Make ratelimit support
+        response_object.headers["X-Ratelimit-Remaining"] = "500"
+        response_object.headers["X-Ratelimit-Reset"] = "1"
         response_object.headers["X-Width"] = str(response["data"][1][0])
         response_object.headers["X-Height"] = str(response["data"][1][1])
 

@@ -22,9 +22,12 @@ class MattingMethod:
     Neural network for matting performs accurate object edge detection by using a special map called trimap,
     with unknown area that we scan for boundary, already known general object area and the background."""
 
-    def __init__(self, matting_module: Union[FBAMatting],
-                 trimap_generator: Union[TrimapGenerator, CV2TrimapGenerator],
-                 device="cpu"):
+    def __init__(
+        self,
+        matting_module: Union[FBAMatting],
+        trimap_generator: Union[TrimapGenerator, CV2TrimapGenerator],
+        device="cpu",
+    ):
         """
         Initializes Matting Method class.
 
@@ -37,8 +40,11 @@ class MattingMethod:
         self.matting_module = matting_module
         self.trimap_generator = trimap_generator
 
-    def __call__(self, images: List[Union[str, Path, Image.Image]],
-                 masks: List[Union[str, Path, Image.Image]]):
+    def __call__(
+        self,
+        images: List[Union[str, Path, Image.Image]],
+        masks: List[Union[str, Path, Image.Image]],
+    ):
         """
         Passes data through apply_mask function
 
@@ -52,9 +58,19 @@ class MattingMethod:
         if len(images) != len(masks):
             raise ValueError("Images and Masks lists should have same length!")
         images = thread_pool_processing(lambda x: convert_image(load_image(x)), images)
-        masks = thread_pool_processing(lambda x: convert_image(load_image(x), mode="L"), masks)
-        trimaps = thread_pool_processing(lambda x: self.trimap_generator(original_image=images[x],
-                                                                         mask=masks[x]), range(len(images)))
+        masks = thread_pool_processing(
+            lambda x: convert_image(load_image(x), mode="L"), masks
+        )
+        trimaps = thread_pool_processing(
+            lambda x: self.trimap_generator(original_image=images[x], mask=masks[x]),
+            range(len(images)),
+        )
         alpha = self.matting_module(images=images, trimaps=trimaps)
-        return list(map(lambda x: apply_mask(image=images[x], mask=alpha[x], device=self.device),
-                        range(len(images))))
+        return list(
+            map(
+                lambda x: apply_mask(
+                    image=images[x], mask=alpha[x], device=self.device
+                ),
+                range(len(images)),
+            )
+        )

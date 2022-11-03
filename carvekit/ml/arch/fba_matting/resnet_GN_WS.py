@@ -6,13 +6,14 @@ License: MIT License
 import torch.nn as nn
 import carvekit.ml.arch.fba_matting.layers_WS as L
 
-__all__ = ['ResNet', 'l_resnet50']
+__all__ = ["ResNet", "l_resnet50"]
 
 
 def conv3x3(in_planes, out_planes, stride=1):
     """3x3 convolution with padding"""
-    return L.Conv2d(in_planes, out_planes, kernel_size=3, stride=stride,
-                    padding=1, bias=False)
+    return L.Conv2d(
+        in_planes, out_planes, kernel_size=3, stride=stride, padding=1, bias=False
+    )
 
 
 def conv1x1(in_planes, out_planes, stride=1):
@@ -91,15 +92,15 @@ class Bottleneck(nn.Module):
 
 
 class ResNet(nn.Module):
-
     def __init__(self, block, layers, num_classes=1000):
         super(ResNet, self).__init__()
         self.inplanes = 64
-        self.conv1 = L.Conv2d(3, 64, kernel_size=7, stride=2, padding=3,
-                              bias=False)
+        self.conv1 = L.Conv2d(3, 64, kernel_size=7, stride=2, padding=3, bias=False)
         self.bn1 = L.BatchNorm2d(64)
         self.relu = nn.ReLU(inplace=True)
-        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1, return_indices=True)
+        self.maxpool = nn.MaxPool2d(
+            kernel_size=3, stride=2, padding=1, return_indices=True
+        )
         self.layer1 = self._make_layer(block, 64, layers[0])
         self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
