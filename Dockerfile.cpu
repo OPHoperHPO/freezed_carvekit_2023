@@ -5,7 +5,7 @@ WORKDIR /app
 RUN pip3 install --no-cache-dir tqdm==4.64.0 requests==2.27.1
 RUN mkdir -p ./carvekit/utils/
 RUN mkdir -p ./carvekit/ml/files
-RUN touch ./carvekit/__init__.py
+COPY ./carvekit/__init__.py ./carvekit/__init__.py
 RUN touch ./carvekit/ml/__init__.py
 RUN touch ./carvekit/utils/__init__.py
 COPY ./carvekit/utils/download_models.py ./carvekit/utils/download_models.py
