@@ -14,7 +14,7 @@ services:
       - CARVEKIT_BATCH_SIZE_MATTING=1  # Number of images processed per one matting nn call. NOT USED IF WEB API IS USED
       - CARVEKIT_SEG_MASK_SIZE=640  # The size of the input image for the segmentation neural network.
       - CARVEKIT_MATTING_MASK_SIZE=2048   # The size of the input image for the matting neural network.
-      - CARVEKIT_FP16=0 # Enables FP16 mode
+      - CARVEKIT_FP16=0 # Enables FP16 mode (Only CUDA at the moment)
       - CARVEKIT_TRIMAP_PROB_THRESHOLD=231  # Probability threshold at which the prob_filter and prob_as_unknown_area operations will be applied
       - CARVEKIT_TRIMAP_DILATION=30  # The size of the offset radius from the object mask in pixels when forming an unknown area
       - CARVEKIT_TRIMAP_EROSION=5  # The number of iterations of erosion that the object's mask will be subjected to before forming an unknown area

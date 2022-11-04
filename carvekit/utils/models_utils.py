@@ -47,13 +47,18 @@ def get_precision_autocast(
     cache_enabled = None
 
     if device == "cpu" and fp16:
-        warnings.warn(
-            "Accuracy BFP16 has experimental support on the CPU. "
-            "This may result in an unexpected reduction in quality."
-        )
-        dtype = (
-            torch.bfloat16
-        )  # Using bfloat16 for CPU, since autocast is not supported for float16
+        warnings.warn('FP16 is not supported on CPU. Using FP32 instead.')
+        dtype = torch.float32
+
+        # TODO: Implement BFP16 on CPU. There are unexpected slowdowns on cpu on a clean environment.
+        # warnings.warn(
+        #     "Accuracy BFP16 has experimental support on the CPU. "
+        #     "This may result in an unexpected reduction in quality."
+        # )
+        # dtype = (
+        #     torch.bfloat16
+        # )  # Using bfloat16 for CPU, since autocast is not supported for float16
+
 
     if "cuda" in device and fp16:
         dtype = torch.float16
