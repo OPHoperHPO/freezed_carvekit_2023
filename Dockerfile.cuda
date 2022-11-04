@@ -18,7 +18,7 @@ FROM pytorch/pytorch:1.11.0-cuda11.3-cudnn8-runtime
 WORKDIR /app
 
 RUN apt-get update && apt-get -y install libgl1 libglib2.0-0  # Install cv2 dep.
-COPY --from=builder /root/.carvekit /root/.carvekit
+COPY --from=builder /root/.cache/carvekit /root/.cache/carvekit
 
 # Install requirements
 COPY requirements.txt ./
