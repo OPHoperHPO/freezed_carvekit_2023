@@ -11,7 +11,9 @@ from carvekit.web.responses.api import error_dict
 from carvekit.api.interface import Interface
 
 
-def process_remove_bg(interface: Interface, params, image, bg, is_json_or_www_encoded=False):
+def process_remove_bg(
+    interface: Interface, params, image, bg, is_json_or_www_encoded=False
+):
     """
     Handles a request to the removebg api method
 
@@ -51,25 +53,45 @@ def process_remove_bg(interface: Interface, params, image, bg, is_json_or_www_en
                     try:
                         coord = int(coord)
                     except BaseException:
-                        return error_dict("Error converting roi coordinate string to number!"), 400
+                        return (
+                            error_dict(
+                                "Error converting roi coordinate string to number!"
+                            ),
+                            400,
+                        )
                     if coord < 0:
-                        error_dict(
-                            "Bad roi coordinate."), 400
+                        error_dict("Bad roi coordinate."), 400
                     if (i == 0 or i == 2) and coord > image.size[0]:
-                        return error_dict(
-                            "The roi coordinate cannot be larger than the image size."), 400
+                        return (
+                            error_dict(
+                                "The roi coordinate cannot be larger than the image size."
+                            ),
+                            400,
+                        )
                     elif (i == 1 or i == 3) and coord > image.size[1]:
-                        return error_dict(
-                            "The roi coordinate cannot be larger than the image size."), 400
+                        return (
+                            error_dict(
+                                "The roi coordinate cannot be larger than the image size."
+                            ),
+                            400,
+                        )
                     roi_box[i] = int(coord)
                 elif "%" in coord:
                     coord = coord.replace("%", "")
                     try:
                         coord = int(coord)
                     except BaseException:
-                        return error_dict("Error converting roi coordinate string to number!"), 400
+                        return (
+                            error_dict(
+                                "Error converting roi coordinate string to number!"
+                            ),
+                            400,
+                        )
                     if coord > 100:
-                        return error_dict("The coordinate cannot be more than 100%"), 400
+                        return (
+                            error_dict("The coordinate cannot be more than 100%"),
+                            400,
+                        )
                     elif coord < 0:
                         return error_dict("Coordinate cannot be less than 0%"), 400
                     if i == 0 or i == 2:
@@ -88,10 +110,12 @@ def process_remove_bg(interface: Interface, params, image, bg, is_json_or_www_en
     new_image = interface([new_image])[0]
 
     scaled = False
-    if "scale" in params.keys() and params['scale'] != 100:
+    if "scale" in params.keys() and params["scale"] != 100:
         value = params["scale"]
-        new_image.thumbnail((int(image.size[0] * value / 100),
-                             int(image.size[1] * value / 100)), resample=3)
+        new_image.thumbnail(
+            (int(image.size[0] * value / 100), int(image.size[1] * value / 100)),
+            resample=3,
+        )
         scaled = True
     if "crop" in params.keys():
         value = params["crop"]
@@ -103,28 +127,51 @@ def process_remove_bg(interface: Interface, params, image, bg, is_json_or_www_en
                     crop_margin = crop_margin.replace("px", "")
                     crop_margin = abs(int(crop_margin))
                     if crop_margin > 500:
-                        return error_dict(
-                            "The crop_margin cannot be larger than the original image size."), 400
-                    new_image = add_margin(new_image, crop_margin,
-                                           crop_margin, crop_margin, crop_margin, (0, 0, 0, 0))
+                        return (
+                            error_dict(
+                                "The crop_margin cannot be larger than the original image size."
+                            ),
+                            400,
+                        )
+                    new_image = add_margin(
+                        new_image,
+                        crop_margin,
+                        crop_margin,
+                        crop_margin,
+                        crop_margin,
+                        (0, 0, 0, 0),
+                    )
                 elif "%" in crop_margin:
                     crop_margin = crop_margin.replace("%", "")
                     crop_margin = int(crop_margin)
-                    new_image = add_margin(new_image, int(new_image.size[1] * crop_margin / 100),
-                                           int(new_image.size[0] * crop_margin / 100),
-                                           int(new_image.size[1] * crop_margin / 100),
-                                           int(new_image.size[0] * crop_margin / 100), (0, 0, 0, 0))
+                    new_image = add_margin(
+                        new_image,
+                        int(new_image.size[1] * crop_margin / 100),
+                        int(new_image.size[0] * crop_margin / 100),
+                        int(new_image.size[1] * crop_margin / 100),
+                        int(new_image.size[0] * crop_margin / 100),
+                        (0, 0, 0, 0),
+                    )
         else:
             if "position" in params.keys() and scaled is False:
                 value = params["position"]
                 if len(value) == 2:
-                    new_image = transparency_paste(Image.new("RGBA", image.size), new_image,
-                                                   (int(image.size[0] * value[0] / 100),
-                                                    int(image.size[1] * value[1] / 100)))
+                    new_image = transparency_paste(
+                        Image.new("RGBA", image.size),
+                        new_image,
+                        (
+                            int(image.size[0] * value[0] / 100),
+                            int(image.size[1] * value[1] / 100),
+                        ),
+                    )
                 else:
-                    new_image = transparency_paste(Image.new("RGBA", image.size), new_image, roi_box)
+                    new_image = transparency_paste(
+                        Image.new("RGBA", image.size), new_image, roi_box
+                    )
             elif scaled is False:
-                new_image = transparency_paste(Image.new("RGBA", image.size), new_image, roi_box)
+                new_image = transparency_paste(
+                    Image.new("RGBA", image.size), new_image, roi_box
+                )
 
     if "channels" in params.keys():
         value = params["channels"]
@@ -163,19 +210,19 @@ def process_remove_bg(interface: Interface, params, image, bg, is_json_or_www_en
         if value == "jpg":
             new_image = new_image.convert("RGB")
             img_io = io.BytesIO()
-            new_image.save(img_io, 'JPEG', quality=100)
+            new_image.save(img_io, "JPEG", quality=100)
             img_io.seek(0)
             return {"type": "jpg", "data": [img_io, new_image.size]}
         elif value == "zip":
             mask = extract_alpha_channel(new_image)
             mask_buff = io.BytesIO()
-            mask.save(mask_buff, 'PNG')
+            mask.save(mask_buff, "PNG")
             mask_buff.seek(0)
             image_buff = io.BytesIO()
-            image.save(image_buff, 'JPEG')
+            image.save(image_buff, "JPEG")
             image_buff.seek(0)
             fileobj = io.BytesIO()
-            with zipfile.ZipFile(fileobj, 'w') as zip_file:
+            with zipfile.ZipFile(fileobj, "w") as zip_file:
                 zip_info = zipfile.ZipInfo(filename="color.jpg")
                 zip_info.date_time = time.localtime(time.time())[:6]
                 zip_info.compress_type = zipfile.ZIP_DEFLATED
@@ -188,8 +235,13 @@ def process_remove_bg(interface: Interface, params, image, bg, is_json_or_www_en
             return {"type": "zip", "data": [fileobj.read(), new_image.size]}
         else:
             buff = io.BytesIO()
-            new_image.save(buff, 'PNG')
+            new_image.save(buff, "PNG")
             buff.seek(0)
             return {"type": "png", "data": [buff, new_image.size]}
-    return error_dict("Something wrong with request or http api. Please, open new issue on Github! This is error in "
-                      "code."), 400
+    return (
+        error_dict(
+            "Something wrong with request or http api. Please, open new issue on Github! This is error in "
+            "code."
+        ),
+        400,
+    )

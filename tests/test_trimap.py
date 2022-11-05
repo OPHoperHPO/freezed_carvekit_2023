@@ -12,9 +12,17 @@ from carvekit.trimap.add_ops import prob_as_unknown_area
 def test_trimap_generator(trimap_instance, image_mask, image_pil):
     te = trimap_instance()
     assert isinstance(te(image_pil, image_mask), PIL.Image.Image)
-    assert isinstance(te(PIL.Image.new("RGB", (512, 512)), PIL.Image.new("L", (512, 512))), PIL.Image.Image)
-    assert isinstance(te(PIL.Image.new("RGB", (512, 512), color=(255, 255, 255)),
-                         PIL.Image.new("L", (512, 512), color=255)), PIL.Image.Image)
+    assert isinstance(
+        te(PIL.Image.new("RGB", (512, 512)), PIL.Image.new("L", (512, 512))),
+        PIL.Image.Image,
+    )
+    assert isinstance(
+        te(
+            PIL.Image.new("RGB", (512, 512), color=(255, 255, 255)),
+            PIL.Image.new("L", (512, 512), color=255),
+        ),
+        PIL.Image.Image,
+    )
     with pytest.raises(ValueError):
         te(PIL.Image.new("RGB", (512, 512)), PIL.Image.new("RGB", (512, 512)))
     with pytest.raises(ValueError):

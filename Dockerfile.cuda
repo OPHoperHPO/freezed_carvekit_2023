@@ -5,7 +5,7 @@ WORKDIR /app
 RUN pip3 install --no-cache-dir tqdm==4.64.0 requests==2.27.1
 RUN mkdir -p ./carvekit/utils/
 RUN mkdir -p ./carvekit/ml/files
-RUN touch ./carvekit/__init__.py
+COPY ./carvekit/__init__.py ./carvekit/__init__.py
 RUN touch ./carvekit/ml/__init__.py
 RUN touch ./carvekit/utils/__init__.py
 COPY ./carvekit/utils/download_models.py ./carvekit/utils/download_models.py
@@ -18,7 +18,7 @@ FROM pytorch/pytorch:1.11.0-cuda11.3-cudnn8-runtime
 WORKDIR /app
 
 RUN apt-get update && apt-get -y install libgl1 libglib2.0-0  # Install cv2 dep.
-COPY --from=builder /root/.carvekit /root/.carvekit
+COPY --from=builder /root/.cache/carvekit /root/.cache/carvekit
 
 # Install requirements
 COPY requirements.txt ./
@@ -34,15 +34,19 @@ RUN pip3 install -e ./
 
 ENV CARVEKIT_PORT '5000'
 ENV CARVEKIT_HOST '0.0.0.0'
-ENV CARVEKIT_SEGMENTATION_NETWORK 'u2net'
+ENV CARVEKIT_SEGMENTATION_NETWORK 'tracer_b7'
 ENV CARVEKIT_PREPROCESSING_METHOD 'none'
 ENV CARVEKIT_POSTPROCESSING_METHOD 'fba'
 ENV CARVEKIT_DEVICE 'cuda'
 ENV CARVEKIT_BATCH_SIZE_SEG '5'
 ENV CARVEKIT_BATCH_SIZE_MATTING '1'
-ENV CARVEKIT_SEG_MASK_SIZE '320'
+ENV CARVEKIT_SEG_MASK_SIZE '640'
 ENV CARVEKIT_MATTING_MASK_SIZE '2048'
 ENV CARVEKIT_AUTH_ENABLE '1'
+ENV CARVEKIT_FP16 '0'
+ENV CARVEKIT_TRIMAP_PROB_THRESHOLD=231
+ENV CARVEKIT_TRIMAP_DILATION=30
+ENV CARVEKIT_TRIMAP_EROSION=5
 
 # Tokens will be generated automatically every time the container is restarted if ENV is not set.
 

@@ -15,7 +15,7 @@ class FBA(nn.Module):
     def __init__(self, encoder: str):
         super(FBA, self).__init__()
         self.encoder = build_encoder(arch=encoder)
-        self.decoder = fba_decoder(batch_norm=True if 'BN' in encoder else False)
+        self.decoder = fba_decoder(batch_norm=True if "BN" in encoder else False)
 
     def forward(self, image, two_chan_trimap, image_n, trimap_transformed):
         resnet_input = torch.cat((image_n, trimap_transformed, two_chan_trimap), 1)
@@ -28,13 +28,10 @@ class ResnetDilatedBN(nn.Module):
         super(ResnetDilatedBN, self).__init__()
 
         if dilate_scale == 8:
-            orig_resnet.layer3.apply(
-                partial(self._nostride_dilate, dilate=2))
-            orig_resnet.layer4.apply(
-                partial(self._nostride_dilate, dilate=4))
+            orig_resnet.layer3.apply(partial(self._nostride_dilate, dilate=2))
+            orig_resnet.layer4.apply(partial(self._nostride_dilate, dilate=4))
         elif dilate_scale == 16:
-            orig_resnet.layer4.apply(
-                partial(self._nostride_dilate, dilate=2))
+            orig_resnet.layer4.apply(partial(self._nostride_dilate, dilate=2))
 
         # take pretrained resnet, except AvgPool and FC
         self.conv1 = orig_resnet.conv1
@@ -54,7 +51,7 @@ class ResnetDilatedBN(nn.Module):
 
     def _nostride_dilate(self, m, dilate):
         classname = m.__class__.__name__
-        if classname.find('Conv') != -1:
+        if classname.find("Conv") != -1:
             # the convolution with stride
             if m.stride == (2, 2):
                 m.stride = (1, 1)
@@ -136,13 +133,10 @@ class ResnetDilated(nn.Module):
         super(ResnetDilated, self).__init__()
 
         if dilate_scale == 8:
-            orig_resnet.layer3.apply(
-                partial(self._nostride_dilate, dilate=2))
-            orig_resnet.layer4.apply(
-                partial(self._nostride_dilate, dilate=4))
+            orig_resnet.layer3.apply(partial(self._nostride_dilate, dilate=2))
+            orig_resnet.layer4.apply(partial(self._nostride_dilate, dilate=4))
         elif dilate_scale == 16:
-            orig_resnet.layer4.apply(
-                partial(self._nostride_dilate, dilate=2))
+            orig_resnet.layer4.apply(partial(self._nostride_dilate, dilate=2))
 
         # take pretrained resnet, except AvgPool and FC
         self.conv1 = orig_resnet.conv1
@@ -156,7 +150,7 @@ class ResnetDilated(nn.Module):
 
     def _nostride_dilate(self, m, dilate):
         classname = m.__class__.__name__
-        if classname.find('Conv') != -1:
+        if classname.find("Conv") != -1:
             # the convolution with stride
             if m.stride == (2, 2):
                 m.stride = (1, 1)
@@ -196,14 +190,15 @@ def norm(dim, bn=False):
 
 
 def fba_fusion(alpha, img, F, B):
-    F = (alpha * img + (1 - alpha ** 2) * F - alpha * (1 - alpha) * B)
-    B = ((1 - alpha) * img + (2 * alpha - alpha ** 2) * B - alpha * (1 - alpha) * F)
+    F = alpha * img + (1 - alpha**2) * F - alpha * (1 - alpha) * B
+    B = (1 - alpha) * img + (2 * alpha - alpha**2) * B - alpha * (1 - alpha) * F
 
     F = torch.clamp(F, 0, 1)
     B = torch.clamp(B, 0, 1)
     la = 0.1
     alpha = (alpha * la + torch.sum((img - B) * (F - B), 1, keepdim=True)) / (
-            torch.sum((F - B) * (F - B), 1, keepdim=True) + la)
+        torch.sum((F - B) * (F - B), 1, keepdim=True) + la
+    )
     alpha = torch.clamp(alpha, 0, 1)
     return alpha, F, B
 
@@ -217,53 +212,50 @@ class fba_decoder(nn.Module):
         self.ppm = []
 
         for scale in pool_scales:
-            self.ppm.append(nn.Sequential(
-                nn.AdaptiveAvgPool2d(scale),
-                L.Conv2d(2048, 256, kernel_size=1, bias=True),
-                norm(256, self.batch_norm),
-                nn.LeakyReLU()
-            ))
+            self.ppm.append(
+                nn.Sequential(
+                    nn.AdaptiveAvgPool2d(scale),
+                    L.Conv2d(2048, 256, kernel_size=1, bias=True),
+                    norm(256, self.batch_norm),
+                    nn.LeakyReLU(),
+                )
+            )
         self.ppm = nn.ModuleList(self.ppm)
 
         self.conv_up1 = nn.Sequential(
-            L.Conv2d(2048 + len(pool_scales) * 256, 256,
-                     kernel_size=3, padding=1, bias=True),
-
+            L.Conv2d(
+                2048 + len(pool_scales) * 256, 256, kernel_size=3, padding=1, bias=True
+            ),
             norm(256, self.batch_norm),
             nn.LeakyReLU(),
             L.Conv2d(256, 256, kernel_size=3, padding=1),
             norm(256, self.batch_norm),
-            nn.LeakyReLU()
+            nn.LeakyReLU(),
         )
 
         self.conv_up2 = nn.Sequential(
-            L.Conv2d(256 + 256, 256,
-                     kernel_size=3, padding=1, bias=True),
+            L.Conv2d(256 + 256, 256, kernel_size=3, padding=1, bias=True),
             norm(256, self.batch_norm),
-            nn.LeakyReLU()
+            nn.LeakyReLU(),
         )
         if self.batch_norm:
             d_up3 = 128
         else:
             d_up3 = 64
         self.conv_up3 = nn.Sequential(
-            L.Conv2d(256 + d_up3, 64,
-                     kernel_size=3, padding=1, bias=True),
+            L.Conv2d(256 + d_up3, 64, kernel_size=3, padding=1, bias=True),
             norm(64, self.batch_norm),
-            nn.LeakyReLU()
+            nn.LeakyReLU(),
         )
 
         self.unpool = nn.MaxUnpool2d(2, stride=2)
 
         self.conv_up4 = nn.Sequential(
-            nn.Conv2d(64 + 3 + 3 + 2, 32,
-                      kernel_size=3, padding=1, bias=True),
+            nn.Conv2d(64 + 3 + 3 + 2, 32, kernel_size=3, padding=1, bias=True),
             nn.LeakyReLU(),
-            nn.Conv2d(32, 16,
-                      kernel_size=3, padding=1, bias=True),
-
+            nn.Conv2d(32, 16, kernel_size=3, padding=1, bias=True),
             nn.LeakyReLU(),
-            nn.Conv2d(16, 7, kernel_size=1, padding=0, bias=True)
+            nn.Conv2d(16, 7, kernel_size=1, padding=0, bias=True),
         )
 
     def forward(self, conv_out, img, indices, two_chan_trimap):
@@ -272,24 +264,34 @@ class fba_decoder(nn.Module):
         input_size = conv5.size()
         ppm_out = [conv5]
         for pool_scale in self.ppm:
-            ppm_out.append(nn.functional.interpolate(
-                pool_scale(conv5),
-                (input_size[2], input_size[3]),
-                mode='bilinear', align_corners=False))
+            ppm_out.append(
+                nn.functional.interpolate(
+                    pool_scale(conv5),
+                    (input_size[2], input_size[3]),
+                    mode="bilinear",
+                    align_corners=False,
+                )
+            )
         ppm_out = torch.cat(ppm_out, 1)
         x = self.conv_up1(ppm_out)
 
-        x = torch.nn.functional.interpolate(x, scale_factor=2, mode='bilinear', align_corners=False)
+        x = torch.nn.functional.interpolate(
+            x, scale_factor=2, mode="bilinear", align_corners=False
+        )
 
         x = torch.cat((x, conv_out[-4]), 1)
 
         x = self.conv_up2(x)
-        x = torch.nn.functional.interpolate(x, scale_factor=2, mode='bilinear', align_corners=False)
+        x = torch.nn.functional.interpolate(
+            x, scale_factor=2, mode="bilinear", align_corners=False
+        )
 
         x = torch.cat((x, conv_out[-5]), 1)
         x = self.conv_up3(x)
 
-        x = torch.nn.functional.interpolate(x, scale_factor=2, mode='bilinear', align_corners=False)
+        x = torch.nn.functional.interpolate(
+            x, scale_factor=2, mode="bilinear", align_corners=False
+        )
         x = torch.cat((x, conv_out[-6][:, :3], img, two_chan_trimap), 1)
 
         output = self.conv_up4(x)
@@ -306,22 +308,22 @@ class fba_decoder(nn.Module):
         return output
 
 
-def build_encoder(arch='resnet50_GN'):
-    if arch == 'resnet50_GN_WS':
-        orig_resnet = resnet_GN_WS.__dict__['l_resnet50']()
+def build_encoder(arch="resnet50_GN"):
+    if arch == "resnet50_GN_WS":
+        orig_resnet = resnet_GN_WS.__dict__["l_resnet50"]()
         net_encoder = ResnetDilated(orig_resnet, dilate_scale=8)
-    elif arch == 'resnet50_BN':
-        orig_resnet = resnet_bn.__dict__['l_resnet50']()
+    elif arch == "resnet50_BN":
+        orig_resnet = resnet_bn.__dict__["l_resnet50"]()
         net_encoder = ResnetDilatedBN(orig_resnet, dilate_scale=8)
 
     else:
-        raise ValueError('Architecture undefined!')
+        raise ValueError("Architecture undefined!")
 
     num_channels = 3 + 6 + 2
 
     if num_channels > 3:
         net_encoder_sd = net_encoder.state_dict()
-        conv1_weights = net_encoder_sd['conv1.weight']
+        conv1_weights = net_encoder_sd["conv1.weight"]
 
         c_out, c_in, h, w = conv1_weights.size()
         conv1_mod = torch.zeros(c_out, num_channels, h, w)
@@ -333,7 +335,7 @@ def build_encoder(arch='resnet50_GN'):
 
         net_encoder.conv1 = conv1
 
-        net_encoder_sd['conv1.weight'] = conv1_mod
+        net_encoder_sd["conv1.weight"] = conv1_mod
 
         net_encoder.load_state_dict(net_encoder_sd)
     return net_encoder

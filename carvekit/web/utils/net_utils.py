@@ -10,12 +10,14 @@ def is_loopback(address):
     try:
         parsed_url = urlparse(address)
         host = parsed_url.hostname
-    except:
+    except ValueError:
         return False  # url is not even a url
 
     loopback_checker = {
-        socket.AF_INET: lambda x: struct.unpack('!I', socket.inet_aton(x))[0] >> (32 - 8) == 127,
-        socket.AF_INET6: lambda x: x == '::1'
+        socket.AF_INET: lambda x: struct.unpack("!I", socket.inet_aton(x))[0]
+        >> (32 - 8)
+        == 127,
+        socket.AF_INET6: lambda x: x == "::1",
     }
     for family in (socket.AF_INET, socket.AF_INET6):
         try:
