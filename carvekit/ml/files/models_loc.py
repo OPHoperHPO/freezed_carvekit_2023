@@ -53,14 +53,6 @@ def tracer_b7_pretrained() -> pathlib.Path:
     return downloader("tracer_b7.pth")
 
 
-def tracer_hair_pretrained() -> pathlib.Path:
-    """Returns TRACER with EfficientNet v1 b7 encoder model for hair segmentation location
-
-    Returns:
-        pathlib.Path to model location
-    """
-    return downloader("tracer_hair.pth")
-
 
 def download_all():
     u2net_full_pretrained()

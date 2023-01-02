@@ -45,11 +45,6 @@ MODELS_URLS = {
         "revision": "d8a8fd9e7b3fa0d2f1506fe7242966b34381e9c5",
         "filename": "tracer_b7.pth",
     },
-    "tracer_hair.pth": {
-        "repository": "Carve/tracer_b7",
-        "revision": "d8a8fd9e7b3fa0d2f1506fe7242966b34381e9c5",
-        "filename": "tracer_b7.pth",  # TODO don't forget change this link!!
-    },
 }
 
 MODELS_CHECKSUMS = {
@@ -63,8 +58,6 @@ MODELS_CHECKSUMS = {
     "bea1533fda5ee70a909b934a9bd495b432cef89d629f00a07858a517742476fa8b346de24f7",
     "tracer_b7.pth": "c439c5c12d4d43d5f9be9ec61e68b2e54658a541bccac2577ef5a54fb252b6e8415d41f7e"
     "c2487033d0c02b4dd08367958e4e62091318111c519f93e2632be7b",
-    "tracer_hair.pth": "5c2fb9973fc42fa6208920ffa9ac233cc2ea9f770b24b4a96969d3449aed7ac89e6d37e"
-    "e486a13e63be5499f2df6ccef1109e9e8797d1326207ac89b2f39a7cf",
 }
 
 
