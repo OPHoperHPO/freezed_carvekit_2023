@@ -9,7 +9,7 @@ import PIL.Image
 import torch
 import torch.nn.functional as F
 import torchvision.transforms as transforms
-from typing import List, Union
+from typing import List, Union, Tuple
 from torch.autograd import Variable
 
 from carvekit.ml.files.models_loc import scene_classifier_pretrained
@@ -89,7 +89,7 @@ class SceneClassifier:
         return torch.unsqueeze(self.transform(data), 0).type(torch.FloatTensor)
 
     def data_postprocessing(self,
-                            data: torch.tensor) -> PIL.Image.Image:
+                            data: torch.tensor) -> Tuple[List[str], List[float]]:
         """
         Transforms output data from neural network to suitable data
         format for using with other components of this framework.

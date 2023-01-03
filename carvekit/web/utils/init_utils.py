@@ -3,6 +3,7 @@ from typing import Union
 
 from loguru import logger
 
+from carvekit.ml.wrap.scene_classifier import SceneClassifier
 from carvekit.web.schemas.config import WebAPIConfig, MLConfig, AuthConfig
 from carvekit.api.interface import Interface
 from carvekit.ml.wrap.fba_matting import FBAMatting
@@ -12,7 +13,7 @@ from carvekit.ml.wrap.basnet import BASNET
 from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
 
 from carvekit.pipelines.postprocessing import MattingMethod
-from carvekit.pipelines.preprocessing import PreprocessingStub
+from carvekit.pipelines.preprocessing import PreprocessingStub, AutoScene
 from carvekit.trimap.generator import TrimapGenerator
 
 
@@ -36,6 +37,9 @@ def init_config() -> WebAPIConfig:
                     default_config.ml.postprocessing_method,
                 ),
                 device=getenv("CARVEKIT_DEVICE", default_config.ml.device),
+                batch_size_pre=int(
+                    getenv("CARVEKIT_BATCH_SIZE_PRE", default_config.ml.batch_size_pre)
+                ),
                 batch_size_seg=int(
                     getenv("CARVEKIT_BATCH_SIZE_SEG", default_config.ml.batch_size_seg)
                 ),
@@ -132,6 +136,10 @@ def init_interface(config: Union[WebAPIConfig, MLConfig]) -> Interface:
         preprocessing = PreprocessingStub()
     elif config.preprocessing_method == "none":
         preprocessing = None
+    elif config.preprocessing_method == "autoscene":
+        preprocessing = AutoScene(scene_classifier=SceneClassifier(device=config.device,
+                                                                   batch_size=config.batch_size_pre,
+                                                                   fp16=config.fp16))
     else:
         preprocessing = None
 

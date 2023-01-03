@@ -26,13 +26,16 @@ Automated high-quality background removal framework for an image using neural ne
 
 ## 🎆 Features:  
 - High Quality
+- Works offline
 - Batch Processing
 - NVIDIA CUDA and CPU processing
 - FP16 inference: Fast inference with low memory usage
 - Easy inference
 - 100% remove.bg compatible FastAPI HTTP API 
 - Removes background from hairs
+- Automatic best method selection for user's image
 - Easy integration with your code
+- Models hosted on [HuggingFace](https://huggingface.co/Carve)
 
 ## ⛱ Try yourself on [Google Colab](https://colab.research.google.com/github/OPHoperHPO/image-background-remove-tool/blob/master/docs/other/carvekit_try.ipynb) 
 ## ⛓️ How does it work?
@@ -64,10 +67,15 @@ It can be briefly described as
 ## 🖼️ Image pre-processing and post-processing methods:
 ### 🔍 Preprocessing methods:
 * `none` - No preprocessing methods used.
-> They will be added in the future.
+* [`autoscene`](https://huggingface.co/Carve/scene_classifier/) - Automatically detects the scene type using classifier and applies the appropriate model. (default)
+
+> ### Notes: 
+> 1. `AutoScene` may override the model and parameters specified by the user without logging. 
+> So, if you want to use a specific model, make all constant etc., you should disable `autoscene` preprocessing method first!
+
 ### ✂ Post-processing methods:
 * `none` - No post-processing methods used.
-* `fba` (default) - This algorithm improves the borders of the image when removing the background from images with hair, etc. using FBA Matting neural network. This method gives the best result in combination with u2net without any preprocessing methods.
+* `fba` (default) - This algorithm improves the borders of the image when removing the background from images with hair, etc. using FBA Matting neural network.
 
 ## 🏷 Setup for CPU processing:
 1. `pip install carvekit --extra-index-url https://download.pytorch.org/whl/cpu`
@@ -84,8 +92,9 @@ import torch
 from carvekit.api.high import HiInterface
 
 # Check doc strings for more information
-interface = HiInterface(object_type="hairs-like",  # Can be "object" or "hairs-like".
+interface = HiInterface(object_type="auto",  # Can be "object" or "hairs-like" or "auto"
                         batch_size_seg=5,
+                        batch_size_pre=5,
                         batch_size_matting=1,
                         device='cuda' if torch.cuda.is_available() else 'cpu',
                         seg_mask_size=640,  # Use 640 for Tracer B7 and 320 for U2Net
@@ -107,14 +116,15 @@ import PIL.Image
 
 from carvekit.api.interface import Interface
 from carvekit.ml.wrap.fba_matting import FBAMatting
+from carvekit.ml.wrap.scene_classifier import SceneClassifier
 from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
 from carvekit.pipelines.postprocessing import MattingMethod
-from carvekit.pipelines.preprocessing import PreprocessingStub
+from carvekit.pipelines.preprocessing import AutoScene
 from carvekit.trimap.generator import TrimapGenerator
 
 # Check doc strings for more information
 seg_net = TracerUniversalB7(device='cpu',
-              batch_size=1)
+                            batch_size=1)
 
 fba = FBAMatting(device='cpu',
                  input_tensor_size=2048,
@@ -122,7 +132,8 @@ fba = FBAMatting(device='cpu',
 
 trimap = TrimapGenerator()
 
-preprocessing = PreprocessingStub()
+scene_classifier = SceneClassifier(device='cpu', batch_size=5)
+preprocessing = AutoScene(scene_classifier=scene_classifier, )
 
 postprocessing = MattingMethod(matting_module=fba,
                                trimap_generator=trimap,
@@ -134,8 +145,7 @@ interface = Interface(pre_pipe=preprocessing,
 
 image = PIL.Image.open('tests/data/cat.jpg')
 cat_wo_bg = interface([image])[0]
-cat_wo_bg.save('2.png')
-                   
+cat_wo_bg.save('2.png')          
 ```
 
 
@@ -151,13 +161,17 @@ Usage: carvekit [OPTIONS]
 Options:
   -i ./2.jpg                   Path to input file or dir  [required]
   -o ./2.png                   Path to output file or dir
-  --pre none                   Preprocessing method
+  --pre autoscene              Preprocessing method
   --post fba                   Postprocessing method.
   --net tracer_b7              Segmentation Network. Check README for more info.
+  
   --recursive                  Enables recursive search for images in a folder
   --batch_size 10              Batch Size for list of images to be loaded to
                                RAM
-
+                               
+  --batch_size_pre 5           Batch size for list of images to be
+                               processed by preprocessing method network
+                               
   --batch_size_seg 5           Batch size for list of images to be processed
                                by segmentation network
 

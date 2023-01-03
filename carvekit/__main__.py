@@ -16,7 +16,7 @@ from carvekit.utils.fs_utils import save_file
 )
 @click.option("-i", required=True, type=str, help="Path to input file or dir")
 @click.option("-o", default="none", type=str, help="Path to output file or dir")
-@click.option("--pre", default="none", type=str, help="Preprocessing method")
+@click.option("--pre", default="autoscene", type=str, help="Preprocessing method")
 @click.option("--post", default="fba", type=str, help="Postprocessing method.")
 @click.option("--net", default="tracer_b7", type=str, help="Segmentation Network")
 @click.option(
@@ -30,6 +30,12 @@ from carvekit.utils.fs_utils import save_file
     default=10,
     type=int,
     help="Batch Size for list of images to be loaded to RAM",
+)
+@click.option(
+    "--batch_size_pre",
+    default=5,
+    type=int,
+    help="Batch size for list of images to be processed by preprocessing method network",
 )
 @click.option(
     "--batch_size_seg",
@@ -60,44 +66,45 @@ from carvekit.utils.fs_utils import save_file
     default=30,
     type=int,
     help="The size of the offset radius from the object mask in "
-    "pixels when forming an unknown area",
+         "pixels when forming an unknown area",
 )
 @click.option(
     "--trimap_erosion",
     default=5,
     type=int,
     help="The number of iterations of erosion that the object's "
-    "mask will be subjected to before forming an unknown area",
+         "mask will be subjected to before forming an unknown area",
 )
 @click.option(
     "--trimap_prob_threshold",
     default=231,
     type=int,
     help="Probability threshold at which the prob_filter "
-    "and prob_as_unknown_area operations will be "
-    "applied",
+         "and prob_as_unknown_area operations will be "
+         "applied",
 )
 @click.option("--device", default="cpu", type=str, help="Processing Device.")
 @click.option(
     "--fp16", default=False, type=bool, help="Enables mixed precision processing."
 )
 def removebg(
-    i: str,
-    o: str,
-    pre: str,
-    post: str,
-    net: str,
-    recursive: bool,
-    batch_size: int,
-    batch_size_seg: int,
-    batch_size_mat: int,
-    seg_mask_size: int,
-    matting_mask_size: int,
-    device: str,
-    fp16: bool,
-    trimap_dilation: int,
-    trimap_erosion: int,
-    trimap_prob_threshold: int,
+        i: str,
+        o: str,
+        pre: str,
+        post: str,
+        net: str,
+        recursive: bool,
+        batch_size: int,
+        batch_size_pre: int,
+        batch_size_seg: int,
+        batch_size_mat: int,
+        seg_mask_size: int,
+        matting_mask_size: int,
+        device: str,
+        fp16: bool,
+        trimap_dilation: int,
+        trimap_erosion: int,
+        trimap_prob_threshold: int,
 ):
     out_path = Path(o)
     input_path = Path(i)
@@ -127,16 +134,17 @@ def removebg(
         trimap_dilation=trimap_dilation,
         trimap_erosion=trimap_erosion,
         trimap_prob_threshold=trimap_prob_threshold,
+        batch_size_pre=batch_size_pre
     )
 
     interface = init_interface(interface_config)
 
     for image_batch in tqdm.tqdm(
-        batch_generator(all_images, n=batch_size),
-        total=int(len(all_images) / batch_size),
-        desc="Removing background",
-        unit=" image batch",
-        colour="blue",
+            batch_generator(all_images, n=batch_size),
+            total=int(len(all_images) / batch_size),
+            desc="Removing background",
+            unit=" image batch",
+            colour="blue",
     ):
         images_without_background = interface(image_batch)  # Remove background
         thread_pool_processing(

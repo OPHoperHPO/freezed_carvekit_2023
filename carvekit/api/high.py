@@ -8,6 +8,8 @@ import warnings
 from carvekit.api.interface import Interface
 from carvekit.ml.wrap.fba_matting import FBAMatting
 from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
+from carvekit.ml.wrap.scene_classifier import SceneClassifier
+from carvekit.pipelines.preprocessing import AutoScene
 from carvekit.ml.wrap.u2net import U2NET
 from carvekit.pipelines.postprocessing import MattingMethod
 from carvekit.trimap.generator import TrimapGenerator
@@ -15,25 +17,27 @@ from carvekit.trimap.generator import TrimapGenerator
 
 class HiInterface(Interface):
     def __init__(
-        self,
-        object_type: str = "object",
-        batch_size_seg=2,
-        batch_size_matting=1,
-        device="cpu",
-        seg_mask_size=640,
-        matting_mask_size=2048,
-        trimap_prob_threshold=231,
-        trimap_dilation=30,
-        trimap_erosion_iters=5,
-        fp16=False,
+            self,
+            object_type: str = "auto",
+            batch_size_pre=5,
+            batch_size_seg=2,
+            batch_size_matting=1,
+            device="cpu",
+            seg_mask_size=640,
+            matting_mask_size=2048,
+            trimap_prob_threshold=231,
+            trimap_dilation=30,
+            trimap_erosion_iters=5,
+            fp16=False,
     ):
         """
         Initializes High Level interface.
 
         Args:
-            object_type: Interest object type. Can be "object" or "hairs-like".
+            object_type: Interest object type. Can be "object" or "hairs-like" or "auto".
             matting_mask_size:  The size of the input image for the matting neural network.
             seg_mask_size: The size of the input image for the segmentation neural network.
+            batch_size_pre: Number of images processed per one preprocessing method call.
             batch_size_seg: Number of images processed per one segmentation neural network call.
             batch_size_matting: Number of images processed per one matting neural network call.
             device: Processing device
@@ -52,48 +56,64 @@ class HiInterface(Interface):
             2. Changing trimap_prob_threshold, trimap_kernel_size, trimap_erosion_iters may improve object edge
             refining quality,
         """
+        preprocess_pipeline = None
+
         if object_type == "object":
-            self.u2net = TracerUniversalB7(
+            self._segnet = TracerUniversalB7(
                 device=device,
                 batch_size=batch_size_seg,
                 input_image_size=seg_mask_size,
                 fp16=fp16,
             )
         elif object_type == "hairs-like":
-            self.u2net = U2NET(
+            self._segnet = U2NET(
                 device=device,
                 batch_size=batch_size_seg,
                 input_image_size=seg_mask_size,
                 fp16=fp16,
             )
+        elif object_type == "auto":
+            # Using Tracer by default,
+            # but it will dynamically switch to other if needed
+            self._segnet = TracerUniversalB7(
+                device=device,
+                batch_size=batch_size_seg,
+                input_image_size=seg_mask_size,
+                fp16=fp16,
+            )
+            self._scene_classifier = SceneClassifier(device=device,
+                                                     fp16=fp16,
+                                                     batch_size=batch_size_pre)
+            preprocess_pipeline = AutoScene(scene_classifier=self._scene_classifier)
+
         else:
             warnings.warn(
                 f"Unknown object type: {object_type}. Using default object type: object"
             )
-            self.u2net = TracerUniversalB7(
+            self._segnet = TracerUniversalB7(
                 device=device,
                 batch_size=batch_size_seg,
                 input_image_size=seg_mask_size,
                 fp16=fp16,
             )
 
-        self.fba = FBAMatting(
+        self._fba = FBAMatting(
             batch_size=batch_size_matting,
             device=device,
             input_tensor_size=matting_mask_size,
             fp16=fp16,
         )
-        self.trimap_generator = TrimapGenerator(
+        self._trimap_generator = TrimapGenerator(
             prob_threshold=trimap_prob_threshold,
             kernel_size=trimap_dilation,
             erosion_iters=trimap_erosion_iters,
         )
         super(HiInterface, self).__init__(
-            pre_pipe=None,
-            seg_pipe=self.u2net,
+            pre_pipe=preprocess_pipeline,
+            seg_pipe=self._segnet,
             post_pipe=MattingMethod(
-                matting_module=self.fba,
-                trimap_generator=self.trimap_generator,
+                matting_module=self._fba,
+                trimap_generator=self._trimap_generator,
                 device=device,
             ),
             device=device,

@@ -24,12 +24,14 @@ class MLConfig(BaseModel):
         "u2net", "deeplabv3", "basnet", "tracer_b7"
     ] = "tracer_b7"
     """Segmentation Network"""
-    preprocessing_method: Literal["none", "stub"] = "none"
+    preprocessing_method: Literal["none", "stub", "autoscene"] = "autoscene"
     """Pre-processing Method"""
     postprocessing_method: Literal["fba", "none"] = "fba"
     """Post-Processing Network"""
     device: str = "cpu"
     """Processing device"""
+    batch_size_pre: int = 5
+    """Batch size for preprocessing method"""
     batch_size_seg: int = 5
     """Batch size for segmentation network"""
     batch_size_matting: int = 1
