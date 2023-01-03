@@ -53,6 +53,21 @@ def tracer_b7_pretrained() -> pathlib.Path:
     return downloader("tracer_b7.pth")
 
 
+def scene_classifier_pretrained() -> pathlib.Path:
+    """Returns scene classifier pretrained model location
+    This model is used to classify scenes into 3 categories: hard, soft, digital
+
+    hard - scenes with hard edges, such as objects, buildings, etc.
+    soft - scenes with soft edges, such as portraits, hairs, animal, etc.
+    digital - digital scenes, such as screenshots, graphics, etc.
+
+    more info: https://huggingface.co/Carve/scene_classifier
+
+    Returns:
+        pathlib.Path to model location
+    """
+    return downloader("scene_classifier.pth")
+
 
 def download_all():
     u2net_full_pretrained()

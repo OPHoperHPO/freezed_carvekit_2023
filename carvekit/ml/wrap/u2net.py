@@ -4,6 +4,8 @@ Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
 License: Apache License 2.0
 """
 import pathlib
+import warnings
+
 from typing import List, Union
 import PIL.Image
 import numpy as np
@@ -43,6 +45,8 @@ class U2NET(U2NETArchitecture):
 
         """
         super(U2NET, self).__init__(cfg_type=layers_cfg, out_ch=1)
+        if fp16:
+            warnings.warn("FP16 is not supported at this moment for U2NET model")
         self.device = device
         self.batch_size = batch_size
         if isinstance(input_image_size, list):
@@ -54,6 +58,7 @@ class U2NET(U2NETArchitecture):
             self.load_state_dict(
                 torch.load(u2net_full_pretrained(), map_location=self.device)
             )
+
         self.eval()
 
     def data_preprocessing(self, data: PIL.Image.Image) -> torch.FloatTensor:
