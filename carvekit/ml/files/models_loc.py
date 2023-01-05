@@ -75,3 +75,4 @@ def download_all():
     deeplab_pretrained()
     basnet_pretrained()
     tracer_b7_pretrained()
+    scene_classifier_pretrained()

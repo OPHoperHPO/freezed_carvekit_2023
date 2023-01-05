@@ -95,7 +95,7 @@ def high_interface_instance() -> Callable[[], HiInterface]:
 
 @pytest.fixture()
 def interface_instance(
-        u2net_model, preprocessing_stub_instance, matting_method_instance
+    u2net_model, preprocessing_stub_instance, matting_method_instance
 ) -> Callable[[], Interface]:
     return lambda: Interface(
         u2net_model(False),
@@ -176,11 +176,11 @@ def converted_pil_image(image_pil) -> Image.Image:
 
 @pytest.fixture()
 def available_models(
-        u2net_model,
-        deeplabv3_model,
-        basnet_model,
-        preprocessing_stub_instance,
-        matting_method_instance,
+    u2net_model,
+    deeplabv3_model,
+    basnet_model,
+    preprocessing_stub_instance,
+    matting_method_instance,
 ) -> Tuple[
     List[Union[Callable[[], U2NET], Callable[[], DeepLabV3], Callable[[], BASNET]]],
     List[Optional[Callable[[], PreprocessingStub]]],

@@ -137,9 +137,11 @@ def init_interface(config: Union[WebAPIConfig, MLConfig]) -> Interface:
     elif config.preprocessing_method == "none":
         preprocessing = None
     elif config.preprocessing_method == "autoscene":
-        preprocessing = AutoScene(scene_classifier=SceneClassifier(device=config.device,
-                                                                   batch_size=config.batch_size_pre,
-                                                                   fp16=config.fp16))
+        preprocessing = AutoScene(
+            scene_classifier=SceneClassifier(
+                device=config.device, batch_size=config.batch_size_pre, fp16=config.fp16
+            )
+        )
     else:
         preprocessing = None
 

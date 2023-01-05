@@ -17,18 +17,18 @@ from carvekit.trimap.generator import TrimapGenerator
 
 class HiInterface(Interface):
     def __init__(
-            self,
-            object_type: str = "auto",
-            batch_size_pre=5,
-            batch_size_seg=2,
-            batch_size_matting=1,
-            device="cpu",
-            seg_mask_size=640,
-            matting_mask_size=2048,
-            trimap_prob_threshold=231,
-            trimap_dilation=30,
-            trimap_erosion_iters=5,
-            fp16=False,
+        self,
+        object_type: str = "auto",
+        batch_size_pre=5,
+        batch_size_seg=2,
+        batch_size_matting=1,
+        device="cpu",
+        seg_mask_size=640,
+        matting_mask_size=2048,
+        trimap_prob_threshold=231,
+        trimap_dilation=30,
+        trimap_erosion_iters=5,
+        fp16=False,
     ):
         """
         Initializes High Level interface.
@@ -81,9 +81,9 @@ class HiInterface(Interface):
                 input_image_size=seg_mask_size,
                 fp16=fp16,
             )
-            self._scene_classifier = SceneClassifier(device=device,
-                                                     fp16=fp16,
-                                                     batch_size=batch_size_pre)
+            self._scene_classifier = SceneClassifier(
+                device=device, fp16=fp16, batch_size=batch_size_pre
+            )
             preprocess_pipeline = AutoScene(scene_classifier=self._scene_classifier)
 
         else:

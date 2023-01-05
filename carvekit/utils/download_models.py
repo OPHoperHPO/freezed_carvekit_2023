@@ -64,7 +64,7 @@ MODELS_CHECKSUMS = {
     "tracer_b7.pth": "c439c5c12d4d43d5f9be9ec61e68b2e54658a541bccac2577ef5a54fb252b6e8415d41f7e"
     "c2487033d0c02b4dd08367958e4e62091318111c519f93e2632be7b",
     "scene_classifier.pth": "6d8692510abde453b406a1fea557afdea62fd2a2a2677283a3ecc2341a4895ee99ed65cedc"
-                            "b79b80775db14c3ffcfc0aad2caec1d85140678852039d2d4e76b4",
+    "b79b80775db14c3ffcfc0aad2caec1d85140678852039d2d4e76b4",
 }
 
 

@@ -66,7 +66,9 @@ class AutoScene:
                 masks_per_scene[scene_name] = interface.segmentation_pipeline(igs)
             else:
                 old_device = interface.segmentation_pipeline.device
-                interface.segmentation_pipeline.to('cpu')  # unload model from gpu, to avoid OOM
+                interface.segmentation_pipeline.to(
+                    "cpu"
+                )  # unload model from gpu, to avoid OOM
                 net_instance = net(device=old_device)
                 masks_per_scene[scene_name] = net_instance(igs)
                 del net_instance
@@ -76,6 +78,8 @@ class AutoScene:
         masks = []
         for i, image in enumerate(images):
             scene_name = scene_analysis[i][0][0]
-            masks.append(masks_per_scene[scene_name][images_per_scene[scene_name].index(image)])
+            masks.append(
+                masks_per_scene[scene_name][images_per_scene[scene_name].index(image)]
+            )
 
         return masks

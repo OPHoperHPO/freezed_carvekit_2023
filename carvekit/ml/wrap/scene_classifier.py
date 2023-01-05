@@ -36,12 +36,12 @@ class SceneClassifier:
     """
 
     def __init__(
-            self,
-            topk: int = 1,
-            device="cpu",
-            batch_size: int = 4,
-            fp16: bool = False,
-            model_path: Union[str, pathlib.Path] = None,
+        self,
+        topk: int = 1,
+        device="cpu",
+        batch_size: int = 4,
+        fp16: bool = False,
+        model_path: Union[str, pathlib.Path] = None,
     ):
         """
         Initialize the Scene Classifier.
@@ -60,13 +60,16 @@ class SceneClassifier:
         self.device = device
         self.batch_size = batch_size
 
-        self.transform = transforms.Compose([
-            transforms.Resize(256),
-            transforms.CenterCrop(224),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                                 std=[0.229, 0.224, 0.225])
-        ])
+        self.transform = transforms.Compose(
+            [
+                transforms.Resize(256),
+                transforms.CenterCrop(224),
+                transforms.ToTensor(),
+                transforms.Normalize(
+                    mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                ),
+            ]
+        )
         state_dict = torch.load(model_path, map_location=device)
         self.model = state_dict["model"]
         self.class_to_idx = state_dict["class_to_idx"]
@@ -88,8 +91,7 @@ class SceneClassifier:
 
         return torch.unsqueeze(self.transform(data), 0).type(torch.FloatTensor)
 
-    def data_postprocessing(self,
-                            data: torch.tensor) -> Tuple[List[str], List[float]]:
+    def data_postprocessing(self, data: torch.tensor) -> Tuple[List[str], List[float]]:
         """
         Transforms output data from neural network to suitable data
         format for using with other components of this framework.
@@ -111,7 +113,7 @@ class SceneClassifier:
         return list(map(lambda x: self.idx_to_class[x], classes)), probs
 
     def __call__(
-            self, images: List[Union[str, pathlib.Path, PIL.Image.Image]]
+        self, images: List[Union[str, pathlib.Path, PIL.Image.Image]]
     ) -> List[PIL.Image.Image]:
         """
         Passes input images though neural network and returns segmentation masks as PIL.Image.Image instances
