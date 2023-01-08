@@ -167,7 +167,7 @@ class HuggingFaceCompatibleDownloader(CachedDownloader, ABC):
             hugging_face_url = f"{self.base_url}/{url['repository']}/resolve/{url['revision']}/{url['filename']}"
 
             try:
-                r = requests.get(hugging_face_url, stream=True)
+                r = requests.get(hugging_face_url, stream=True, timeout=10)
                 if r.status_code < 400:
                     with open(cached_path, "wb") as f:
                         r.raw.decode_content = True
