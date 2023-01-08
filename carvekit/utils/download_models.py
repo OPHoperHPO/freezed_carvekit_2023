@@ -90,6 +90,11 @@ class CachedDownloader:
 
     @property
     @abstractmethod
+    def name(self) -> str:
+        return self.__class__.__name__
+
+    @property
+    @abstractmethod
     def fallback_downloader(self) -> Optional["CachedDownloader"]:
         pass
 
@@ -99,13 +104,13 @@ class CachedDownloader:
         except BaseException as e:
             if self.fallback_downloader is not None:
                 warnings.warn(
-                    f"Failed to download model from {self.__class__.__name__} downloader."
-                    f" Trying to download from {self.fallback_downloader.__class__.__name__} downloader."
+                    f"Failed to download model from {self.name} downloader."
+                    f" Trying to download from {self.fallback_downloader.name} downloader."
                 )
                 return self.fallback_downloader.download_model(file_name)
             else:
                 warnings.warn(
-                    f"Failed to download model from {self.__class__.__name__} downloader."
+                    f"Failed to download model from {self.name} downloader."
                     f" No fallback downloader available."
                 )
                 raise e
@@ -121,16 +126,22 @@ class CachedDownloader:
 class HuggingFaceCompatibleDownloader(CachedDownloader, ABC):
     def __init__(
         self,
+        name: str = "Huggingface.co",
         base_url: str = "https://huggingface.co",
         fb_downloader: Optional["CachedDownloader"] = None,
     ):
         self.cache_dir = checkpoints_dir
         self.base_url = base_url
+        self._name = name
         self._fallback_downloader = fb_downloader
 
     @property
     def fallback_downloader(self) -> Optional["CachedDownloader"]:
         return self._fallback_downloader
+
+    @property
+    def name(self):
+        return self._name
 
     def check_for_existence(self, file_name: str) -> Optional[Path]:
         if file_name not in MODELS_URLS.keys():
@@ -194,8 +205,10 @@ class HuggingFaceCompatibleDownloader(CachedDownloader, ABC):
             return cached_path
 
 
-downloader: CachedDownloader = HuggingFaceCompatibleDownloader(
-    base_url="https://cdn.carve.photos"
-)
 fallback_downloader: CachedDownloader = HuggingFaceCompatibleDownloader()
+downloader: CachedDownloader = HuggingFaceCompatibleDownloader(
+    base_url="https://cdn.carve.photos",
+    fb_downloader=fallback_downloader,
+    name="Carve CDN",
+)
 downloader._fallback_downloader = fallback_downloader
