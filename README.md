@@ -125,6 +125,7 @@ interface = AutoInterface(scene_classifier=scene_classifier,
                           postprocessing_batch_size=1,
                           postprocessing_image_size=2048,
                           segmentation_device="cpu",
+                          fp16=False,
                           postprocessing_device="cpu")
 images_without_background = interface(['./tests/data/cat.jpg'])
 cat_wo_bg = images_without_background[0]

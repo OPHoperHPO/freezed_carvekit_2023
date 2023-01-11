@@ -122,6 +122,7 @@ def init_interface(config: Union[WebAPIConfig, MLConfig]) -> Interface:
             postprocessing_image_size=config.matting_mask_size,
             segmentation_device=config.device,
             postprocessing_device=config.device,
+            fp16=config.fp16,
         )
 
     else:

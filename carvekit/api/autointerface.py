@@ -37,6 +37,7 @@ class AutoInterface(Interface):
         postprocessing_image_size: int = 2048,
         segmentation_device: str = "cpu",
         postprocessing_device: str = "cpu",
+        fp16=False,
     ):
         """
         Args:
@@ -50,6 +51,7 @@ class AutoInterface(Interface):
         self.postprocessing_image_size = postprocessing_image_size
         self.segmentation_device = segmentation_device
         self.postprocessing_device = postprocessing_device
+        self.fp16 = fp16
         super().__init__(
             seg_pipe=None, post_pipe=None, pre_pipe=None
         )  # just for compatibility with Interface class
@@ -187,6 +189,7 @@ class AutoInterface(Interface):
                 masks = net(
                     device=self.segmentation_device,
                     batch_size=self.segmentation_batch_size,
+                    fp16=self.fp16,
                 )(sc_images)
 
                 for i, image_info in enumerate(gimages_info):
@@ -196,6 +199,7 @@ class AutoInterface(Interface):
             device=self.postprocessing_device,
             batch_size=self.postprocessing_batch_size,
             input_tensor_size=self.postprocessing_image_size,
+            fp16=self.fp16,
         )
         # groups images by net
         for scene_name, images_info in list(images_per_scene.items()):
