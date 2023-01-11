@@ -69,6 +69,22 @@ def scene_classifier_pretrained() -> pathlib.Path:
     return downloader("scene_classifier.pth")
 
 
+def yolov4_coco_pretrained() -> pathlib.Path:
+    """Returns yolov4 classifier pretrained model location
+    This model is used to classify objects in images.
+
+    Training dataset: COCO 2017
+    Training classes: 80
+
+    It's a modified version of the original model from https://github.com/Tianxiaomo/pytorch-YOLOv4 (pytorch)
+    We have only added coco classnames to the model.
+
+    Returns:
+        pathlib.Path to model location
+    """
+    return downloader("yolov4_coco_with_classes.pth")
+
+
 def download_all():
     u2net_full_pretrained()
     fba_pretrained()
@@ -76,3 +92,4 @@ def download_all():
     basnet_pretrained()
     tracer_b7_pretrained()
     scene_classifier_pretrained()
+    yolov4_coco_pretrained()

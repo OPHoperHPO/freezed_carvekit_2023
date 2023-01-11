@@ -133,11 +133,11 @@ class TracerUniversalB7(TracerDecoder):
         with autocast:
             cast_network(self, dtype)
             for image_batch in batch_generator(images, self.batch_size):
-                images = thread_pool_processing(
+                converted_images = thread_pool_processing(
                     lambda x: convert_image(load_image(x)), image_batch
                 )
                 batches = torch.vstack(
-                    thread_pool_processing(self.data_preprocessing, images)
+                    thread_pool_processing(self.data_preprocessing, converted_images)
                 )
                 with torch.no_grad():
                     batches = batches.to(self.device)
@@ -145,8 +145,10 @@ class TracerUniversalB7(TracerDecoder):
                     masks_cpu = masks.cpu()
                     del batches, masks
                 masks = thread_pool_processing(
-                    lambda x: self.data_postprocessing(masks_cpu[x], images[x]),
-                    range(len(images)),
+                    lambda x: self.data_postprocessing(
+                        masks_cpu[x], converted_images[x]
+                    ),
+                    range(len(converted_images)),
                 )
                 collect_masks += masks
 

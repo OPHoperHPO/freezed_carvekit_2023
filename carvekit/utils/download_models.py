@@ -50,6 +50,11 @@ MODELS_URLS = {
         "revision": "71c8e4c771dd5a20ff0c5c9e3c8f1c9cf8082740",
         "filename": "scene_classifier.pth",
     },
+    "yolov4_coco_with_classes.pth": {
+        "repository": "Carve/yolov4_coco",
+        "revision": "e3fc9cd22f86e456d2749d1ae148400f2f950fb3",
+        "filename": "yolov4_coco_with_classes.pth",
+    },
 }
 
 MODELS_CHECKSUMS = {
@@ -63,8 +68,10 @@ MODELS_CHECKSUMS = {
     "bea1533fda5ee70a909b934a9bd495b432cef89d629f00a07858a517742476fa8b346de24f7",
     "tracer_b7.pth": "c439c5c12d4d43d5f9be9ec61e68b2e54658a541bccac2577ef5a54fb252b6e8415d41f7e"
     "c2487033d0c02b4dd08367958e4e62091318111c519f93e2632be7b",
-    "scene_classifier.pth": "6d8692510abde453b406a1fea557afdea62fd2a2a2677283a3ecc2341a4895ee99ed65cedc"
-    "b79b80775db14c3ffcfc0aad2caec1d85140678852039d2d4e76b4",
+    "scene_classifier.pth": "6d8692510abde453b406a1fea557afdea62fd2a2a2677283a3ecc2"
+    "341a4895ee99ed65cedcb79b80775db14c3ffcfc0aad2caec1d85140678852039d2d4e76b4",
+    "yolov4_coco_with_classes.pth": "44b6ec2dd35dc3802bf8c512002f76e00e97bfbc86bc7af6de2fafce229a41b4ca"
+    "12c6f3d7589278c71cd4ddd62df80389b148c19b84fa03216905407a107fff",
 }
 
 

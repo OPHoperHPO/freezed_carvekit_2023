@@ -22,7 +22,7 @@ from carvekit.utils.pool_utils import thread_pool_processing
 class Interface:
     def __init__(
         self,
-        seg_pipe: Union[U2NET, BASNET, DeepLabV3, TracerUniversalB7],
+        seg_pipe: Optional[Union[U2NET, BASNET, DeepLabV3, TracerUniversalB7]],
         pre_pipe: Optional[Union[PreprocessingStub, AutoScene]] = None,
         post_pipe: Optional[Union[MattingMethod]] = None,
         device="cpu",
@@ -53,6 +53,9 @@ class Interface:
         Returns:
             List of images without background as PIL.Image.Image instances
         """
+        if self.segmentation_pipeline is None:
+            raise ValueError("Segmentation pipeline is not initialized."
+                             "Override the class or pass the pipeline to the constructor.")
         images = thread_pool_processing(load_image, images)
         if self.preprocessing_pipeline is not None:
             masks: List[Image.Image] = self.preprocessing_pipeline(
