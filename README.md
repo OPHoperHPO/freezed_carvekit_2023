@@ -68,11 +68,12 @@ It can be briefly described as
 ### 🔍 Preprocessing methods:
 * `none` - No preprocessing methods used.
 * [`autoscene`](https://huggingface.co/Carve/scene_classifier/) - Automatically detects the scene type using classifier and applies the appropriate model. (default)
-
+* `auto` - Performs in-depth image analysis and more accurately determines the best background removal method. Uses object classifier and scene classifier together. 
 > ### Notes: 
-> 1. `AutoScene` may override the model and parameters specified by the user without logging. 
-> So, if you want to use a specific model, make all constant etc., you should disable `autoscene` preprocessing method first!
-
+> 1. `AutoScene` and `auto` may override the model and parameters specified by the user without logging. 
+> So, if you want to use a specific model, make all constant etc., you should disable auto preprocessing methods first!
+> 2. At the moment for `auto` method universal models are selected for some specific domains, since the added models are currently not enough for so many types of scenes.
+> In the future, when some variety of models is added, auto-selection will be rewritten for the better.
 ### ✂ Post-processing methods:
 * `none` - No post-processing methods used.
 * `fba` (default) - This algorithm improves the borders of the image when removing the background from images with hair, etc. using FBA Matting neural network.
@@ -109,7 +110,26 @@ cat_wo_bg.save('2.png')
 
                    
 ```
+### Analogue of `auto` preprocessing method from cli
+``` python
+from carvekit.api.autointerface import AutoInterface
+from carvekit.ml.wrap.scene_classifier import SceneClassifier
+from carvekit.ml.wrap.yolov4 import SimplifiedYoloV4
 
+scene_classifier = SceneClassifier(device="cpu", batch_size=1)
+object_classifier = SimplifiedYoloV4(device="cpu", batch_size=1)
+
+interface = AutoInterface(scene_classifier=scene_classifier,
+                          object_classifier=object_classifier,
+                          segmentation_batch_size=1,
+                          postprocessing_batch_size=1,
+                          postprocessing_image_size=2048,
+                          segmentation_device="cpu",
+                          postprocessing_device="cpu")
+images_without_background = interface(['./tests/data/cat.jpg'])
+cat_wo_bg = images_without_background[0]
+cat_wo_bg.save('2.png')
+```
 ### If you want control everything
 ``` python
 import PIL.Image

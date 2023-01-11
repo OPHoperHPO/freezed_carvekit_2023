@@ -54,8 +54,10 @@ class Interface:
             List of images without background as PIL.Image.Image instances
         """
         if self.segmentation_pipeline is None:
-            raise ValueError("Segmentation pipeline is not initialized."
-                             "Override the class or pass the pipeline to the constructor.")
+            raise ValueError(
+                "Segmentation pipeline is not initialized."
+                "Override the class or pass the pipeline to the constructor."
+            )
         images = thread_pool_processing(load_image, images)
         if self.preprocessing_pipeline is not None:
             masks: List[Image.Image] = self.preprocessing_pipeline(

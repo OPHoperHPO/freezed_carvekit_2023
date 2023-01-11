@@ -7,7 +7,7 @@ services:
       - CARVEKIT_PORT=5000
       - CARVEKIT_HOST=0.0.0.0
       - CARVEKIT_SEGMENTATION_NETWORK=tracer_b7  # can be u2net, tracer_b7, basnet, deeplabv3
-      - CARVEKIT_PREPROCESSING_METHOD=none # can be none, stub
+      - CARVEKIT_PREPROCESSING_METHOD=none # can be none, stub, autoscene, auto
       - CARVEKIT_POSTPROCESSING_METHOD=fba # can be none, fba
       - CARVEKIT_DEVICE=cpu # can be cuda (req. cuda docker image), cpu
       - CARVEKIT_BATCH_SIZE_PRE=5 # Number of images processed per one preprocessing method call. NOT USED IF WEB API IS USED

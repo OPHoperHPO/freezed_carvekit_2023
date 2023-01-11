@@ -28,16 +28,15 @@ from carvekit.utils.pool_utils import thread_pool_processing
 
 
 class AutoInterface(Interface):
-
     def __init__(
-            self,
-            scene_classifier: SceneClassifier,
-            object_classifier: SimplifiedYoloV4,
-            segmentation_batch_size: int = 3,
-            postprocessing_batch_size: int = 1,
-            postprocessing_image_size: int = 2048,
-            segmentation_device: str = "cpu",
-            postprocessing_device: str = "cpu",
+        self,
+        scene_classifier: SceneClassifier,
+        object_classifier: SimplifiedYoloV4,
+        segmentation_batch_size: int = 3,
+        postprocessing_batch_size: int = 1,
+        postprocessing_image_size: int = 2048,
+        segmentation_device: str = "cpu",
+        postprocessing_device: str = "cpu",
     ):
         """
         Args:
@@ -51,9 +50,9 @@ class AutoInterface(Interface):
         self.postprocessing_image_size = postprocessing_image_size
         self.segmentation_device = segmentation_device
         self.postprocessing_device = postprocessing_device
-        super().__init__(seg_pipe=None,
-                         post_pipe=None,
-                         pre_pipe=None)  # just for compatibility with Interface class
+        super().__init__(
+            seg_pipe=None, post_pipe=None, pre_pipe=None
+        )  # just for compatibility with Interface class
 
     @staticmethod
     def select_params_for_net(net: Union[TracerUniversalB7, U2NET, DeepLabV3]):
@@ -64,21 +63,13 @@ class AutoInterface(Interface):
             net: network
         """
         if net == TracerUniversalB7:
-            return {
-                "prob_threshold": 231, "kernel_size": 30, "erosion_iters": 5
-            }
+            return {"prob_threshold": 231, "kernel_size": 30, "erosion_iters": 5}
         elif net == U2NET:
-            return {
-                "prob_threshold": 231, "kernel_size": 30, "erosion_iters": 5
-            }
+            return {"prob_threshold": 231, "kernel_size": 30, "erosion_iters": 5}
         elif net == DeepLabV3:
-            return {
-                "prob_threshold": 231, "kernel_size": 40, "erosion_iters": 20
-            }
+            return {"prob_threshold": 231, "kernel_size": 40, "erosion_iters": 20}
         elif net == BASNET:
-            return {
-                "prob_threshold": 231, "kernel_size": 30, "erosion_iters": 5
-            }
+            return {"prob_threshold": 231, "kernel_size": 30, "erosion_iters": 5}
         else:
             raise ValueError("Unknown network type")
 
@@ -102,12 +93,10 @@ class AutoInterface(Interface):
 
                 if obj_counter["human"] > 0 and len(non_empty_classes) == 1:
                     # Human only case. Hard Scene? It may be a photo of a person in far/middle distance.
-                    image_info[
-                        "net"] = TracerUniversalB7
+                    image_info["net"] = TracerUniversalB7
                     # TODO: will use DeepLabV3+ for this image, it is more suitable for this case,
                     #  but needs checks for small bbox
-                elif obj_counter["human"] > 0 and len(
-                        non_empty_classes) > 1:
+                elif obj_counter["human"] > 0 and len(non_empty_classes) > 1:
                     # Okay, we have a human without extra hairs and something else. Hard border
                     image_info["net"] = TracerUniversalB7
                 elif obj_counter["cars"] > 0:
@@ -139,8 +128,7 @@ class AutoInterface(Interface):
                 if obj_counter["human"] > 0 and len(non_empty_classes) == 1:
                     # Human only case. It may be a portrait
                     image_info["net"] = U2NET
-                elif obj_counter["human"] > 0 and len(
-                        non_empty_classes) > 1:
+                elif obj_counter["human"] > 0 and len(non_empty_classes) > 1:
                     # Okay, we have a human with hairs and something else
                     image_info["net"] = U2NET
                 elif obj_counter["cars"] > 0:
@@ -180,8 +168,7 @@ class AutoInterface(Interface):
             if scene_name not in images_per_scene:
                 images_per_scene[scene_name] = []
             images_per_scene[scene_name].append(
-                {"image": image,
-                 "objects": images_objects[i]}
+                {"image": image, "objects": images_objects[i]}
             )
 
         for scene_name, images_info in list(images_per_scene.items()):
@@ -197,15 +184,19 @@ class AutoInterface(Interface):
                 groups[net].append(image_info)
             for net, gimages_info in list(groups.items()):
                 sc_images = [image_info["image"] for image_info in gimages_info]
-                masks = net(device=self.segmentation_device,
-                            batch_size=self.segmentation_batch_size)(sc_images)
+                masks = net(
+                    device=self.segmentation_device,
+                    batch_size=self.segmentation_batch_size,
+                )(sc_images)
 
                 for i, image_info in enumerate(gimages_info):
                     image_info["mask"] = masks[i]
 
-        fba = FBAMatting(device=self.postprocessing_device,
-                         batch_size=self.postprocessing_batch_size,
-                         input_tensor_size=self.postprocessing_image_size, )
+        fba = FBAMatting(
+            device=self.postprocessing_device,
+            batch_size=self.postprocessing_batch_size,
+            input_tensor_size=self.postprocessing_image_size,
+        )
         # groups images by net
         for scene_name, images_info in list(images_per_scene.items()):
             groups = {}
@@ -218,9 +209,11 @@ class AutoInterface(Interface):
                 sc_images = [image_info["image"] for image_info in gimages_info]
                 # noinspection PyArgumentList
                 trimap_generator = TrimapGenerator(**self.select_params_for_net(net))
-                matting_method = MattingMethod(matting_module=fba,
-                                               trimap_generator=trimap_generator,
-                                               device=self.postprocessing_device, )
+                matting_method = MattingMethod(
+                    matting_module=fba,
+                    trimap_generator=trimap_generator,
+                    device=self.postprocessing_device,
+                )
                 masks = [image_info["mask"] for image_info in gimages_info]
                 result = matting_method(sc_images, masks)
 
@@ -236,5 +229,7 @@ class AutoInterface(Interface):
                         result.append(image_info["result"])
                         break
         if len(result) != len(images):
-            raise RuntimeError("Something went wrong with restoring original order. Please report this bug.")
+            raise RuntimeError(
+                "Something went wrong with restoring original order. Please report this bug."
+            )
         return result

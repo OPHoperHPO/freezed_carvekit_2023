@@ -24,7 +24,7 @@ class MLConfig(BaseModel):
         "u2net", "deeplabv3", "basnet", "tracer_b7"
     ] = "tracer_b7"
     """Segmentation Network"""
-    preprocessing_method: Literal["none", "stub", "autoscene"] = "autoscene"
+    preprocessing_method: Literal["none", "stub", "autoscene", "auto"] = "autoscene"
     """Pre-processing Method"""
     postprocessing_method: Literal["fba", "none"] = "fba"
     """Post-Processing Network"""
