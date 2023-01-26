@@ -4,6 +4,7 @@ from typing import Union
 
 from loguru import logger
 
+from carvekit.ml.wrap.cascadepsp import CascadePSP
 from carvekit.ml.wrap.scene_classifier import SceneClassifier
 from carvekit.web.schemas.config import WebAPIConfig, MLConfig, AuthConfig
 
@@ -18,7 +19,7 @@ from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
 from carvekit.ml.wrap.yolov4 import SimplifiedYoloV4
 
 
-from carvekit.pipelines.postprocessing import MattingMethod
+from carvekit.pipelines.postprocessing import MattingMethod, CasMattingMethod
 from carvekit.pipelines.preprocessing import PreprocessingStub, AutoScene
 from carvekit.trimap.generator import TrimapGenerator
 
@@ -55,6 +56,12 @@ def init_config() -> WebAPIConfig:
                         default_config.ml.batch_size_matting,
                     )
                 ),
+                batch_size_refine=int(
+                    getenv(
+                        "CARVEKIT_BATCH_SIZE_REFINE",
+                        default_config.ml.batch_size_refine,
+                    )
+                ),
                 seg_mask_size=int(
                     getenv("CARVEKIT_SEG_MASK_SIZE", default_config.ml.seg_mask_size)
                 ),
@@ -62,6 +69,12 @@ def init_config() -> WebAPIConfig:
                     getenv(
                         "CARVEKIT_MATTING_MASK_SIZE",
                         default_config.ml.matting_mask_size,
+                    )
+                ),
+                refine_mask_size=int(
+                    getenv(
+                        "CARVEKIT_REFINE_MASK_SIZE",
+                        default_config.ml.refine_mask_size,
                     )
                 ),
                 fp16=bool(int(getenv("CARVEKIT_FP16", default_config.ml.fp16))),
@@ -194,7 +207,30 @@ def init_interface(config: Union[WebAPIConfig, MLConfig]) -> Interface:
                 matting_module=fba,
                 trimap_generator=trimap_generator,
             )
-
+        elif config.postprocessing_method == "cascade_fba":
+            cascadepsp = CascadePSP(
+                device=config.device,
+                batch_size=config.batch_size_refine,
+                input_tensor_size=config.refine_mask_size,
+                fp16=config.fp16,
+            )
+            fba = FBAMatting(
+                device=config.device,
+                batch_size=config.batch_size_matting,
+                input_tensor_size=config.matting_mask_size,
+                fp16=config.fp16,
+            )
+            trimap_generator = TrimapGenerator(
+                prob_threshold=config.trimap_prob_threshold,
+                kernel_size=config.trimap_dilation,
+                erosion_iters=config.trimap_erosion,
+            )
+            postprocessing = CasMattingMethod(
+                device=config.device,
+                matting_module=fba,
+                trimap_generator=trimap_generator,
+                refining_module=cascadepsp,
+            )
         elif config.postprocessing_method == "none":
             postprocessing = None
         else:

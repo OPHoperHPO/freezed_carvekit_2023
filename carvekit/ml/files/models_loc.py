@@ -85,6 +85,19 @@ def yolov4_coco_pretrained() -> pathlib.Path:
     return downloader("yolov4_coco_with_classes.pth")
 
 
+def cascadepsp_pretrained() -> pathlib.Path:
+    """Returns cascade psp pretrained model location
+    This model is used to refine segmentation masks.
+
+    Training dataset: MSRA-10K, DUT-OMRON, ECSSD and FSS-1000
+    more info: https://huggingface.co/Carve/cascadepsp
+
+    Returns:
+        pathlib.Path to model location
+    """
+    return downloader("cascadepsp.pth")
+
+
 def download_all():
     u2net_full_pretrained()
     fba_pretrained()
@@ -93,3 +106,4 @@ def download_all():
     tracer_b7_pretrained()
     scene_classifier_pretrained()
     yolov4_coco_pretrained()
+    cascadepsp_pretrained()

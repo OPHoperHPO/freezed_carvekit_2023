@@ -11,13 +11,14 @@ from typing import Union, List, Dict
 
 from carvekit.api.interface import Interface
 from carvekit.ml.wrap.basnet import BASNET
+from carvekit.ml.wrap.cascadepsp import CascadePSP
 from carvekit.ml.wrap.deeplab_v3 import DeepLabV3
 from carvekit.ml.wrap.fba_matting import FBAMatting
 from carvekit.ml.wrap.scene_classifier import SceneClassifier
 from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
 from carvekit.ml.wrap.u2net import U2NET
 from carvekit.ml.wrap.yolov4 import SimplifiedYoloV4
-from carvekit.pipelines.postprocessing import MattingMethod
+from carvekit.pipelines.postprocessing import CasMattingMethod
 from carvekit.trimap.generator import TrimapGenerator
 
 __all__ = ["AutoInterface"]
@@ -33,6 +34,8 @@ class AutoInterface(Interface):
         scene_classifier: SceneClassifier,
         object_classifier: SimplifiedYoloV4,
         segmentation_batch_size: int = 3,
+        refining_batch_size: int = 1,
+        refining_image_size: int = 900,
         postprocessing_batch_size: int = 1,
         postprocessing_image_size: int = 2048,
         segmentation_device: str = "cpu",
@@ -47,6 +50,8 @@ class AutoInterface(Interface):
         self.scene_classifier = scene_classifier
         self.object_classifier = object_classifier
         self.segmentation_batch_size = segmentation_batch_size
+        self.refining_batch_size = refining_batch_size
+        self.refining_image_size = refining_image_size
         self.postprocessing_batch_size = postprocessing_batch_size
         self.postprocessing_image_size = postprocessing_image_size
         self.segmentation_device = segmentation_device
@@ -195,6 +200,13 @@ class AutoInterface(Interface):
                 for i, image_info in enumerate(gimages_info):
                     image_info["mask"] = masks[i]
 
+        cascadepsp = CascadePSP(
+            device=self.postprocessing_device,
+            fp16=self.fp16,
+            input_tensor_size=self.refining_image_size,
+            batch_size=self.refining_batch_size,
+        )
+
         fba = FBAMatting(
             device=self.postprocessing_device,
             batch_size=self.postprocessing_batch_size,
@@ -213,7 +225,8 @@ class AutoInterface(Interface):
                 sc_images = [image_info["image"] for image_info in gimages_info]
                 # noinspection PyArgumentList
                 trimap_generator = TrimapGenerator(**self.select_params_for_net(net))
-                matting_method = MattingMethod(
+                matting_method = CasMattingMethod(
+                    refining_module=cascadepsp,
                     matting_module=fba,
                     trimap_generator=trimap_generator,
                     device=self.postprocessing_device,

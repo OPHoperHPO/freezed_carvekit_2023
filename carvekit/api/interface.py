@@ -13,7 +13,7 @@ from carvekit.ml.wrap.deeplab_v3 import DeepLabV3
 from carvekit.ml.wrap.u2net import U2NET
 from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
 from carvekit.pipelines.preprocessing import PreprocessingStub, AutoScene
-from carvekit.pipelines.postprocessing import MattingMethod
+from carvekit.pipelines.postprocessing import MattingMethod, CasMattingMethod
 from carvekit.utils.image_utils import load_image
 from carvekit.utils.mask_utils import apply_mask
 from carvekit.utils.pool_utils import thread_pool_processing
@@ -24,7 +24,7 @@ class Interface:
         self,
         seg_pipe: Optional[Union[U2NET, BASNET, DeepLabV3, TracerUniversalB7]],
         pre_pipe: Optional[Union[PreprocessingStub, AutoScene]] = None,
-        post_pipe: Optional[Union[MattingMethod]] = None,
+        post_pipe: Optional[Union[MattingMethod, CasMattingMethod]] = None,
         device="cpu",
     ):
         """
