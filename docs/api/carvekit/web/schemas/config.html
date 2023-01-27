@@ -52,20 +52,26 @@ class MLConfig(BaseModel):
         &#34;u2net&#34;, &#34;deeplabv3&#34;, &#34;basnet&#34;, &#34;tracer_b7&#34;
     ] = &#34;tracer_b7&#34;
     &#34;&#34;&#34;Segmentation Network&#34;&#34;&#34;
-    preprocessing_method: Literal[&#34;none&#34;, &#34;stub&#34;] = &#34;none&#34;
+    preprocessing_method: Literal[&#34;none&#34;, &#34;stub&#34;, &#34;autoscene&#34;, &#34;auto&#34;] = &#34;autoscene&#34;
     &#34;&#34;&#34;Pre-processing Method&#34;&#34;&#34;
-    postprocessing_method: Literal[&#34;fba&#34;, &#34;none&#34;] = &#34;fba&#34;
+    postprocessing_method: Literal[&#34;fba&#34;, &#34;cascade_fba&#34;, &#34;none&#34;] = &#34;cascade_fba&#34;
     &#34;&#34;&#34;Post-Processing Network&#34;&#34;&#34;
     device: str = &#34;cpu&#34;
     &#34;&#34;&#34;Processing device&#34;&#34;&#34;
+    batch_size_pre: int = 5
+    &#34;&#34;&#34;Batch size for preprocessing method&#34;&#34;&#34;
     batch_size_seg: int = 5
     &#34;&#34;&#34;Batch size for segmentation network&#34;&#34;&#34;
     batch_size_matting: int = 1
     &#34;&#34;&#34;Batch size for matting network&#34;&#34;&#34;
+    batch_size_refine: int = 1
+    &#34;&#34;&#34;Batch size for refine network&#34;&#34;&#34;
     seg_mask_size: int = 640
     &#34;&#34;&#34;The size of the input image for the segmentation neural network.&#34;&#34;&#34;
     matting_mask_size: int = 2048
     &#34;&#34;&#34;The size of the input image for the matting neural network.&#34;&#34;&#34;
+    refine_mask_size: int = 900
+    &#34;&#34;&#34;The size of the input image for the refine neural network.&#34;&#34;&#34;
     fp16: bool = False
     &#34;&#34;&#34;Use half precision for inference&#34;&#34;&#34;
     trimap_dilation: int = 30
@@ -198,20 +204,26 @@ class WebAPIConfig(BaseModel):
         &#34;u2net&#34;, &#34;deeplabv3&#34;, &#34;basnet&#34;, &#34;tracer_b7&#34;
     ] = &#34;tracer_b7&#34;
     &#34;&#34;&#34;Segmentation Network&#34;&#34;&#34;
-    preprocessing_method: Literal[&#34;none&#34;, &#34;stub&#34;] = &#34;none&#34;
+    preprocessing_method: Literal[&#34;none&#34;, &#34;stub&#34;, &#34;autoscene&#34;, &#34;auto&#34;] = &#34;autoscene&#34;
     &#34;&#34;&#34;Pre-processing Method&#34;&#34;&#34;
-    postprocessing_method: Literal[&#34;fba&#34;, &#34;none&#34;] = &#34;fba&#34;
+    postprocessing_method: Literal[&#34;fba&#34;, &#34;cascade_fba&#34;, &#34;none&#34;] = &#34;cascade_fba&#34;
     &#34;&#34;&#34;Post-Processing Network&#34;&#34;&#34;
     device: str = &#34;cpu&#34;
     &#34;&#34;&#34;Processing device&#34;&#34;&#34;
+    batch_size_pre: int = 5
+    &#34;&#34;&#34;Batch size for preprocessing method&#34;&#34;&#34;
     batch_size_seg: int = 5
     &#34;&#34;&#34;Batch size for segmentation network&#34;&#34;&#34;
     batch_size_matting: int = 1
     &#34;&#34;&#34;Batch size for matting network&#34;&#34;&#34;
+    batch_size_refine: int = 1
+    &#34;&#34;&#34;Batch size for refine network&#34;&#34;&#34;
     seg_mask_size: int = 640
     &#34;&#34;&#34;The size of the input image for the segmentation neural network.&#34;&#34;&#34;
     matting_mask_size: int = 2048
     &#34;&#34;&#34;The size of the input image for the matting neural network.&#34;&#34;&#34;
+    refine_mask_size: int = 900
+    &#34;&#34;&#34;The size of the input image for the refine neural network.&#34;&#34;&#34;
     fp16: bool = False
     &#34;&#34;&#34;Use half precision for inference&#34;&#34;&#34;
     trimap_dilation: int = 30
@@ -270,6 +282,14 @@ class WebAPIConfig(BaseModel):
 <dd>
 <div class="desc"><p>Batch size for matting network</p></div>
 </dd>
+<dt id="carvekit.web.schemas.config.MLConfig.batch_size_pre"><code class="name">var <span class="ident">batch_size_pre</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Batch size for preprocessing method</p></div>
+</dd>
+<dt id="carvekit.web.schemas.config.MLConfig.batch_size_refine"><code class="name">var <span class="ident">batch_size_refine</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Batch size for refine network</p></div>
+</dd>
 <dt id="carvekit.web.schemas.config.MLConfig.batch_size_seg"><code class="name">var <span class="ident">batch_size_seg</span> : int</code></dt>
 <dd>
 <div class="desc"><p>Batch size for segmentation network</p></div>
@@ -286,19 +306,23 @@ class WebAPIConfig(BaseModel):
 <dd>
 <div class="desc"><p>The size of the input image for the matting neural network.</p></div>
 </dd>
-<dt id="carvekit.web.schemas.config.MLConfig.postprocessing_method"><code class="name">var <span class="ident">postprocessing_method</span> : Literal['fba', 'none']</code></dt>
+<dt id="carvekit.web.schemas.config.MLConfig.postprocessing_method"><code class="name">var <span class="ident">postprocessing_method</span> : Literal['fba', 'cascade_fba', 'none']</code></dt>
 <dd>
 <div class="desc"><p>Post-Processing Network</p></div>
 </dd>
-<dt id="carvekit.web.schemas.config.MLConfig.preprocessing_method"><code class="name">var <span class="ident">preprocessing_method</span> : Literal['none', 'stub']</code></dt>
+<dt id="carvekit.web.schemas.config.MLConfig.preprocessing_method"><code class="name">var <span class="ident">preprocessing_method</span> : Literal['none', '<a title="stub" href="../../../stub.html">stub</a>', 'autoscene', 'auto']</code></dt>
 <dd>
 <div class="desc"><p>Pre-processing Method</p></div>
+</dd>
+<dt id="carvekit.web.schemas.config.MLConfig.refine_mask_size"><code class="name">var <span class="ident">refine_mask_size</span> : int</code></dt>
+<dd>
+<div class="desc"><p>The size of the input image for the refine neural network.</p></div>
 </dd>
 <dt id="carvekit.web.schemas.config.MLConfig.seg_mask_size"><code class="name">var <span class="ident">seg_mask_size</span> : int</code></dt>
 <dd>
 <div class="desc"><p>The size of the input image for the segmentation neural network.</p></div>
 </dd>
-<dt id="carvekit.web.schemas.config.MLConfig.segmentation_network"><code class="name">var <span class="ident">segmentation_network</span> : Literal['u2net', 'deeplabv3', 'basnet', 'tracer_b7']</code></dt>
+<dt id="carvekit.web.schemas.config.MLConfig.segmentation_network"><code class="name">var <span class="ident">segmentation_network</span> : Literal['<a title="u2net" href="../../../u2net.html">u2net</a>', 'deeplabv3', '<a title="basnet" href="../../../basnet.html">basnet</a>', '<a title="tracer_b7" href="../../../tracer_b7.html">tracer_b7</a>']</code></dt>
 <dd>
 <div class="desc"><p>Segmentation Network</p></div>
 </dd>
@@ -485,6 +509,8 @@ def seg_mask_size_validator(cls, value: int, values):
 <ul class="">
 <li><code><a title="carvekit.web.schemas.config.MLConfig.batch_size_matting" href="#carvekit.web.schemas.config.MLConfig.batch_size_matting">batch_size_matting</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.MLConfig.batch_size_matting_validator" href="#carvekit.web.schemas.config.MLConfig.batch_size_matting_validator">batch_size_matting_validator</a></code></li>
+<li><code><a title="carvekit.web.schemas.config.MLConfig.batch_size_pre" href="#carvekit.web.schemas.config.MLConfig.batch_size_pre">batch_size_pre</a></code></li>
+<li><code><a title="carvekit.web.schemas.config.MLConfig.batch_size_refine" href="#carvekit.web.schemas.config.MLConfig.batch_size_refine">batch_size_refine</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.MLConfig.batch_size_seg" href="#carvekit.web.schemas.config.MLConfig.batch_size_seg">batch_size_seg</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.MLConfig.batch_size_seg_validator" href="#carvekit.web.schemas.config.MLConfig.batch_size_seg_validator">batch_size_seg_validator</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.MLConfig.device" href="#carvekit.web.schemas.config.MLConfig.device">device</a></code></li>
@@ -494,6 +520,7 @@ def seg_mask_size_validator(cls, value: int, values):
 <li><code><a title="carvekit.web.schemas.config.MLConfig.matting_mask_size_validator" href="#carvekit.web.schemas.config.MLConfig.matting_mask_size_validator">matting_mask_size_validator</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.MLConfig.postprocessing_method" href="#carvekit.web.schemas.config.MLConfig.postprocessing_method">postprocessing_method</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.MLConfig.preprocessing_method" href="#carvekit.web.schemas.config.MLConfig.preprocessing_method">preprocessing_method</a></code></li>
+<li><code><a title="carvekit.web.schemas.config.MLConfig.refine_mask_size" href="#carvekit.web.schemas.config.MLConfig.refine_mask_size">refine_mask_size</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.MLConfig.seg_mask_size" href="#carvekit.web.schemas.config.MLConfig.seg_mask_size">seg_mask_size</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.MLConfig.seg_mask_size_validator" href="#carvekit.web.schemas.config.MLConfig.seg_mask_size_validator">seg_mask_size_validator</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.MLConfig.segmentation_network" href="#carvekit.web.schemas.config.MLConfig.segmentation_network">segmentation_network</a></code></li>

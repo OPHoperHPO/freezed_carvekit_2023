@@ -45,8 +45,8 @@ from carvekit.ml.wrap.basnet import BASNET
 from carvekit.ml.wrap.deeplab_v3 import DeepLabV3
 from carvekit.ml.wrap.u2net import U2NET
 from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
-from carvekit.pipelines.preprocessing import PreprocessingStub
-from carvekit.pipelines.postprocessing import MattingMethod
+from carvekit.pipelines.preprocessing import PreprocessingStub, AutoScene
+from carvekit.pipelines.postprocessing import MattingMethod, CasMattingMethod
 from carvekit.utils.image_utils import load_image
 from carvekit.utils.mask_utils import apply_mask
 from carvekit.utils.pool_utils import thread_pool_processing
@@ -55,9 +55,9 @@ from carvekit.utils.pool_utils import thread_pool_processing
 class Interface:
     def __init__(
         self,
-        seg_pipe: Union[U2NET, BASNET, DeepLabV3, TracerUniversalB7],
-        pre_pipe: Optional[Union[PreprocessingStub]] = None,
-        post_pipe: Optional[Union[MattingMethod]] = None,
+        seg_pipe: Optional[Union[U2NET, BASNET, DeepLabV3, TracerUniversalB7]],
+        pre_pipe: Optional[Union[PreprocessingStub, AutoScene]] = None,
+        post_pipe: Optional[Union[MattingMethod, CasMattingMethod]] = None,
         device=&#34;cpu&#34;,
     ):
         &#34;&#34;&#34;
@@ -86,6 +86,11 @@ class Interface:
         Returns:
             List of images without background as PIL.Image.Image instances
         &#34;&#34;&#34;
+        if self.segmentation_pipeline is None:
+            raise ValueError(
+                &#34;Segmentation pipeline is not initialized.&#34;
+                &#34;Override the class or pass the pipeline to the constructor.&#34;
+            )
         images = thread_pool_processing(load_image, images)
         if self.preprocessing_pipeline is not None:
             masks: List[Image.Image] = self.preprocessing_pipeline(
@@ -121,7 +126,7 @@ class Interface:
 <dl>
 <dt id="carvekit.api.interface.Interface"><code class="flex name class">
 <span>class <span class="ident">Interface</span></span>
-<span>(</span><span>seg_pipe: Union[<a title="carvekit.ml.wrap.u2net.U2NET" href="../ml/wrap/u2net.html#carvekit.ml.wrap.u2net.U2NET">U2NET</a>, <a title="carvekit.ml.wrap.basnet.BASNET" href="../ml/wrap/basnet.html#carvekit.ml.wrap.basnet.BASNET">BASNET</a>, <a title="carvekit.ml.wrap.deeplab_v3.DeepLabV3" href="../ml/wrap/deeplab_v3.html#carvekit.ml.wrap.deeplab_v3.DeepLabV3">DeepLabV3</a>, <a title="carvekit.ml.wrap.tracer_b7.TracerUniversalB7" href="../ml/wrap/tracer_b7.html#carvekit.ml.wrap.tracer_b7.TracerUniversalB7">TracerUniversalB7</a>], pre_pipe: Optional[<a title="carvekit.pipelines.preprocessing.PreprocessingStub" href="../pipelines/preprocessing.html#carvekit.pipelines.preprocessing.PreprocessingStub">PreprocessingStub</a>] = None, post_pipe: Optional[<a title="carvekit.pipelines.postprocessing.MattingMethod" href="../pipelines/postprocessing.html#carvekit.pipelines.postprocessing.MattingMethod">MattingMethod</a>] = None, device='cpu')</span>
+<span>(</span><span>seg_pipe: Union[<a title="carvekit.ml.wrap.u2net.U2NET" href="../ml/wrap/u2net.html#carvekit.ml.wrap.u2net.U2NET">U2NET</a>, <a title="carvekit.ml.wrap.basnet.BASNET" href="../ml/wrap/basnet.html#carvekit.ml.wrap.basnet.BASNET">BASNET</a>, <a title="carvekit.ml.wrap.deeplab_v3.DeepLabV3" href="../ml/wrap/deeplab_v3.html#carvekit.ml.wrap.deeplab_v3.DeepLabV3">DeepLabV3</a>, <a title="carvekit.ml.wrap.tracer_b7.TracerUniversalB7" href="../ml/wrap/tracer_b7.html#carvekit.ml.wrap.tracer_b7.TracerUniversalB7">TracerUniversalB7</a>, ForwardRef(None)], pre_pipe: Union[<a title="carvekit.pipelines.preprocessing.stub.PreprocessingStub" href="../pipelines/preprocessing/stub.html#carvekit.pipelines.preprocessing.stub.PreprocessingStub">PreprocessingStub</a>, <a title="carvekit.pipelines.preprocessing.autoscene.AutoScene" href="../pipelines/preprocessing/autoscene.html#carvekit.pipelines.preprocessing.autoscene.AutoScene">AutoScene</a>, ForwardRef(None)] = None, post_pipe: Union[<a title="carvekit.pipelines.postprocessing.matting.MattingMethod" href="../pipelines/postprocessing/matting.html#carvekit.pipelines.postprocessing.matting.MattingMethod">MattingMethod</a>, <a title="carvekit.pipelines.postprocessing.casmatting.CasMattingMethod" href="../pipelines/postprocessing/casmatting.html#carvekit.pipelines.postprocessing.casmatting.CasMattingMethod">CasMattingMethod</a>, ForwardRef(None)] = None, device='cpu')</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Initializes an object for interacting with pipelines and other components of the CarveKit framework.</p>
@@ -143,9 +148,9 @@ class Interface:
 <pre><code class="python">class Interface:
     def __init__(
         self,
-        seg_pipe: Union[U2NET, BASNET, DeepLabV3, TracerUniversalB7],
-        pre_pipe: Optional[Union[PreprocessingStub]] = None,
-        post_pipe: Optional[Union[MattingMethod]] = None,
+        seg_pipe: Optional[Union[U2NET, BASNET, DeepLabV3, TracerUniversalB7]],
+        pre_pipe: Optional[Union[PreprocessingStub, AutoScene]] = None,
+        post_pipe: Optional[Union[MattingMethod, CasMattingMethod]] = None,
         device=&#34;cpu&#34;,
     ):
         &#34;&#34;&#34;
@@ -174,6 +179,11 @@ class Interface:
         Returns:
             List of images without background as PIL.Image.Image instances
         &#34;&#34;&#34;
+        if self.segmentation_pipeline is None:
+            raise ValueError(
+                &#34;Segmentation pipeline is not initialized.&#34;
+                &#34;Override the class or pass the pipeline to the constructor.&#34;
+            )
         images = thread_pool_processing(load_image, images)
         if self.preprocessing_pipeline is not None:
             masks: List[Image.Image] = self.preprocessing_pipeline(
@@ -199,7 +209,9 @@ class Interface:
 </details>
 <h3>Subclasses</h3>
 <ul class="hlist">
+<li><a title="carvekit.api.autointerface.AutoInterface" href="autointerface.html#carvekit.api.autointerface.AutoInterface">AutoInterface</a></li>
 <li><a title="carvekit.api.high.HiInterface" href="high.html#carvekit.api.high.HiInterface">HiInterface</a></li>
+<li><a title="high.HiInterface" href="../../high.html#high.HiInterface">HiInterface</a></li>
 </ul>
 </dd>
 </dl>

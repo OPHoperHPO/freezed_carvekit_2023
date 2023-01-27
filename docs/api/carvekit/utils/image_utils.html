@@ -125,7 +125,11 @@ def is_image_valid(image: Union[pathlib.Path, PIL.Image.Image]) -&gt; bool:
     elif isinstance(image, PIL.Image.Image):
         if not (image.size[0] &gt; 32 and image.size[1] &gt; 32):
             raise ValueError(&#34;Image should be bigger then (32x32) pixels.&#34;)
-        elif image.mode not in [&#34;RGB&#34;, &#34;RGBA&#34;, &#34;L&#34;]:
+        elif image.mode not in [
+            &#34;RGB&#34;,
+            &#34;RGBA&#34;,
+            &#34;L&#34;,
+        ]:
             raise ValueError(&#34;Wrong image color mode.&#34;)
     else:
         raise ValueError(&#34;Unknown input file type&#34;)
@@ -342,7 +346,11 @@ def add_margin(
     elif isinstance(image, PIL.Image.Image):
         if not (image.size[0] &gt; 32 and image.size[1] &gt; 32):
             raise ValueError(&#34;Image should be bigger then (32x32) pixels.&#34;)
-        elif image.mode not in [&#34;RGB&#34;, &#34;RGBA&#34;, &#34;L&#34;]:
+        elif image.mode not in [
+            &#34;RGB&#34;,
+            &#34;RGBA&#34;,
+            &#34;L&#34;,
+        ]:
             raise ValueError(&#34;Wrong image color mode.&#34;)
     else:
         raise ValueError(&#34;Unknown input file type&#34;)

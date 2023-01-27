@@ -78,10 +78,20 @@ MODELS_URLS = {
         &#34;revision&#34;: &#34;d8a8fd9e7b3fa0d2f1506fe7242966b34381e9c5&#34;,
         &#34;filename&#34;: &#34;tracer_b7.pth&#34;,
     },
-    &#34;tracer_hair.pth&#34;: {
-        &#34;repository&#34;: &#34;Carve/tracer_b7&#34;,
-        &#34;revision&#34;: &#34;d8a8fd9e7b3fa0d2f1506fe7242966b34381e9c5&#34;,
-        &#34;filename&#34;: &#34;tracer_b7.pth&#34;,  # TODO don&#39;t forget change this link!!
+    &#34;scene_classifier.pth&#34;: {
+        &#34;repository&#34;: &#34;Carve/scene_classifier&#34;,
+        &#34;revision&#34;: &#34;71c8e4c771dd5a20ff0c5c9e3c8f1c9cf8082740&#34;,
+        &#34;filename&#34;: &#34;scene_classifier.pth&#34;,
+    },
+    &#34;yolov4_coco_with_classes.pth&#34;: {
+        &#34;repository&#34;: &#34;Carve/yolov4_coco&#34;,
+        &#34;revision&#34;: &#34;e3fc9cd22f86e456d2749d1ae148400f2f950fb3&#34;,
+        &#34;filename&#34;: &#34;yolov4_coco_with_classes.pth&#34;,
+    },
+    &#34;cascadepsp.pth&#34;: {
+        &#34;repository&#34;: &#34;Carve/cascadepsp&#34;,
+        &#34;revision&#34;: &#34;3ca1e5e432344b1277bc88d1c6d4265c46cff62f&#34;,
+        &#34;filename&#34;: &#34;cascadepsp.pth&#34;,
     },
 }
 &#34;&#34;&#34;
@@ -99,8 +109,11 @@ MODELS_CHECKSUMS = {
     &#34;bea1533fda5ee70a909b934a9bd495b432cef89d629f00a07858a517742476fa8b346de24f7&#34;,
     &#34;tracer_b7.pth&#34;: &#34;c439c5c12d4d43d5f9be9ec61e68b2e54658a541bccac2577ef5a54fb252b6e8415d41f7e&#34;
     &#34;c2487033d0c02b4dd08367958e4e62091318111c519f93e2632be7b&#34;,
-    &#34;tracer_hair.pth&#34;: &#34;5c2fb9973fc42fa6208920ffa9ac233cc2ea9f770b24b4a96969d3449aed7ac89e6d37e&#34;
-    &#34;e486a13e63be5499f2df6ccef1109e9e8797d1326207ac89b2f39a7cf&#34;,
+    &#34;scene_classifier.pth&#34;: &#34;6d8692510abde453b406a1fea557afdea62fd2a2a2677283a3ecc2&#34;
+    &#34;341a4895ee99ed65cedcb79b80775db14c3ffcfc0aad2caec1d85140678852039d2d4e76b4&#34;,
+    &#34;yolov4_coco_with_classes.pth&#34;: &#34;44b6ec2dd35dc3802bf8c512002f76e00e97bfbc86bc7af6de2fafce229a41b4ca&#34;
+    &#34;12c6f3d7589278c71cd4ddd62df80389b148c19b84fa03216905407a107fff&#34;,
+    &#34;cascadepsp.pth&#34;: &#34;3f895f5126d80d6f73186f045557ea7c8eab4dfa3d69a995815bb2c03d564573f36c474f04d7bf0022a27829f583a1a793b036adf801cb423e41a4831b830122&#34;,
 }
 &#34;&#34;&#34;
 Model -&gt; checksum dictionary
@@ -133,6 +146,11 @@ class CachedDownloader:
 
     @property
     @abstractmethod
+    def name(self) -&gt; str:
+        return self.__class__.__name__
+
+    @property
+    @abstractmethod
     def fallback_downloader(self) -&gt; Optional[&#34;CachedDownloader&#34;]:
         &#34;&#34;&#34;
         Property MAY be overriden in subclasses.
@@ -157,13 +175,13 @@ class CachedDownloader:
         except BaseException as e:
             if self.fallback_downloader is not None:
                 warnings.warn(
-                    f&#34;Failed to download model from {self.__class__.__name__} downloader.&#34;
-                    f&#34; Trying to download from {self.fallback_downloader.__class__.__name__} downloader.&#34;
+                    f&#34;Failed to download model from {self.name} downloader.&#34;
+                    f&#34; Trying to download from {self.fallback_downloader.name} downloader.&#34;
                 )
                 return self.fallback_downloader.download_model(file_name)
             else:
                 warnings.warn(
-                    f&#34;Failed to download model from {self.__class__.__name__} downloader.&#34;
+                    f&#34;Failed to download model from {self.name} downloader.&#34;
                     f&#34; No fallback downloader available.&#34;
                 )
                 raise e
@@ -188,6 +206,7 @@ class HuggingFaceCompatibleDownloader(CachedDownloader, ABC):
 
     def __init__(
         self,
+        name: str = &#34;Huggingface.co&#34;,
         base_url: str = &#34;https://huggingface.co&#34;,
         fb_downloader: Optional[&#34;CachedDownloader&#34;] = None,
     ):
@@ -196,11 +215,16 @@ class HuggingFaceCompatibleDownloader(CachedDownloader, ABC):
         Points to ~/.cache/carvekit/checkpoints&#34;&#34;&#34;
         self.base_url = base_url
         &#34;&#34;&#34;MUST be a base url with protocol and domain name to huggingface or another, compatible in terms of models downloading API source&#34;&#34;&#34;
+        self._name = name
         self._fallback_downloader = fb_downloader
 
     @property
     def fallback_downloader(self) -&gt; Optional[&#34;CachedDownloader&#34;]:
         return self._fallback_downloader
+
+    @property
+    def name(self):
+        return self._name
 
     def check_for_existence(self, model_name: str) -&gt; Optional[Path]:
         &#34;&#34;&#34;
@@ -242,7 +266,7 @@ class HuggingFaceCompatibleDownloader(CachedDownloader, ABC):
             hugging_face_url = f&#34;{self.base_url}/{url[&#39;repository&#39;]}/resolve/{url[&#39;revision&#39;]}/{url[&#39;filename&#39;]}&#34;
 
             try:
-                r = requests.get(hugging_face_url, stream=True)
+                r = requests.get(hugging_face_url, stream=True, timeout=10)
                 if r.status_code &lt; 400:
                     with open(cached_path, &#34;wb&#34;) as f:
                         r.raw.decode_content = True
@@ -269,10 +293,12 @@ class HuggingFaceCompatibleDownloader(CachedDownloader, ABC):
             return cached_path
 
 
-downloader: CachedDownloader = HuggingFaceCompatibleDownloader(
-    base_url=&#34;https://cdn.carve.photos&#34;
-)
 fallback_downloader: CachedDownloader = HuggingFaceCompatibleDownloader()
+downloader: CachedDownloader = HuggingFaceCompatibleDownloader(
+    base_url=&#34;https://cdn.carve.photos&#34;,
+    fb_downloader=fallback_downloader,
+    name=&#34;Carve CDN&#34;,
+)
 downloader._fallback_downloader = fallback_downloader</code></pre>
 </details>
 </section>
@@ -350,6 +376,11 @@ downloader._fallback_downloader = fallback_downloader</code></pre>
 
     @property
     @abstractmethod
+    def name(self) -&gt; str:
+        return self.__class__.__name__
+
+    @property
+    @abstractmethod
     def fallback_downloader(self) -&gt; Optional[&#34;CachedDownloader&#34;]:
         &#34;&#34;&#34;
         Property MAY be overriden in subclasses.
@@ -374,13 +405,13 @@ downloader._fallback_downloader = fallback_downloader</code></pre>
         except BaseException as e:
             if self.fallback_downloader is not None:
                 warnings.warn(
-                    f&#34;Failed to download model from {self.__class__.__name__} downloader.&#34;
-                    f&#34; Trying to download from {self.fallback_downloader.__class__.__name__} downloader.&#34;
+                    f&#34;Failed to download model from {self.name} downloader.&#34;
+                    f&#34; Trying to download from {self.fallback_downloader.name} downloader.&#34;
                 )
                 return self.fallback_downloader.download_model(file_name)
             else:
                 warnings.warn(
-                    f&#34;Failed to download model from {self.__class__.__name__} downloader.&#34;
+                    f&#34;Failed to download model from {self.name} downloader.&#34;
                     f&#34; No fallback downloader available.&#34;
                 )
                 raise e
@@ -422,6 +453,19 @@ def fallback_downloader(self) -&gt; Optional[&#34;CachedDownloader&#34;]:
     pass</code></pre>
 </details>
 </dd>
+<dt id="carvekit.utils.download_models.CachedDownloader.name"><code class="name">var <span class="ident">name</span> : str</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+@abstractmethod
+def name(self) -&gt; str:
+    return self.__class__.__name__</code></pre>
+</details>
+</dd>
 </dl>
 <h3>Methods</h3>
 <dl>
@@ -454,13 +498,13 @@ def fallback_downloader(self) -&gt; Optional[&#34;CachedDownloader&#34;]:
     except BaseException as e:
         if self.fallback_downloader is not None:
             warnings.warn(
-                f&#34;Failed to download model from {self.__class__.__name__} downloader.&#34;
-                f&#34; Trying to download from {self.fallback_downloader.__class__.__name__} downloader.&#34;
+                f&#34;Failed to download model from {self.name} downloader.&#34;
+                f&#34; Trying to download from {self.fallback_downloader.name} downloader.&#34;
             )
             return self.fallback_downloader.download_model(file_name)
         else:
             warnings.warn(
-                f&#34;Failed to download model from {self.__class__.__name__} downloader.&#34;
+                f&#34;Failed to download model from {self.name} downloader.&#34;
                 f&#34; No fallback downloader available.&#34;
             )
             raise e</code></pre>
@@ -493,7 +537,7 @@ def download_model_base(self, model_name: str) -&gt; Path:
 </dd>
 <dt id="carvekit.utils.download_models.HuggingFaceCompatibleDownloader"><code class="flex name class">
 <span>class <span class="ident">HuggingFaceCompatibleDownloader</span></span>
-<span>(</span><span>base_url: str = 'https://huggingface.co', fb_downloader: Optional[ForwardRef('<a title="carvekit.utils.download_models.CachedDownloader" href="#carvekit.utils.download_models.CachedDownloader">CachedDownloader</a>')] = None)</span>
+<span>(</span><span>name: str = 'Huggingface.co', base_url: str = 'https://huggingface.co', fb_downloader: Optional[ForwardRef('<a title="carvekit.utils.download_models.CachedDownloader" href="#carvekit.utils.download_models.CachedDownloader">CachedDownloader</a>')] = None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Downloader for models from HuggingFace Hub.
@@ -510,6 +554,7 @@ Private models are not supported.</p></div>
 
     def __init__(
         self,
+        name: str = &#34;Huggingface.co&#34;,
         base_url: str = &#34;https://huggingface.co&#34;,
         fb_downloader: Optional[&#34;CachedDownloader&#34;] = None,
     ):
@@ -518,11 +563,16 @@ Private models are not supported.</p></div>
         Points to ~/.cache/carvekit/checkpoints&#34;&#34;&#34;
         self.base_url = base_url
         &#34;&#34;&#34;MUST be a base url with protocol and domain name to huggingface or another, compatible in terms of models downloading API source&#34;&#34;&#34;
+        self._name = name
         self._fallback_downloader = fb_downloader
 
     @property
     def fallback_downloader(self) -&gt; Optional[&#34;CachedDownloader&#34;]:
         return self._fallback_downloader
+
+    @property
+    def name(self):
+        return self._name
 
     def check_for_existence(self, model_name: str) -&gt; Optional[Path]:
         &#34;&#34;&#34;
@@ -564,7 +614,7 @@ Private models are not supported.</p></div>
             hugging_face_url = f&#34;{self.base_url}/{url[&#39;repository&#39;]}/resolve/{url[&#39;revision&#39;]}/{url[&#39;filename&#39;]}&#34;
 
             try:
-                r = requests.get(hugging_face_url, stream=True)
+                r = requests.get(hugging_face_url, stream=True, timeout=10)
                 if r.status_code &lt; 400:
                     with open(cached_path, &#34;wb&#34;) as f:
                         r.raw.decode_content = True
@@ -605,6 +655,18 @@ Private models are not supported.</p></div>
 <dd>
 <div class="desc"><p>SHOULD be same for all instances to prevent downloading same model multiple times
 Points to ~/.cache/carvekit/checkpoints</p></div>
+</dd>
+<dt id="carvekit.utils.download_models.HuggingFaceCompatibleDownloader.name"><code class="name">var <span class="ident">name</span></code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">@property
+def name(self):
+    return self._name</code></pre>
+</details>
 </dd>
 </dl>
 <h3>Methods</h3>
@@ -694,6 +756,7 @@ Points to ~/.cache/carvekit/checkpoints</p></div>
 <li><code><a title="carvekit.utils.download_models.CachedDownloader.download_model" href="#carvekit.utils.download_models.CachedDownloader.download_model">download_model</a></code></li>
 <li><code><a title="carvekit.utils.download_models.CachedDownloader.download_model_base" href="#carvekit.utils.download_models.CachedDownloader.download_model_base">download_model_base</a></code></li>
 <li><code><a title="carvekit.utils.download_models.CachedDownloader.fallback_downloader" href="#carvekit.utils.download_models.CachedDownloader.fallback_downloader">fallback_downloader</a></code></li>
+<li><code><a title="carvekit.utils.download_models.CachedDownloader.name" href="#carvekit.utils.download_models.CachedDownloader.name">name</a></code></li>
 </ul>
 </li>
 <li>
@@ -702,6 +765,7 @@ Points to ~/.cache/carvekit/checkpoints</p></div>
 <li><code><a title="carvekit.utils.download_models.HuggingFaceCompatibleDownloader.base_url" href="#carvekit.utils.download_models.HuggingFaceCompatibleDownloader.base_url">base_url</a></code></li>
 <li><code><a title="carvekit.utils.download_models.HuggingFaceCompatibleDownloader.cache_dir" href="#carvekit.utils.download_models.HuggingFaceCompatibleDownloader.cache_dir">cache_dir</a></code></li>
 <li><code><a title="carvekit.utils.download_models.HuggingFaceCompatibleDownloader.check_for_existence" href="#carvekit.utils.download_models.HuggingFaceCompatibleDownloader.check_for_existence">check_for_existence</a></code></li>
+<li><code><a title="carvekit.utils.download_models.HuggingFaceCompatibleDownloader.name" href="#carvekit.utils.download_models.HuggingFaceCompatibleDownloader.name">name</a></code></li>
 </ul>
 </li>
 </ul>

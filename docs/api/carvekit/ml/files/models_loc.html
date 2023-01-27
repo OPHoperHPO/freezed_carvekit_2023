@@ -86,13 +86,49 @@ def tracer_b7_pretrained() -&gt; pathlib.Path:
     return downloader(&#34;tracer_b7.pth&#34;)
 
 
-def tracer_hair_pretrained() -&gt; pathlib.Path:
-    &#34;&#34;&#34;Returns TRACER with EfficientNet v1 b7 encoder model for hair segmentation location
+def scene_classifier_pretrained() -&gt; pathlib.Path:
+    &#34;&#34;&#34;Returns scene classifier pretrained model location
+    This model is used to classify scenes into 3 categories: hard, soft, digital
+
+    hard - scenes with hard edges, such as objects, buildings, etc.
+    soft - scenes with soft edges, such as portraits, hairs, animal, etc.
+    digital - digital scenes, such as screenshots, graphics, etc.
+
+    more info: https://huggingface.co/Carve/scene_classifier
 
     Returns:
         pathlib.Path: model location
     &#34;&#34;&#34;
-    return downloader(&#34;tracer_hair.pth&#34;)
+    return downloader(&#34;scene_classifier.pth&#34;)
+
+
+def yolov4_coco_pretrained() -&gt; pathlib.Path:
+    &#34;&#34;&#34;Returns yolov4 classifier pretrained model location
+    This model is used to classify objects in images.
+
+    Training dataset: COCO 2017
+    Training classes: 80
+
+    It&#39;s a modified version of the original model from https://github.com/Tianxiaomo/pytorch-YOLOv4 (pytorch)
+    We have only added coco classnames to the model.
+
+    Returns:
+        pathlib.Path to model location
+    &#34;&#34;&#34;
+    return downloader(&#34;yolov4_coco_with_classes.pth&#34;)
+
+
+def cascadepsp_pretrained() -&gt; pathlib.Path:
+    &#34;&#34;&#34;Returns cascade psp pretrained model location
+    This model is used to refine segmentation masks.
+
+    Training dataset: MSRA-10K, DUT-OMRON, ECSSD and FSS-1000
+    more info: https://huggingface.co/Carve/cascadepsp
+
+    Returns:
+        pathlib.Path to model location
+    &#34;&#34;&#34;
+    return downloader(&#34;cascadepsp.pth&#34;)
 
 
 def download_all():
@@ -100,7 +136,10 @@ def download_all():
     fba_pretrained()
     deeplab_pretrained()
     basnet_pretrained()
-    tracer_b7_pretrained()</code></pre>
+    tracer_b7_pretrained()
+    scene_classifier_pretrained()
+    yolov4_coco_pretrained()
+    cascadepsp_pretrained()</code></pre>
 </details>
 </section>
 <section>
@@ -131,6 +170,33 @@ def download_all():
         pathlib.Path: model location
     &#34;&#34;&#34;
     return downloader(&#34;basnet.pth&#34;)</code></pre>
+</details>
+</dd>
+<dt id="carvekit.ml.files.models_loc.cascadepsp_pretrained"><code class="name flex">
+<span>def <span class="ident">cascadepsp_pretrained</span></span>(<span>) ‑> pathlib.Path</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns cascade psp pretrained model location
+This model is used to refine segmentation masks.</p>
+<p>Training dataset: MSRA-10K, DUT-OMRON, ECSSD and FSS-1000
+more info: <a href="https://huggingface.co/Carve/cascadepsp">https://huggingface.co/Carve/cascadepsp</a></p>
+<h2 id="returns">Returns</h2>
+<p>pathlib.Path to model location</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def cascadepsp_pretrained() -&gt; pathlib.Path:
+    &#34;&#34;&#34;Returns cascade psp pretrained model location
+    This model is used to refine segmentation masks.
+
+    Training dataset: MSRA-10K, DUT-OMRON, ECSSD and FSS-1000
+    more info: https://huggingface.co/Carve/cascadepsp
+
+    Returns:
+        pathlib.Path to model location
+    &#34;&#34;&#34;
+    return downloader(&#34;cascadepsp.pth&#34;)</code></pre>
 </details>
 </dd>
 <dt id="carvekit.ml.files.models_loc.deeplab_pretrained"><code class="name flex">
@@ -170,7 +236,10 @@ def download_all():
     fba_pretrained()
     deeplab_pretrained()
     basnet_pretrained()
-    tracer_b7_pretrained()</code></pre>
+    tracer_b7_pretrained()
+    scene_classifier_pretrained()
+    yolov4_coco_pretrained()
+    cascadepsp_pretrained()</code></pre>
 </details>
 </dd>
 <dt id="carvekit.ml.files.models_loc.fba_pretrained"><code class="name flex">
@@ -196,6 +265,41 @@ def download_all():
     return downloader(&#34;fba_matting.pth&#34;)</code></pre>
 </details>
 </dd>
+<dt id="carvekit.ml.files.models_loc.scene_classifier_pretrained"><code class="name flex">
+<span>def <span class="ident">scene_classifier_pretrained</span></span>(<span>) ‑> pathlib.Path</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns scene classifier pretrained model location
+This model is used to classify scenes into 3 categories: hard, soft, digital</p>
+<p>hard - scenes with hard edges, such as objects, buildings, etc.
+soft - scenes with soft edges, such as portraits, hairs, animal, etc.
+digital - digital scenes, such as screenshots, graphics, etc.</p>
+<p>more info: <a href="https://huggingface.co/Carve/scene_classifier">https://huggingface.co/Carve/scene_classifier</a></p>
+<h2 id="returns">Returns</h2>
+<dl>
+<dt><code>pathlib.Path</code></dt>
+<dd>model location</dd>
+</dl></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def scene_classifier_pretrained() -&gt; pathlib.Path:
+    &#34;&#34;&#34;Returns scene classifier pretrained model location
+    This model is used to classify scenes into 3 categories: hard, soft, digital
+
+    hard - scenes with hard edges, such as objects, buildings, etc.
+    soft - scenes with soft edges, such as portraits, hairs, animal, etc.
+    digital - digital scenes, such as screenshots, graphics, etc.
+
+    more info: https://huggingface.co/Carve/scene_classifier
+
+    Returns:
+        pathlib.Path: model location
+    &#34;&#34;&#34;
+    return downloader(&#34;scene_classifier.pth&#34;)</code></pre>
+</details>
+</dd>
 <dt id="carvekit.ml.files.models_loc.tracer_b7_pretrained"><code class="name flex">
 <span>def <span class="ident">tracer_b7_pretrained</span></span>(<span>) ‑> pathlib.Path</span>
 </code></dt>
@@ -217,29 +321,6 @@ def download_all():
         pathlib.Path: model location
     &#34;&#34;&#34;
     return downloader(&#34;tracer_b7.pth&#34;)</code></pre>
-</details>
-</dd>
-<dt id="carvekit.ml.files.models_loc.tracer_hair_pretrained"><code class="name flex">
-<span>def <span class="ident">tracer_hair_pretrained</span></span>(<span>) ‑> pathlib.Path</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Returns TRACER with EfficientNet v1 b7 encoder model for hair segmentation location</p>
-<h2 id="returns">Returns</h2>
-<dl>
-<dt><code>pathlib.Path</code></dt>
-<dd>model location</dd>
-</dl></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def tracer_hair_pretrained() -&gt; pathlib.Path:
-    &#34;&#34;&#34;Returns TRACER with EfficientNet v1 b7 encoder model for hair segmentation location
-
-    Returns:
-        pathlib.Path: model location
-    &#34;&#34;&#34;
-    return downloader(&#34;tracer_hair.pth&#34;)</code></pre>
 </details>
 </dd>
 <dt id="carvekit.ml.files.models_loc.u2net_full_pretrained"><code class="name flex">
@@ -265,6 +346,38 @@ def download_all():
     return downloader(&#34;u2net.pth&#34;)</code></pre>
 </details>
 </dd>
+<dt id="carvekit.ml.files.models_loc.yolov4_coco_pretrained"><code class="name flex">
+<span>def <span class="ident">yolov4_coco_pretrained</span></span>(<span>) ‑> pathlib.Path</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Returns yolov4 classifier pretrained model location
+This model is used to classify objects in images.</p>
+<p>Training dataset: COCO 2017
+Training classes: 80</p>
+<p>It's a modified version of the original model from <a href="https://github.com/Tianxiaomo/pytorch-YOLOv4">https://github.com/Tianxiaomo/pytorch-YOLOv4</a> (pytorch)
+We have only added coco classnames to the model.</p>
+<h2 id="returns">Returns</h2>
+<p>pathlib.Path to model location</p></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def yolov4_coco_pretrained() -&gt; pathlib.Path:
+    &#34;&#34;&#34;Returns yolov4 classifier pretrained model location
+    This model is used to classify objects in images.
+
+    Training dataset: COCO 2017
+    Training classes: 80
+
+    It&#39;s a modified version of the original model from https://github.com/Tianxiaomo/pytorch-YOLOv4 (pytorch)
+    We have only added coco classnames to the model.
+
+    Returns:
+        pathlib.Path to model location
+    &#34;&#34;&#34;
+    return downloader(&#34;yolov4_coco_with_classes.pth&#34;)</code></pre>
+</details>
+</dd>
 </dl>
 </section>
 <section>
@@ -284,12 +397,14 @@ def download_all():
 <li><h3><a href="#header-functions">Functions</a></h3>
 <ul class="">
 <li><code><a title="carvekit.ml.files.models_loc.basnet_pretrained" href="#carvekit.ml.files.models_loc.basnet_pretrained">basnet_pretrained</a></code></li>
+<li><code><a title="carvekit.ml.files.models_loc.cascadepsp_pretrained" href="#carvekit.ml.files.models_loc.cascadepsp_pretrained">cascadepsp_pretrained</a></code></li>
 <li><code><a title="carvekit.ml.files.models_loc.deeplab_pretrained" href="#carvekit.ml.files.models_loc.deeplab_pretrained">deeplab_pretrained</a></code></li>
 <li><code><a title="carvekit.ml.files.models_loc.download_all" href="#carvekit.ml.files.models_loc.download_all">download_all</a></code></li>
 <li><code><a title="carvekit.ml.files.models_loc.fba_pretrained" href="#carvekit.ml.files.models_loc.fba_pretrained">fba_pretrained</a></code></li>
+<li><code><a title="carvekit.ml.files.models_loc.scene_classifier_pretrained" href="#carvekit.ml.files.models_loc.scene_classifier_pretrained">scene_classifier_pretrained</a></code></li>
 <li><code><a title="carvekit.ml.files.models_loc.tracer_b7_pretrained" href="#carvekit.ml.files.models_loc.tracer_b7_pretrained">tracer_b7_pretrained</a></code></li>
-<li><code><a title="carvekit.ml.files.models_loc.tracer_hair_pretrained" href="#carvekit.ml.files.models_loc.tracer_hair_pretrained">tracer_hair_pretrained</a></code></li>
 <li><code><a title="carvekit.ml.files.models_loc.u2net_full_pretrained" href="#carvekit.ml.files.models_loc.u2net_full_pretrained">u2net_full_pretrained</a></code></li>
+<li><code><a title="carvekit.ml.files.models_loc.yolov4_coco_pretrained" href="#carvekit.ml.files.models_loc.yolov4_coco_pretrained">yolov4_coco_pretrained</a></code></li>
 </ul>
 </li>
 </ul>
