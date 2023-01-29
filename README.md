@@ -45,24 +45,28 @@ It can be briefly described as
 3. Using machine learning technology, the background of the image is removed
 4. Image post-processing to improve the quality of the processed image
 ## 🎓 Implemented Neural Networks:
-|        Networks         |                   Target                    |             Accuracy             |
-|:-----------------------:|:-------------------------------------------:|:--------------------------------:|
-| **Tracer-B7** (default) |     **General** (objects, animals, etc)     | **90%** (mean F1-Score, DUTS-TE) |
-|         U^2-net         | **Hairs** (hairs, people, animals, objects) |  80.4% (mean F1-Score, DUTS-TE)  |
-|         BASNet          |        **General** (people, objects)        |  80.3% (mean F1-Score, DUTS-TE)  |
-|        DeepLabV3        |         People, Animals, Cars, etc          |  67.4% (mean IoU, COCO val2017)  |
+|        Networks         |                   Target                    |               Accuracy               |
+|:-----------------------:|:-------------------------------------------:|:------------------------------------:|
+| **Tracer-B7** (default) |     **General** (objects, animals, etc)     | **90%** (mean F1-Score, DUTS-TE, LR) |
+|        **ISNet**        |     **Hairs** (hairs, people, animals)      |  **79%** (max F1-Score, DIS5K, HR)   |
+|         U^2-net         | **Hairs** (hairs, people, animals, objects) |  80.4% (mean F1-Score, DUTS-TE, LR)  |
+|         BASNet          |        **General** (people, objects)        |  80.3% (mean F1-Score, DUTS-TE, LR)  |
+|        DeepLabV3        |         People, Animals, Cars, etc          |  67.4% (mean IoU, COCO val2017, LR)  |
 
+> HR - High resolution images.
+> LR - Low resolution images.
 ### Recommended parameters for different models
 |  Networks   | Segmentation mask  size | Trimap parameters (dilation, erosion) |
 |:-----------:|:-----------------------:|:-------------------------------------:|
 | `tracer_b7` |           640           |                (30, 5)                |
+|   `isnet`   |          1024           |                (30, 5)                |
 |   `u2net`   |           320           |                (30, 5)                |
 |  `basnet`   |           320           |                (30, 5)                |
 | `deeplabv3` |          1024           |               (40, 20)                |
 
 > ### Notes: 
 > 1. The final quality may depend on the resolution of your image, the type of scene or object.
-> 2. Use **U2-Net for hairs** and **Tracer-B7 for general images** and correct parameters. \
+> 2. Use **ISNet for hairs** or **U2-Net for hairs** and **Tracer-B7 for general images** and correct parameters. \
 > It is very important for final quality! Example images was taken by using U2-Net and FBA post-processing.
 ## 🖼️ Image pre-processing and post-processing methods:
 ### 🔍 Preprocessing methods:
@@ -216,7 +220,7 @@ Options:
                                   processed by refining network
 
   --seg_mask_size 640          The size of the input image for the
-                               segmentation neural network. Use 640 for Tracer B7 and 320 for U2Net
+                               segmentation neural network. Use 640 for Tracer B7 and 1024 for ISNet
 
   --matting_mask_size 2048     The size of the input image for the matting
                                neural network.

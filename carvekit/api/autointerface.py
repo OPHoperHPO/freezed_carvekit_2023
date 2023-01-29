@@ -13,6 +13,7 @@ from carvekit.api.interface import Interface
 from carvekit.ml.wrap.basnet import BASNET
 from carvekit.ml.wrap.cascadepsp import CascadePSP
 from carvekit.ml.wrap.deeplab_v3 import DeepLabV3
+from carvekit.ml.wrap.isnet import ISNet
 from carvekit.ml.wrap.fba_matting import FBAMatting
 from carvekit.ml.wrap.scene_classifier import SceneClassifier
 from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
@@ -73,6 +74,8 @@ class AutoInterface(Interface):
             return {"prob_threshold": 231, "kernel_size": 30, "erosion_iters": 5}
         elif net == U2NET:
             return {"prob_threshold": 231, "kernel_size": 30, "erosion_iters": 5}
+        elif net == ISNet:
+            return {"prob_threshold": 231, "kernel_size": 30, "erosion_iters": 5}
         elif net == DeepLabV3:
             return {"prob_threshold": 231, "kernel_size": 40, "erosion_iters": 20}
         elif net == BASNET:
@@ -111,7 +114,7 @@ class AutoInterface(Interface):
                     image_info["net"] = TracerUniversalB7
                 elif obj_counter["animals"] > 0:
                     # Animals case
-                    image_info["net"] = U2NET  # animals should be always in soft scenes
+                    image_info["net"] = ISNet  # animals should be always in soft scenes
                 else:
                     # We have no idea what is in the image, so we will try to process it with universal model
                     image_info["net"] = TracerUniversalB7
@@ -134,16 +137,16 @@ class AutoInterface(Interface):
 
                 if obj_counter["human"] > 0 and len(non_empty_classes) == 1:
                     # Human only case. It may be a portrait
-                    image_info["net"] = U2NET
+                    image_info["net"] = ISNet
                 elif obj_counter["human"] > 0 and len(non_empty_classes) > 1:
                     # Okay, we have a human with hairs and something else
-                    image_info["net"] = U2NET
+                    image_info["net"] = ISNet
                 elif obj_counter["cars"] > 0:
                     # Cars case.
                     image_info["net"] = TracerUniversalB7
                 elif obj_counter["animals"] > 0:
                     # Animals case
-                    image_info["net"] = U2NET  # animals should be always in soft scenes
+                    image_info["net"] = ISNet  # animals should be always in soft scenes
                 else:
                     # We have no idea what is in the image, so we will try to process it with universal model
                     image_info["net"] = TracerUniversalB7

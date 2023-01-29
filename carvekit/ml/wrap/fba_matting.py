@@ -33,7 +33,7 @@ class FBAMatting(FBA):
     def __init__(
         self,
         device="cpu",
-        input_tensor_size: Union[List[int], int] = 1500,
+        input_tensor_size: Union[List[int], int] = 2048, #1500,
         batch_size: int = 2,
         encoder="resnet50_GN_WS",
         load_pretrained: bool = True,

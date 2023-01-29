@@ -11,7 +11,7 @@ from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
 from carvekit.ml.wrap.cascadepsp import CascadePSP
 from carvekit.ml.wrap.scene_classifier import SceneClassifier
 from carvekit.pipelines.preprocessing import AutoScene
-from carvekit.ml.wrap.u2net import U2NET
+from carvekit.ml.wrap.isnet import ISNet
 from carvekit.pipelines.postprocessing import CasMattingMethod
 from carvekit.trimap.generator import TrimapGenerator
 
@@ -71,7 +71,7 @@ class HiInterface(Interface):
                 fp16=fp16,
             )
         elif object_type == "hairs-like":
-            self._segnet = U2NET(
+            self._segnet = ISNet(
                 device=device,
                 batch_size=batch_size_seg,
                 input_image_size=seg_mask_size,

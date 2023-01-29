@@ -21,7 +21,7 @@ class MLConfig(BaseModel):
     """Config for ml part of framework"""
 
     segmentation_network: Literal[
-        "u2net", "deeplabv3", "basnet", "tracer_b7"
+        "u2net", "deeplabv3", "basnet", "tracer_b7", "isnet"
     ] = "tracer_b7"
     """Segmentation Network"""
     preprocessing_method: Literal["none", "stub", "autoscene", "auto"] = "autoscene"
