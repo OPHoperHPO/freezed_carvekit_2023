@@ -60,6 +60,11 @@ MODELS_URLS = {
         "revision": "3ca1e5e432344b1277bc88d1c6d4265c46cff62f",
         "filename": "cascadepsp.pth",
     },
+    "isnet.pth": {
+        "repository": "Carve/isnet",
+        "revision": "91475fcb280243259a551653597c4702eabe9ff1",
+        "filename": "isnet.pth",
+    },
 }
 
 MODELS_CHECKSUMS = {
@@ -77,7 +82,10 @@ MODELS_CHECKSUMS = {
     "341a4895ee99ed65cedcb79b80775db14c3ffcfc0aad2caec1d85140678852039d2d4e76b4",
     "yolov4_coco_with_classes.pth": "44b6ec2dd35dc3802bf8c512002f76e00e97bfbc86bc7af6de2fafce229a41b4ca"
     "12c6f3d7589278c71cd4ddd62df80389b148c19b84fa03216905407a107fff",
-    "cascadepsp.pth": "3f895f5126d80d6f73186f045557ea7c8eab4dfa3d69a995815bb2c03d564573f36c474f04d7bf0022a27829f583a1a793b036adf801cb423e41a4831b830122",
+    "cascadepsp.pth": "3f895f5126d80d6f73186f045557ea7c8eab4dfa3d69a995815bb2c03d564573f36c474f0"
+                      "4d7bf0022a27829f583a1a793b036adf801cb423e41a4831b830122",
+    "isnet.pth": "e996b95c78aefe4573950ce1ed2eec20fa3c869381e9b5233c361a8e1dff09f"
+                 "844f6c054c9cfa55377ae16a4cf55e727926599df0b1b8af65de478eccfac4708"
 }
 
 

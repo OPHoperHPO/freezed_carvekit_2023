@@ -17,6 +17,15 @@ def u2net_full_pretrained() -> pathlib.Path:
     return downloader("u2net.pth")
 
 
+def isnet_full_pretrained() -> pathlib.Path:
+    """Returns isnet pretrained model location
+
+    Returns:
+        pathlib.Path to model location
+    """
+    return downloader("isnet.pth")
+
+
 def basnet_pretrained() -> pathlib.Path:
     """Returns basnet pretrained model location
 
