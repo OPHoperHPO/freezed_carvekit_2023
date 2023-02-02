@@ -45,13 +45,13 @@ It can be briefly described as
 3. Using machine learning technology, the background of the image is removed
 4. Image post-processing to improve the quality of the processed image
 ## 🎓 Implemented Neural Networks:
-|        Networks         |                   Target                    |               Accuracy               |
-|:-----------------------:|:-------------------------------------------:|:------------------------------------:|
-| **Tracer-B7** (default) |     **General** (objects, animals, etc)     | **90%** (mean F1-Score, DUTS-TE, LR) |
-|        **ISNet**        |     **Hairs** (hairs, people, animals)      |  **79%** (max F1-Score, DIS5K, HR)   |
-|         U^2-net         | **Hairs** (hairs, people, animals, objects) |  80.4% (mean F1-Score, DUTS-TE, LR)  |
-|         BASNet          |        **General** (people, objects)        |  80.3% (mean F1-Score, DUTS-TE, LR)  |
-|        DeepLabV3        |         People, Animals, Cars, etc          |  67.4% (mean IoU, COCO val2017, LR)  |
+|        Networks         |                   Target                    |                Accuracy                |
+|:-----------------------:|:-------------------------------------------:|:--------------------------------------:|
+| **Tracer-B7** (default) |     **General** (objects, animals, etc)     | **91.5%** (mean F1-Score, DUTS-TE, LR) |
+|        **ISNet**        |     **Hairs** (hairs, people, animals)      |  **96%** (mean F1-Score, DUTS-TE, LR)  |
+|         U^2-net         | **Hairs** (hairs, people, animals, objects) |   80.4% (mean F1-Score, DUTS-TE, LR)   |
+|         BASNet          |        **General** (people, objects)        |   80.3% (mean F1-Score, DUTS-TE, LR)   |
+|        DeepLabV3        |         People, Animals, Cars, etc          |   67.4% (mean IoU, COCO val2017, LR)   |
 
 > HR - High resolution images.
 > LR - Low resolution images.
