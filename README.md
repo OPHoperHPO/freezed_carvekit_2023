@@ -5,7 +5,7 @@
 <p align="center">
 <img src="https://github.com/OPHoperHPO/image-background-remove-tool/actions/workflows/master_docker.yaml/badge.svg">
 <img src="https://github.com/OPHoperHPO/image-background-remove-tool/actions/workflows/master.yml/badge.svg">
-<a href="https://colab.research.google.com/github/OPHoperHPO/image-background-remove-tool/blob/master/docs/other/carvekit_try.ipynb">
+<a href="https://colab.research.google.com/github/OPHoperHPO/freezed_carvekit_2023/blob/master/docs/other/carvekit_try.ipynb">
 <img src="https://camo.githubusercontent.com/52feade06f2fecbf006889a904d221e6a730c194/68747470733a2f2f636f6c61622e72657365617263682e676f6f676c652e636f6d2f6173736574732f636f6c61622d62616467652e737667"></a>
 
 </p>
@@ -37,7 +37,7 @@ Automated high-quality background removal framework for an image using neural ne
 - Easy integration with your code
 - Models hosted on [HuggingFace](https://huggingface.co/Carve)
 
-## ⛱ Try yourself on [Google Colab](https://colab.research.google.com/github/OPHoperHPO/image-background-remove-tool/blob/master/docs/other/carvekit_try.ipynb) 
+## ⛱ Try yourself on [Google Colab](https://colab.research.google.com/github/OPHoperHPO/freezed_carvekit_2023/blob/master/docs/other/carvekit_try.ipynb) 
 ## ⛓️ How does it work?
 It can be briefly described as
 1. The user selects a picture or a folder with pictures for processing
@@ -84,13 +84,15 @@ It can be briefly described as
 * `cascade_fba` (default) - This algorithm refines the segmentation mask using CascadePSP neural network and then applies the FBA algorithm.
 
 ## 🏷 Setup for CPU processing:
-1. `pip install carvekit --extra-index-url https://download.pytorch.org/whl/cpu`
+1. `pip install git+https://github.com/OPHoperHPO/freezed_carvekit_2023 --extra-index-url https://download.pytorch.org/whl/cpu`
 > The project supports python versions from 3.8 to 3.10.4
 ## 🏷 Setup for GPU processing:  
 1. Make sure you have an NVIDIA GPU with 8 GB VRAM.
 2. Install `CUDA Toolkit and Video Driver for your GPU`
-3. `pip install carvekit --extra-index-url https://download.pytorch.org/whl/cu113`
+3. `pip install git+https://github.com/OPHoperHPO/freezed_carvekit_2023 --extra-index-url https://download.pytorch.org/whl/cu113`
 > The project supports python versions from 3.8 to 3.10.4
+> Please, build and install carvekit directly from this repo. 
+> Don't use prebuilt binaries from PyPI or other already links. It's only for main repo.
 ## 🧰 Interact via code:  
 ### If you don't need deep configuration or don't want to deal with it
 ``` python
@@ -287,18 +289,6 @@ See `docker-compose.<device>.yml` for more information. \
 
 ## 👪 Credits: [More info](docs/CREDITS.md)
 
-## 💵 Support
-  You can thank me for developing this project and buy me a small cup of coffee ☕
-
-| Blockchain |           Cryptocurrency            |          Network          |                                             Wallet                                              |
-|:----------:|:-----------------------------------:|:-------------------------:|:-----------------------------------------------------------------------------------------------:|
-|  Ethereum  | ETH / USDT / USDC / BNB / Dogecoin  |          Mainnet          |                           0x7Ab1B8015020242D2a9bC48F09b2F34b994bc2F8                            |
-|  Ethereum  | ETH / USDT / USDC / BNB / Dogecoin  | BSC (Binance Smart Chain) |                           0x7Ab1B8015020242D2a9bC48F09b2F34b994bc2F8                            |
-|  Bitcoin   |                 BTC                 |             -             |                           bc1qmf4qedujhhvcsg8kxpg5zzc2s3jvqssmu7mmhq                            |
-|   ZCash    |                 ZEC                 |             -             |                               t1d7b9WxdboGFrcVVHG2ZuwWBgWEKhNUbtm                               |
-|    Tron    |                 TRX                 |             -             |                               TH12CADSqSTcNZPvG77GVmYKAe4nrrJB5X                                |
-|   Monero   |                 XMR                 |          Mainnet          | 48w2pDYgPtPenwqgnNneEUC9Qt1EE6eD5MucLvU3FGpY3SABudDa4ce5bT1t32oBwchysRCUimCkZVsD1HQRBbxVLF9GTh3 |
-|    TON     |                 TON                 |             -             |                        EQCznqTdfOKI3L06QX-3Q802tBL0ecSWIKfkSjU-qsoy0CWE                         |
 ## 📧 __Feedback__
 I will be glad to receive feedback on the project and suggestions for integration.
 
