@@ -114,15 +114,15 @@ class SceneClassifier:
 
     def __call__(
         self, images: List[Union[str, pathlib.Path, PIL.Image.Image]]
-    ) -> List[PIL.Image.Image]:
+    ) -> Tuple[List[str], List[float]]:
         """
-        Passes input images though neural network and returns segmentation masks as PIL.Image.Image instances
+        Passes input images though neural network and returns class predictions.
 
         Args:
             images: input images
 
         Returns:
-            segmentation masks as for input images, as PIL.Image.Image instances
+            Top-k class of scene type, probability of these classes for every passed image
 
         """
         collect_masks = []
@@ -130,11 +130,11 @@ class SceneClassifier:
         with autocast:
             cast_network(self.model, dtype)
             for image_batch in batch_generator(images, self.batch_size):
-                images = thread_pool_processing(
+                converted_images = thread_pool_processing(
                     lambda x: convert_image(load_image(x)), image_batch
                 )
                 batches = torch.vstack(
-                    thread_pool_processing(self.data_preprocessing, images)
+                    thread_pool_processing(self.data_preprocessing, converted_images)
                 )
                 with torch.no_grad():
                     batches = Variable(batches).to(self.device)
@@ -143,7 +143,7 @@ class SceneClassifier:
                     del batches, masks
                 masks = thread_pool_processing(
                     lambda x: self.data_postprocessing(masks_cpu[x]),
-                    range(len(images)),
+                    range(len(converted_images)),
                 )
                 collect_masks += masks
 

@@ -10,7 +10,7 @@ from typing import Union, List
 
 from carvekit.ml.wrap.scene_classifier import SceneClassifier
 from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
-from carvekit.ml.wrap.u2net import U2NET
+from carvekit.ml.wrap.isnet import ISNet
 
 __all__ = ["AutoScene"]
 
@@ -36,7 +36,7 @@ class AutoScene:
         if scene == "hard":
             return TracerUniversalB7
         elif scene == "soft":
-            return U2NET
+            return ISNet
         elif scene == "digital":
             return TracerUniversalB7  # TODO: not implemented yet
 
