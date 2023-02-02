@@ -1,14 +1,15 @@
 # <p align="center"> ✂️ CarveKit ✂️  </p>
 
-<p align="center"> <img src="/docs/imgs/logo.png"> </p>
+<p align="center"> <img src="docs/imgs/logo.png"> </p>
 
 <p align="center">
-<img src="https://github.githubassets.com/favicons/favicon-success.svg"> <a src="https://github.com/OPHoperHPO/image-background-remove-tool/actions">
-<img src="https://github.com/OPHoperHPO/image-background-remove-tool/workflows/Test%20release%20version/badge.svg?branch=master"> <a src="https://colab.research.google.com/github/OPHoperHPO/image-background-remove-tool/blob/master/docs/other/carvekit_try.ipynb">
-<a href="https://colab.research.google.com/github/OPHoperHPO/image-background-remove-tool/blob/master/docs/other/carvekit_try.ipynb">
+<img src="https://github.com/OPHoperHPO/image-background-remove-tool/actions/workflows/master_docker.yaml/badge.svg">
+<img src="https://github.com/OPHoperHPO/image-background-remove-tool/actions/workflows/master.yml/badge.svg">
+<a href="https://colab.research.google.com/github/OPHoperHPO/freezed_carvekit_2023/blob/master/docs/other/carvekit_try.ipynb">
 <img src="https://camo.githubusercontent.com/52feade06f2fecbf006889a904d221e6a730c194/68747470733a2f2f636f6c61622e72657365617263682e676f6f676c652e636f6d2f6173736574732f636f6c61622d62616467652e737667"></a>
 
 </p>
+
 
 **********************************************************************
 <p align="center"> <img align="center" width="512" height="288" src="/docs/imgs/compare/readme.jpg"> </p>
@@ -36,7 +37,7 @@
 - Простая интеграция с вашим кодом
 - Модели размещены на [HuggingFace](https://huggingface.co/Carve)
 
-## ⛱ Попробуйте сами на [Google Colab](https://colab.research.google.com/github/OPHoperHPO/image-background-remove-tool/blob/master/docs/other/carvekit_try.ipynb) 
+## ⛱ Попробуйте сами на [Google Colab](https://colab.research.google.com/github/OPHoperHPO/freezed_carvekit_2023/blob/master/docs/other/carvekit_try.ipynb) 
 ## ⛓️ Как это работает?
 
 1. Пользователь выбирает картинку или папку с картинками для обработки
@@ -82,15 +83,16 @@
 * `cascade_fba` (default) - Этот алгоритм уточняет маску сегментации с помощью нейронной сети CascadePSP, а затем применяет алгоритм FBA.
 
 ## 🏷 Настройка для обработки на CPU:
-1. `pip install carvekit --extra-index-url https://download.pytorch.org/whl/cpu`
+1. `pip install git+https://github.com/OPHoperHPO/freezed_carvekit_2023 --extra-index-url https://download.pytorch.org/whl/cpu`
 > Проект поддерживает версии Python от 3.8 до 3.10.4.
 
 ## 🏷 Настройка для обработки на GPU:  
 1. Убедитесь, что у вас есть графический процессор NVIDIA с 8 ГБ видеопамяти.
 2. Установите `CUDA Toolkit и Видеодрайвер для вашей видеокарты.`
-3. `pip install carvekit --extra-index-url https://download.pytorch.org/whl/cu113`
+3. `pip install git+https://github.com/OPHoperHPO/freezed_carvekit_2023 --extra-index-url https://download.pytorch.org/whl/cu113`
 > Проект поддерживает версии Python от 3.8 до 3.10.4.
-
+> Пожалуйста, соберите и установите carvekit прямо из этого репозитория.
+> Не используйте готовые двоичные файлы из PyPI или других уже имеющихся ссылок. Это только для основного репо.
 ## 🧰 Интеграция в код:  
 ### Если вы хотите быстрее приступить к работе без дополнительной настройки
 ``` python
