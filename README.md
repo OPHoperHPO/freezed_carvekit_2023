@@ -5,7 +5,6 @@
 <p align="center">
 <img src="https://github.com/OPHoperHPO/image-background-remove-tool/actions/workflows/master_docker.yaml/badge.svg">
 <img src="https://github.com/OPHoperHPO/image-background-remove-tool/actions/workflows/master.yml/badge.svg">
-<a href="https://colab.research.google.com/github/OPHoperHPO/freezed_carvekit_2023/blob/master/docs/other/carvekit_try.ipynb">
 <img src="https://camo.githubusercontent.com/52feade06f2fecbf006889a904d221e6a730c194/68747470733a2f2f636f6c61622e72657365617263682e676f6f676c652e636f6d2f6173736574732f636f6c61622d62616467652e737667"></a>
 
 </p>
@@ -37,7 +36,6 @@ Automated high-quality background removal framework for an image using neural ne
 - Easy integration with your code
 - Models hosted on [HuggingFace](https://huggingface.co/Carve)
 
-## ⛱ Try yourself on [Google Colab](https://colab.research.google.com/github/OPHoperHPO/freezed_carvekit_2023/blob/master/docs/other/carvekit_try.ipynb) 
 ## ⛓️ How does it work?
 It can be briefly described as
 1. The user selects a picture or a folder with pictures for processing
