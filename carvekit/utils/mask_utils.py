@@ -21,7 +21,7 @@ def apply_mask(
         Image without background, where mask was black.
     """
     background = PIL.Image.new("RGBA", image.size, color=(130, 130, 130, 0))
-    return PIL.Image.composite(image, background, mask).convert("RGBA")
+    return PIL.Image.composite(image.convert('RGBA'), background.convert('RGBA'), mask.convert('L')).convert("RGBA")
 
 
 def extract_alpha_channel(image: PIL.Image.Image) -> PIL.Image.Image:
