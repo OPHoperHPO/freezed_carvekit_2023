@@ -29,7 +29,6 @@ def test_apply_mask():
             apply_mask(
                 image=PIL.Image.new("RGB", (512, 512)),
                 mask=PIL.Image.new("RGB", (512, 512)),
-                device="cpu",
             ),
             PIL.Image.Image,
         )

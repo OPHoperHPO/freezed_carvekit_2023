@@ -69,7 +69,7 @@ class MattingMethod:
         return list(
             map(
                 lambda x: apply_mask(
-                    image=images[x], mask=alpha[x], device=self.device
+                    image=images[x], mask=alpha[x]
                 ),
                 range(len(images)),
             )
