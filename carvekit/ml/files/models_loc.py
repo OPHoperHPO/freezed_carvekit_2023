@@ -17,6 +17,15 @@ def u2net_full_pretrained() -> pathlib.Path:
     return downloader("u2net.pth")
 
 
+def isnet_full_pretrained() -> pathlib.Path:
+    """Returns isnet pretrained model location
+
+    Returns:
+        pathlib.Path to model location
+    """
+    return downloader("isnet.pth")
+
+
 def basnet_pretrained() -> pathlib.Path:
     """Returns basnet pretrained model location
 
@@ -69,6 +78,35 @@ def scene_classifier_pretrained() -> pathlib.Path:
     return downloader("scene_classifier.pth")
 
 
+def yolov4_coco_pretrained() -> pathlib.Path:
+    """Returns yolov4 classifier pretrained model location
+    This model is used to classify objects in images.
+
+    Training dataset: COCO 2017
+    Training classes: 80
+
+    It's a modified version of the original model from https://github.com/Tianxiaomo/pytorch-YOLOv4 (pytorch)
+    We have only added coco classnames to the model.
+
+    Returns:
+        pathlib.Path to model location
+    """
+    return downloader("yolov4_coco_with_classes.pth")
+
+
+def cascadepsp_pretrained() -> pathlib.Path:
+    """Returns cascade psp pretrained model location
+    This model is used to refine segmentation masks.
+
+    Training dataset: MSRA-10K, DUT-OMRON, ECSSD and FSS-1000
+    more info: https://huggingface.co/Carve/cascadepsp
+
+    Returns:
+        pathlib.Path to model location
+    """
+    return downloader("cascadepsp.pth")
+
+
 def download_all():
     u2net_full_pretrained()
     fba_pretrained()
@@ -76,3 +114,5 @@ def download_all():
     basnet_pretrained()
     tracer_b7_pretrained()
     scene_classifier_pretrained()
+    yolov4_coco_pretrained()
+    cascadepsp_pretrained()

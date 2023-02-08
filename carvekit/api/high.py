@@ -8,10 +8,11 @@ import warnings
 from carvekit.api.interface import Interface
 from carvekit.ml.wrap.fba_matting import FBAMatting
 from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
+from carvekit.ml.wrap.cascadepsp import CascadePSP
 from carvekit.ml.wrap.scene_classifier import SceneClassifier
 from carvekit.pipelines.preprocessing import AutoScene
-from carvekit.ml.wrap.u2net import U2NET
-from carvekit.pipelines.postprocessing import MattingMethod
+from carvekit.ml.wrap.isnet import ISNet
+from carvekit.pipelines.postprocessing import CasMattingMethod
 from carvekit.trimap.generator import TrimapGenerator
 
 
@@ -22,9 +23,11 @@ class HiInterface(Interface):
         batch_size_pre=5,
         batch_size_seg=2,
         batch_size_matting=1,
+        batch_size_refine=1,
         device="cpu",
         seg_mask_size=640,
         matting_mask_size=2048,
+        refine_mask_size=900,
         trimap_prob_threshold=231,
         trimap_dilation=30,
         trimap_erosion_iters=5,
@@ -45,6 +48,8 @@ class HiInterface(Interface):
             trimap_prob_threshold: Probability threshold at which the prob_filter and prob_as_unknown_area operations will be applied
             trimap_dilation: The size of the offset radius from the object mask in pixels when forming an unknown area
             trimap_erosion_iters: The number of iterations of erosion that the object's mask will be subjected to before forming an unknown area
+            refine_mask_size: The size of the input image for the refinement neural network.
+            batch_size_refine: Number of images processed per one refinement neural network call.
 
         Notes:
             1. Changing seg_mask_size may cause an out-of-memory error if the value is too large, and it may also
@@ -66,7 +71,7 @@ class HiInterface(Interface):
                 fp16=fp16,
             )
         elif object_type == "hairs-like":
-            self._segnet = U2NET(
+            self._segnet = ISNet(
                 device=device,
                 batch_size=batch_size_seg,
                 input_image_size=seg_mask_size,
@@ -97,6 +102,12 @@ class HiInterface(Interface):
                 fp16=fp16,
             )
 
+        self._cascade_psp = CascadePSP(
+            device=device,
+            batch_size=batch_size_refine,
+            input_tensor_size=refine_mask_size,
+            fp16=fp16,
+        )
         self._fba = FBAMatting(
             batch_size=batch_size_matting,
             device=device,
@@ -111,7 +122,8 @@ class HiInterface(Interface):
         super(HiInterface, self).__init__(
             pre_pipe=preprocess_pipeline,
             seg_pipe=self._segnet,
-            post_pipe=MattingMethod(
+            post_pipe=CasMattingMethod(
+                refining_module=self._cascade_psp,
                 matting_module=self._fba,
                 trimap_generator=self._trimap_generator,
                 device=device,
