@@ -7,7 +7,8 @@ import PIL.Image
 
 
 def apply_mask(
-    image: PIL.Image.Image, mask: PIL.Image.Image,
+    image: PIL.Image.Image,
+    mask: PIL.Image.Image,
 ) -> PIL.Image.Image:
     """
     Applies mask to foreground.
@@ -21,7 +22,9 @@ def apply_mask(
         Image without background, where mask was black.
     """
     background = PIL.Image.new("RGBA", image.size, color=(130, 130, 130, 0))
-    return PIL.Image.composite(image.convert('RGBA'), background.convert('RGBA'), mask.convert('L')).convert("RGBA")
+    return PIL.Image.composite(
+        image.convert("RGBA"), background.convert("RGBA"), mask.convert("L")
+    ).convert("RGBA")
 
 
 def extract_alpha_channel(image: PIL.Image.Image) -> PIL.Image.Image:

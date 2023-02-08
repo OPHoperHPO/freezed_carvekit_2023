@@ -74,9 +74,7 @@ class Interface:
         else:
             images = list(
                 map(
-                    lambda x: apply_mask(
-                        image=images[x], mask=masks[x]
-                    ),
+                    lambda x: apply_mask(image=images[x], mask=masks[x]),
                     range(len(images)),
                 )
             )

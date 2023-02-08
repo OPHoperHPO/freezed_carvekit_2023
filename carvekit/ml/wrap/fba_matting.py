@@ -31,14 +31,14 @@ class FBAMatting(FBA):
     """
 
     def __init__(
-            self,
-            device="cpu",
-            input_tensor_size: Union[List[int], int] = 2048,  # 1500,
-            batch_size: int = 2,
-            encoder="resnet50_GN_WS",
-            load_pretrained: bool = True,
-            fp16: bool = False,
-            disable_noise_filter=False
+        self,
+        device="cpu",
+        input_tensor_size: Union[List[int], int] = 2048,  # 1500,
+        batch_size: int = 2,
+        encoder="resnet50_GN_WS",
+        load_pretrained: bool = True,
+        fp16: bool = False,
+        disable_noise_filter=False,
     ):
         """
         Initialize the FBAMatting model
@@ -68,7 +68,7 @@ class FBAMatting(FBA):
         self.eval()
 
     def data_preprocessing(
-            self, data: Union[PIL.Image.Image, np.ndarray]
+        self, data: Union[PIL.Image.Image, np.ndarray]
     ) -> Tuple[torch.FloatTensor, torch.FloatTensor]:
         """
         Transform input image to suitable data format for neural network
@@ -115,9 +115,9 @@ class FBAMatting(FBA):
                 .float(),
             )
 
-    def data_postprocessing(self,
-                            data: torch.tensor, trimap: PIL.Image.Image
-                            ) -> PIL.Image.Image:
+    def data_postprocessing(
+        self, data: torch.tensor, trimap: PIL.Image.Image
+    ) -> PIL.Image.Image:
         """
         Transforms output data from neural network to suitable data
         format for using with other components of this framework.
@@ -144,9 +144,9 @@ class FBAMatting(FBA):
         return Image.fromarray(pred * 255).convert("L")
 
     def __call__(
-            self,
-            images: List[Union[str, pathlib.Path, PIL.Image.Image]],
-            trimaps: List[Union[str, pathlib.Path, PIL.Image.Image]],
+        self,
+        images: List[Union[str, pathlib.Path, PIL.Image.Image]],
+        trimaps: List[Union[str, pathlib.Path, PIL.Image.Image]],
     ) -> List[PIL.Image.Image]:
         """
         Passes input images though neural network and returns segmentation masks as PIL.Image.Image instances
