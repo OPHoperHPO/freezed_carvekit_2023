@@ -103,7 +103,6 @@ class RefinementModule(nn.Module):
         self.final_21 = nn.Conv2d(32, 1, kernel_size=1)
 
     def forward(self, x, seg, inter_s8=None, inter_s4=None):
-
         images = {}
 
         """

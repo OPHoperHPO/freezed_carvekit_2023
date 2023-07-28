@@ -31,6 +31,28 @@ def prob_filter(mask: Image.Image, prob_threshold=231) -> Image.Image:
     return Image.fromarray(mask_array).convert("L")
 
 
+def low_prob_filter(mask: Image.Image, filter_threshold=-1) -> Image.Image:
+    """
+    Applies a filter to the mask by the probability of locating an object in the object area.
+
+    Args:
+        filter_threshold: Threshold of probability for mark area as background.
+        mask: Predicted object mask
+
+    Raises:
+        ValueError if mask or trimap has wrong color mode
+
+    Returns:
+        Generated trimap for image.
+    """
+    if mask.mode != "L":
+        raise ValueError("Input mask has wrong color mode.")
+    # noinspection PyTypeChecker
+    mask_array = np.array(mask)
+    mask_array[mask_array <= filter_threshold] = 0
+    return Image.fromarray(mask_array).convert("L")
+
+
 def prob_as_unknown_area(
     trimap: Image.Image, mask: Image.Image, prob_threshold=255
 ) -> Image.Image:

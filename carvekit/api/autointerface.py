@@ -28,21 +28,19 @@ from carvekit.utils.pool_utils import thread_pool_processing
 __all__ = ["AutoInterface"]
 
 
-
-
 class AutoInterface(Interface):
     def __init__(
-            self,
-            scene_classifier: SceneClassifier,
-            object_classifier: SimplifiedYoloV4,
-            segmentation_batch_size: int = 3,
-            refining_batch_size: int = 1,
-            refining_image_size: int = 900,
-            postprocessing_batch_size: int = 1,
-            postprocessing_image_size: int = 2048,
-            segmentation_device: str = "cpu",
-            postprocessing_device: str = "cpu",
-            fp16=False,
+        self,
+        scene_classifier: SceneClassifier,
+        object_classifier: SimplifiedYoloV4,
+        segmentation_batch_size: int = 3,
+        refining_batch_size: int = 1,
+        refining_image_size: int = 900,
+        postprocessing_batch_size: int = 1,
+        postprocessing_image_size: int = 2048,
+        segmentation_device: str = "cpu",
+        postprocessing_device: str = "cpu",
+        fp16=False,
     ):
         """
         Args:
@@ -73,38 +71,53 @@ class AutoInterface(Interface):
         """
         if net == TracerUniversalB7:
             return {
-                "trimap_generator": {"prob_threshold": 231, "kernel_size": 30, "erosion_iters": 5},
+                "trimap_generator": {
+                    "prob_threshold": 231,
+                    "kernel_size": 30,
+                    "erosion_iters": 5,
+                },
                 "matting_module": {"disable_noise_filter": False},
-                "refining": {"enabled": True,
-                             "mask_binary_threshold": 128}
+                "refining": {"enabled": True, "mask_binary_threshold": 128},
             }
         elif net == U2NET:
             return {
-                "trimap_generator": {"prob_threshold": 231, "kernel_size": 30, "erosion_iters": 5},
+                "trimap_generator": {
+                    "prob_threshold": 231,
+                    "kernel_size": 30,
+                    "erosion_iters": 5,
+                },
                 "matting_module": {"disable_noise_filter": False},
-                "refining": {"enabled": True,
-                             "mask_binary_threshold": 128}
+                "refining": {"enabled": True, "mask_binary_threshold": 128},
             }
         elif net == ISNet:
             return {
-                "trimap_generator": {"prob_threshold": 231, "kernel_size": 30, "erosion_iters": 5},
+                "trimap_generator": {
+                    "prob_threshold": 231,
+                    "kernel_size": 30,
+                    "erosion_iters": 5,
+                },
                 "matting_module": {"disable_noise_filter": True},
-                "refining": {"enabled": False,
-                             "mask_binary_threshold": 128}
+                "refining": {"enabled": False, "mask_binary_threshold": 128},
             }
         elif net == DeepLabV3:
             return {
-                "trimap_generator": {"prob_threshold": 231, "kernel_size": 40, "erosion_iters": 20},
+                "trimap_generator": {
+                    "prob_threshold": 231,
+                    "kernel_size": 40,
+                    "erosion_iters": 20,
+                },
                 "matting_module": {"disable_noise_filter": False},
-                "refining": {"enabled": True,
-                             "mask_binary_threshold": 128}
+                "refining": {"enabled": True, "mask_binary_threshold": 128},
             }
         elif net == BASNET:
             return {
-                "trimap_generator": {"prob_threshold": 231, "kernel_size": 30, "erosion_iters": 5},
+                "trimap_generator": {
+                    "prob_threshold": 231,
+                    "kernel_size": 30,
+                    "erosion_iters": 5,
+                },
                 "matting_module": {"disable_noise_filter": False},
-                "refining": {"enabled": True,
-                             "mask_binary_threshold": 128}
+                "refining": {"enabled": True, "mask_binary_threshold": 128},
             }
         else:
             raise ValueError("Unknown network type")
@@ -180,7 +193,6 @@ class AutoInterface(Interface):
                     "net"
                 ] = TracerUniversalB7  # It seems that the image is empty, but we will try to process it
 
-
     def __call__(self, images: List[Union[str, Path, Image.Image]]):
         """
         Automatically detects the scene and selects the appropriate network for segmentation
@@ -250,13 +262,16 @@ class AutoInterface(Interface):
                     groups[net] = []
                 groups[net].append(image_info)
             for net, gimages_info in list(groups.items()):
-
                 # Configure custom pipeline for image group
                 config_params = self.select_params_for_net(net)
                 trimap_generator = TrimapGenerator(**config_params["trimap_generator"])
-                fba.disable_noise_filter = config_params["matting_module"]["disable_noise_filter"]
+                fba.disable_noise_filter = config_params["matting_module"][
+                    "disable_noise_filter"
+                ]
                 if config_params["refining"]["enabled"]:
-                    cascadepsp.mask_binary_threshold = config_params["refining"]["mask_binary_threshold"]
+                    cascadepsp.mask_binary_threshold = config_params["refining"][
+                        "mask_binary_threshold"
+                    ]
                     matting_method = CasMattingMethod(
                         refining_module=cascadepsp,
                         matting_module=fba,
@@ -267,7 +282,7 @@ class AutoInterface(Interface):
                     matting_method = MattingMethod(
                         matting_module=fba,
                         trimap_generator=trimap_generator,
-                        device=self.postprocessing_device
+                        device=self.postprocessing_device,
                     )
 
                 sc_images = [image_info["image"] for image_info in gimages_info]
