@@ -1,5 +1,8 @@
 services:
   carvekit_api:
+    build:
+      context: .
+      dockerfile: Dockerfile.cpu
     image: anodev/carvekit:latest-cpu
     ports:
       - "5000:5000"  # 5000
