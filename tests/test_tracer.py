@@ -6,8 +6,8 @@ from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
 
 
 def test_init():
-    TracerUniversalB7(input_image_size=[640, 640], load_pretrained=True)
-    TracerUniversalB7(input_image_size=640, load_pretrained=True)
+    TracerUniversalB7(input_image_size=[960, 960], load_pretrained=True)
+    TracerUniversalB7(input_image_size=960, load_pretrained=True)
     TracerUniversalB7(load_pretrained=False)
     TracerUniversalB7(fp16=True)
 

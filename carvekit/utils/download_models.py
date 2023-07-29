@@ -70,6 +70,11 @@ MODELS_URLS = {
         "revision": "743f5677b76322c87f09288cf913023a284f75c6",
         "filename": "isnet-97-carveset.pth",
     },
+    "tracer-b7-carveset-finetuned.pth": {
+        "repository": "Carve/tracer_b7",
+        "revision": "c5cd31d81855f1b6fe4188fa226cb468494cea85",
+        "filename": "tracer-b7-carveset-finetuned.pth",
+    },
 }
 
 MODELS_CHECKSUMS = {
@@ -93,6 +98,8 @@ MODELS_CHECKSUMS = {
     "844f6c054c9cfa55377ae16a4cf55e727926599df0b1b8af65de478eccfac4708",
     "isnet-97-carveset.pth": "8df0bd65367928ebb81b6f0fdb24ae991dc8c574a39d5e353d86844366b21d0c483ed71b035"
                              "2d752ae5792b3dc6adc46bfb72934046656239cb2ddc615953365",
+    "tracer-b7-carveset-finetuned.pth": "6e6f553580a5db48fb27a145132b32481bceb55ef5b39b1"
+                                        "b1fa2e3fda97c44625d0fba24153209efb737cdcb4c1ef781138e3ea95e766c379915bf76a28c92e6"
 }
 
 

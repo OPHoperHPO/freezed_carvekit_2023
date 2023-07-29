@@ -57,7 +57,7 @@ from carvekit.utils.fs_utils import save_file
 )
 @click.option(
     "--seg_mask_size",
-    default=640,
+    default=960,
     type=int,
     help="The size of the input image for the segmentation neural network.",
 )

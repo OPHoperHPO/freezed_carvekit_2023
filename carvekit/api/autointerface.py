@@ -33,7 +33,7 @@ class AutoInterface(Interface):
         self,
         scene_classifier: SceneClassifier,
         object_classifier: SimplifiedYoloV4,
-        segmentation_batch_size: int = 3,
+        segmentation_batch_size: int = 1,
         refining_batch_size: int = 1,
         refining_image_size: int = 900,
         postprocessing_batch_size: int = 1,
