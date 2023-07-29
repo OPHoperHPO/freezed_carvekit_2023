@@ -25,6 +25,16 @@ def isnet_full_pretrained() -> pathlib.Path:
     """
     return downloader("isnet.pth")
 
+def isnet_carveset_pretrained() -> pathlib.Path:
+    """Returns isnet pretrained model location
+    ISNet model finetuned on CarveSet with DUTS-HD.
+    Achieves 97% of F-Beta-Score on test set
+
+    Returns:
+        pathlib.Path to model location
+    """
+    return downloader("isnet-97-carveset.pth")
+
 
 def basnet_pretrained() -> pathlib.Path:
     """Returns basnet pretrained model location

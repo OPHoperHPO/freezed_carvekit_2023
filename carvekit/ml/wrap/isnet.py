@@ -13,7 +13,7 @@ from typing import List, Union
 from torchvision.transforms.functional import normalize
 
 from carvekit.ml.arch.isnet.isnet import ISNetDIS
-from carvekit.ml.files.models_loc import isnet_full_pretrained
+from carvekit.ml.files.models_loc import isnet_carveset_pretrained
 from carvekit.utils.image_utils import load_image, convert_image
 from carvekit.utils.models_utils import get_precision_autocast, cast_network
 from carvekit.utils.pool_utils import thread_pool_processing, batch_generator
@@ -54,7 +54,7 @@ class ISNet(ISNetDIS):
         self.to(device)
         if load_pretrained:
             self.load_state_dict(
-                torch.load(isnet_full_pretrained(), map_location=self.device)
+                torch.load(isnet_carveset_pretrained(), map_location=self.device)
             )
 
         self.eval()

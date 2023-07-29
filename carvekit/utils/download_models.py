@@ -65,6 +65,11 @@ MODELS_URLS = {
         "revision": "91475fcb280243259a551653597c4702eabe9ff1",
         "filename": "isnet.pth",
     },
+    "isnet-97-carveset.pth": {
+        "repository": "Carve/isnet",
+        "revision": "743f5677b76322c87f09288cf913023a284f75c6",
+        "filename": "isnet-97-carveset.pth",
+    },
 }
 
 MODELS_CHECKSUMS = {
@@ -86,6 +91,8 @@ MODELS_CHECKSUMS = {
     "4d7bf0022a27829f583a1a793b036adf801cb423e41a4831b830122",
     "isnet.pth": "e996b95c78aefe4573950ce1ed2eec20fa3c869381e9b5233c361a8e1dff09f"
     "844f6c054c9cfa55377ae16a4cf55e727926599df0b1b8af65de478eccfac4708",
+    "isnet-97-carveset.pth": "8df0bd65367928ebb81b6f0fdb24ae991dc8c574a39d5e353d86844366b21d0c483ed71b035"
+                             "2d752ae5792b3dc6adc46bfb72934046656239cb2ddc615953365",
 }
 
 

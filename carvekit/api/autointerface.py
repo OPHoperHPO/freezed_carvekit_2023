@@ -95,6 +95,7 @@ class AutoInterface(Interface):
                     "prob_threshold": 231,
                     "kernel_size": 30,
                     "erosion_iters": 5,
+                    "filter_threshold": 70
                 },
                 "matting_module": {"disable_noise_filter": True},
                 "refining": {"enabled": False, "mask_binary_threshold": 128},
@@ -123,14 +124,13 @@ class AutoInterface(Interface):
             raise ValueError("Unknown network type")
 
     def select_net(self, scene: str, images_info: List[dict]):
-        # TODO: Update this function, when new networks will be added
         if scene == "hard":
             for image_info in images_info:
                 objects = image_info["objects"]
                 if len(objects) == 0:
                     image_info[
                         "net"
-                    ] = TracerUniversalB7  # It seems that the image is empty, but we will try to process it
+                    ] = ISNet  # It seems that the image is empty, but we will try to process it
                     continue
                 obj_counter: Dict = dict(Counter([obj for obj in objects]))
                 # fill empty classes
@@ -142,10 +142,10 @@ class AutoInterface(Interface):
 
                 if obj_counter["human"] > 0 and len(non_empty_classes) == 1:
                     # Human only case. Hard Scene? It may be a photo of a person in far/middle distance.
-                    image_info["net"] = TracerUniversalB7
+                    image_info["net"] = ISNet
                 elif obj_counter["human"] > 0 and len(non_empty_classes) > 1:
                     # Okay, we have a human without extra hairs and something else. Hard border
-                    image_info["net"] = TracerUniversalB7
+                    image_info["net"] = ISNet
                 elif obj_counter["cars"] > 0:
                     # Cars case
                     image_info["net"] = TracerUniversalB7
@@ -162,7 +162,7 @@ class AutoInterface(Interface):
                 if len(objects) == 0:
                     image_info[
                         "net"
-                    ] = TracerUniversalB7  # It seems that the image is empty, but we will try to process it
+                    ] = ISNet  # It seems that the image is empty, but we will try to process it
                     continue
                 obj_counter: Dict = dict(Counter([obj for obj in objects]))
                 # fill empty classes
@@ -180,18 +180,19 @@ class AutoInterface(Interface):
                     image_info["net"] = ISNet
                 elif obj_counter["cars"] > 0:
                     # Cars case.
-                    image_info["net"] = TracerUniversalB7
+                    image_info["net"] = ISNet
                 elif obj_counter["animals"] > 0:
                     # Animals case
                     image_info["net"] = ISNet  # animals should be always in soft scenes
                 else:
                     # We have no idea what is in the image, so we will try to process it with universal model
-                    image_info["net"] = TracerUniversalB7
+                    image_info["net"] = ISNet
         elif scene == "digital":
             for image_info in images_info:  # TODO: not implemented yet
                 image_info[
                     "net"
                 ] = TracerUniversalB7  # It seems that the image is empty, but we will try to process it
+
 
     def __call__(self, images: List[Union[str, Path, Image.Image]]):
         """
