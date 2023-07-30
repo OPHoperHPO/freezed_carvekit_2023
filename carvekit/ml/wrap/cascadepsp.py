@@ -18,7 +18,7 @@ from carvekit.ml.arch.cascadepsp.utils import (
     process_im_single_pass,
     process_high_res_im,
 )
-from carvekit.ml.files.models_loc import cascadepsp_pretrained
+from carvekit.ml.files.models_loc import cascadepsp_finetuned
 from carvekit.utils.image_utils import convert_image, load_image
 from carvekit.utils.models_utils import get_precision_autocast, cast_network
 from carvekit.utils.pool_utils import batch_generator, thread_pool_processing
@@ -73,7 +73,7 @@ class CascadePSP(RefinementModule):
             )
         if load_pretrained:
             self.load_state_dict(
-                torch.load(cascadepsp_pretrained(), map_location=self.device)
+                torch.load(cascadepsp_finetuned(), map_location=self.device)
             )
         self.eval()
 
@@ -308,3 +308,5 @@ class CascadePSP(RefinementModule):
                     range(len(inpt_masks)),
                 )
             return collect_masks
+
+

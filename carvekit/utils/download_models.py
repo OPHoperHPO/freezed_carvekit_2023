@@ -75,6 +75,11 @@ MODELS_URLS = {
         "revision": "c5cd31d81855f1b6fe4188fa226cb468494cea85",
         "filename": "tracer-b7-carveset-finetuned.pth",
     },
+    "cascadepsp_finetuned_carveset.pth": {
+        "repository": "Carve/cascadepsp",
+        "revision": "f29a969d48f5266e4727668cbca78723a518d1cd",
+        "filename": "cascadepsp_finetuned_carveset.pth",
+    },
 }
 
 MODELS_CHECKSUMS = {
@@ -99,7 +104,8 @@ MODELS_CHECKSUMS = {
     "isnet-97-carveset.pth": "8df0bd65367928ebb81b6f0fdb24ae991dc8c574a39d5e353d86844366b21d0c483ed71b035"
                              "2d752ae5792b3dc6adc46bfb72934046656239cb2ddc615953365",
     "tracer-b7-carveset-finetuned.pth": "6e6f553580a5db48fb27a145132b32481bceb55ef5b39b1"
-                                        "b1fa2e3fda97c44625d0fba24153209efb737cdcb4c1ef781138e3ea95e766c379915bf76a28c92e6"
+                                        "b1fa2e3fda97c44625d0fba24153209efb737cdcb4c1ef781138e3ea95e766c379915bf76a28c92e6",
+    "cascadepsp_finetuned_carveset.pth":"44e045eb9f9551b53e0554041c7939340056db129b6c6351011e8db86e5ef4cb49c210722feffa4587f747dfb8c0299ee1609da4986c9223c4d474ae7bcea71b",
 }
 
 

@@ -25,6 +25,7 @@ def isnet_full_pretrained() -> pathlib.Path:
     """
     return downloader("isnet.pth")
 
+
 def isnet_carveset_pretrained() -> pathlib.Path:
     """Returns isnet pretrained model location
     ISNet model finetuned on CarveSet with DUTS-HD.
@@ -70,6 +71,7 @@ def tracer_b7_pretrained() -> pathlib.Path:
         pathlib.Path to model location
     """
     return downloader("tracer_b7.pth")
+
 
 def tracer_b7_carveset_finetuned() -> pathlib.Path:
     """Returns TRACER with EfficientNet v1 b7 encoder pretrained model location
@@ -125,6 +127,19 @@ def cascadepsp_pretrained() -> pathlib.Path:
         pathlib.Path to model location
     """
     return downloader("cascadepsp.pth")
+
+
+def cascadepsp_finetuned() -> pathlib.Path:
+    """Returns cascade psp pretrained model location
+    This model is used to refine segmentation masks.
+
+    Training dataset: CarveSet with DUTS-HD, DIS.
+    more info: https://huggingface.co/Carve/cascadepsp
+
+    Returns:
+        pathlib.Path to model location
+    """
+    return downloader("cascadepsp_finetuned_carveset.pth")
 
 
 def download_all():
