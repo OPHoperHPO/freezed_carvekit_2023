@@ -285,6 +285,26 @@ See `docker-compose.<device>.yml` for more information. \
 1. Run `docker-compose -f docker-compose.cpu.yml run carvekit_api pytest`  # For testing on CPU
 2. Run `docker-compose -f docker-compose.cuda.yml run carvekit_api pytest`  # For testing on GPU
 
+### 🖼️ CarveSet Dataset V1.0:
+<div> 
+<img src="./docs/imgs/carveset/carveset_pair_example.png"/>
+<img src="./docs/imgs/carveset/duts_hd.png"/> 
+
+</div>
+
+We have collected an extensive dataset covering the most common categories of objects intended for background removal.
+It includes about 179 object names belonging to 8 different categories. (CarveSet subset)
+
+Total number of images in the dataset: **20,155**.
+####  Information about the image database in the dataset
+1.  **CarveSet** - contains 4,583 high-quality images with a size of approximately 2500x2500 pixels.
+2.  **DUTS-HD** - consists of 15,572 images, magnified 4 times from the DUTS dataset,
+with a size of approximately 1600x1600 pixels. 
+The dataset was re-annotated with controlled enhancement of the output mask. 
+The images were upscaled, which added new details (see figure).
+
+More info: [CarveSet Dataset](docs/carveset/carveset.md)
+
 ## 👪 Credits: [More info](docs/CREDITS.md)
 
 ## 📧 __Feedback__
