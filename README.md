@@ -43,20 +43,20 @@ It can be briefly described as
 3. Using machine learning technology, the background of the image is removed
 4. Image post-processing to improve the quality of the processed image
 ## 🎓 Implemented Neural Networks:
-|        Networks         |                   Target                    |                Accuracy                |
-|:-----------------------:|:-------------------------------------------:|:--------------------------------------:|
-| **Tracer-B7** (default) |     **General** (objects, animals, etc)     | **91.5%** (mean F1-Score, DUTS-TE, LR) |
-|        **ISNet**        |     **Hairs** (hairs, people, animals)      |  **96%** (mean F1-Score, DUTS-TE, LR)  |
-|         U^2-net         | **Hairs** (hairs, people, animals, objects) |   80.4% (mean F1-Score, DUTS-TE, LR)   |
-|         BASNet          |        **General** (people, objects)        |   80.3% (mean F1-Score, DUTS-TE, LR)   |
-|        DeepLabV3        |         People, Animals, Cars, etc          |   67.4% (mean IoU, COCO val2017, LR)   |
+|        Networks         |                   Target                    |                   Accuracy                   |
+|:-----------------------:|:-------------------------------------------:|:--------------------------------------------:|
+| **Tracer-B7** (default) |     **General** (objects, animals, etc)     | **96.2%** (mean F1-Score, CarveSet/test, HR) |
+|        **ISNet**        |     **Hairs** (hairs, people, animals)      |  **97%** (mean F1-Score, CarveSet/test, HR)  |
+|         U^2-net         | **Hairs** (hairs, people, animals, objects) |      80.4% (mean F1-Score, DUTS-TE, LR)      |
+|         BASNet          |        **General** (people, objects)        |      80.3% (mean F1-Score, DUTS-TE, LR)      |
+|        DeepLabV3        |         People, Animals, Cars, etc          |      67.4% (mean IoU, COCO val2017, LR)      |
 
 > HR - High resolution images.
 > LR - Low resolution images.
 ### Recommended parameters for different models
 |  Networks   | Segmentation mask  size | Trimap parameters (dilation, erosion) |
 |:-----------:|:-----------------------:|:-------------------------------------:|
-| `tracer_b7` |           640           |                (30, 5)                |
+| `tracer_b7` |           960           |                (30, 5)                |
 |   `isnet`   |          1024           |                (30, 5)                |
 |   `u2net`   |           320           |                (30, 5)                |
 |  `basnet`   |           320           |                (30, 5)                |
@@ -99,12 +99,12 @@ from carvekit.api.high import HiInterface
 
 # Check doc strings for more information
 interface = HiInterface(object_type="auto",  # Can be "object" or "hairs-like" or "auto"
-                        batch_size_seg=5,
+                        batch_size_seg=1,
                         batch_size_pre=5,
                         batch_size_matting=1,
                         batch_size_refine=1,
                         device='cuda' if torch.cuda.is_available() else 'cpu',
-                        seg_mask_size=640,  # Use 640 for Tracer B7 and 320 for U2Net
+                        seg_mask_size=960,  # Use 960 for Tracer B7 and 320 for U2Net
                         matting_mask_size=2048,
                         refine_mask_size=900,
                         trimap_prob_threshold=231,
@@ -219,8 +219,8 @@ Options:
   --batch_size_refine 1        Batch size for list of images to be
                                   processed by refining network
 
-  --seg_mask_size 640          The size of the input image for the
-                               segmentation neural network. Use 640 for Tracer B7 and 1024 for ISNet
+  --seg_mask_size 960          The size of the input image for the
+                               segmentation neural network. Use 960 for Tracer B7 and 1024 for ISNet
 
   --matting_mask_size 2048     The size of the input image for the matting
                                neural network.
@@ -284,6 +284,26 @@ See `docker-compose.<device>.yml` for more information. \
 ### ☑️ Testing with Docker
 1. Run `docker-compose -f docker-compose.cpu.yml run carvekit_api pytest`  # For testing on CPU
 2. Run `docker-compose -f docker-compose.cuda.yml run carvekit_api pytest`  # For testing on GPU
+
+### 🖼️ CarveSet Dataset V1.0:
+<div> 
+<img src="./docs/imgs/carveset/carveset_pair_example.png"/>
+<img src="./docs/imgs/carveset/duts_hd.png"/> 
+
+</div>
+
+We have collected an extensive dataset covering the most common categories of objects intended for background removal.
+It includes about 179 object names belonging to 8 different categories. (CarveSet subset)
+
+Total number of images in the dataset: **20,155**.
+####  Information about the image database in the dataset
+1.  **CarveSet** - contains 4,583 high-quality images with a size of approximately 2500x2500 pixels.
+2.  **DUTS-HD** - consists of 15,572 images, magnified 4 times from the DUTS dataset,
+with a size of approximately 1600x1600 pixels. 
+The dataset was re-annotated with controlled enhancement of the output mask. 
+The images were upscaled, which added new details (see figure).
+
+More info: [CarveSet Dataset](docs/carveset/carveset.md)
 
 ## 👪 Credits: [More info](docs/CREDITS.md)
 

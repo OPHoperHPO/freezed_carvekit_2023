@@ -13,7 +13,7 @@ from typing import List, Union
 from torchvision.transforms.functional import normalize
 
 from carvekit.ml.arch.isnet.isnet import ISNetDIS
-from carvekit.ml.files.models_loc import isnet_full_pretrained
+from carvekit.ml.files.models_loc import isnet_carveset_pretrained, isnet_full_pretrained
 from carvekit.utils.image_utils import load_image, convert_image
 from carvekit.utils.models_utils import get_precision_autocast, cast_network
 from carvekit.utils.pool_utils import thread_pool_processing, batch_generator
@@ -54,7 +54,7 @@ class ISNet(ISNetDIS):
         self.to(device)
         if load_pretrained:
             self.load_state_dict(
-                torch.load(isnet_full_pretrained(), map_location=self.device)
+                torch.load(isnet_carveset_pretrained(), map_location=self.device)
             )
 
         self.eval()
@@ -98,7 +98,9 @@ class ISNet(ISNetDIS):
         ma = torch.max(data)
         mi = torch.min(data)
         data = (data - mi) / (ma - mi)
-        mask = Image.fromarray((data * 255).cpu().data.numpy().astype(np.uint8)).convert("L")
+        mask = Image.fromarray(
+            (data * 255).cpu().data.numpy().astype(np.uint8)
+        ).convert("L")
         mask = mask.resize(original_image.size, resample=3)
         return mask
 
@@ -132,8 +134,40 @@ class ISNet(ISNetDIS):
                     masks_cpu = masks.cpu()
                     del batches, masks
                 masks = thread_pool_processing(
-                    lambda x: self.data_postprocessing(masks_cpu[x], converted_images[x]),
+                    lambda x: self.data_postprocessing(
+                        masks_cpu[x], converted_images[x]
+                    ),
                     range(len(converted_images)),
                 )
                 collect_masks += masks
         return collect_masks
+
+
+class ISNetDISPretrained(ISNet):
+    """ISNet model interface"""
+
+    def __init__(
+            self,
+            device="cpu",
+            input_image_size: Union[List[int], int] = 1024,
+            batch_size: int = 1,
+            load_pretrained: bool = True,
+            fp16: bool = False,
+    ):
+        """
+        Initialize the ISNet model
+
+        Args:
+            device: processing device
+            input_image_size: input image size
+            batch_size: the number of images that the neural network processes in one run
+            load_pretrained: loading pretrained model
+            fp16: use fp16 precision
+
+        """
+        super().__init__(device, input_image_size, batch_size, load_pretrained, fp16)
+        if load_pretrained:
+            self.load_state_dict(
+                torch.load(isnet_full_pretrained(), map_location=self.device)
+            )
+

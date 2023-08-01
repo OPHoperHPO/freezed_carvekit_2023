@@ -200,7 +200,6 @@ class EfficientNet(nn.Module):
         # Build blocks
         self._blocks = nn.ModuleList([])
         for block_args in self._blocks_args:
-
             # Update block input and output filters based on depth multiplier.
             block_args = block_args._replace(
                 input_filters=round_filters(

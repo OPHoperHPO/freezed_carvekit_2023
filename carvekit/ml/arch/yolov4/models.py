@@ -45,7 +45,6 @@ class Upsample(nn.Module):
         # _, _, tH, tW = target_size
 
         if inference:
-
             # B = x.data.size(0)
             # C = x.data.size(1)
             # H = x.data.size(2)

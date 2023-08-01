@@ -14,10 +14,10 @@ services:
       - CARVEKIT_POSTPROCESSING_METHOD=cascade_fba # can be none, fba, cascade_fba
       - CARVEKIT_DEVICE=cpu # can be cuda (req. cuda docker image), cpu
       - CARVEKIT_BATCH_SIZE_PRE=5 # Number of images processed per one preprocessing method call. NOT USED IF WEB API IS USED
-      - CARVEKIT_BATCH_SIZE_SEG=5 #  Number of images processed per one segmentation nn call. NOT USED IF WEB API IS USED
+      - CARVEKIT_BATCH_SIZE_SEG=1 #  Number of images processed per one segmentation nn call. NOT USED IF WEB API IS USED
       - CARVEKIT_BATCH_SIZE_MATTING=1  # Number of images processed per one matting nn call. NOT USED IF WEB API IS USED
       - CARVEKIT_BATCH_SIZE_REFINE=1  # Number of images processed per one refine nn call. NOT USED IF WEB API IS USED
-      - CARVEKIT_SEG_MASK_SIZE=640  # The size of the input image for the segmentation neural network.
+      - CARVEKIT_SEG_MASK_SIZE=960  # The size of the input image for the segmentation neural network.
       - CARVEKIT_MATTING_MASK_SIZE=2048   # The size of the input image for the matting neural network.
       - CARVEKIT_REFINE_MASK_SIZE=900   # The size of the input image for the refine neural network.
       - CARVEKIT_FP16=0 # Enables FP16 mode (Only CUDA at the moment)
