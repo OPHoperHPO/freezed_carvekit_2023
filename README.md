@@ -3,10 +3,8 @@
 <p align="center"> <img src="docs/imgs/logo.png"> </p>
 
 <p align="center">
-<img src="https://github.com/OPHoperHPO/image-background-remove-tool/actions/workflows/master_docker.yaml/badge.svg">
-<img src="https://github.com/OPHoperHPO/image-background-remove-tool/actions/workflows/master.yml/badge.svg">
-<img src="https://camo.githubusercontent.com/52feade06f2fecbf006889a904d221e6a730c194/68747470733a2f2f636f6c61622e72657365617263682e676f6f676c652e636f6d2f6173736574732f636f6c61622d62616467652e737667"></a>
-
+<img src="https://github.com/OPHoperHPO/freezed_carvekit_2023/actions/workflows/master_docker.yaml/badge.svg">
+<img src="https://github.com/OPHoperHPO/freezed_carvekit_2023/actions/workflows/master.yml/badge.svg">
 </p>
 
 

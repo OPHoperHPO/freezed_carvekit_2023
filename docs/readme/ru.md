@@ -3,7 +3,8 @@
 <p align="center"> <img src="docs/imgs/logo.png"> </p>
 
 <p align="center">
-
+<img src="https://github.com/OPHoperHPO/freezed_carvekit_2023/actions/workflows/master_docker.yaml/badge.svg">
+<img src="https://github.com/OPHoperHPO/freezed_carvekit_2023/actions/workflows/master.yml/badge.svg">
 </p>
 
 
