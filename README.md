@@ -20,8 +20,20 @@
 [Russian](docs/readme/ru.md)
 [English](README.md)
 
-## 📄 Description:  
+## 📄 About project:  
 Automated high-quality background removal framework for an image using neural networks.
+
+### Area of application of the project:
+Currently, background removal solutions are in high demand in various fields:
+
+Advertising Industry: In this case, background removal is necessary for creating various advertising materials, banners, and logos. This speeds up and simplifies the work of designers, as manual background removal takes a lot of time. It's also important to consider the need for high-quality images, which plays a significant role in the perception of various advertising products.
+
+Online Retail: For the e-commerce sector, where it is crucial to present the product in the most favorable light and more qualitatively for the purpose of sales, background removal is an essential part of the process. For instance, the online marketplace "Amazon" has strict product image guidelines, including the requirement that the primary image be of good quality and on a clean white background. This rule ensures that the main focus remains solely on the product and maintains a uniform appearance of products on their platform.
+Medical and Scientific Research and Diagnostics: For types of research such as computed tomography and magnetic resonance imaging, background removal can solve the problem of obtaining higher-quality images for diagnosing various diseases, including in the early stages.
+
+Computer Vision and Artificial Intelligence: Background removal is widely used in the field of computer vision and artificial intelligence for detecting and classifying objects in images. By removing the background, the image processing task can be simplified and the accuracy of object recognition algorithms can be improved. One application is in the scientific field of nuclear technology and radiation safety for visualizing radioactive materials, for image processing and data display, which contributes to more accurate analysis, classification, and management of radioactive materials and ensures safety.
+
+Background removal is used in various applied solutions across different fields. The software suite can be reconfigured to suit various tasks and needs.
 
 ## 🎆 Features:  
 - High Quality
