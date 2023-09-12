@@ -1,6 +1,7 @@
 """
 Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
 Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
+
 License: Apache License 2.0
 """
 import PIL.Image

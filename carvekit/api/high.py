@@ -1,6 +1,7 @@
 """
 Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
-Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
+Author: Nikita Selin [OPHoperHPO](https://github.com/OPHoperHPO).
+
 License: Apache License 2.0
 """
 import warnings
@@ -37,29 +38,30 @@ class HiInterface(Interface):
         Initializes High Level interface.
 
         Args:
-            object_type: Interest object type. Can be "object" or "hairs-like" or "auto".
-            matting_mask_size:  The size of the input image for the matting neural network.
-            seg_mask_size: The size of the input image for the segmentation neural network.
-            batch_size_pre: Number of images processed per one preprocessing method call.
-            batch_size_seg: Number of images processed per one segmentation neural network call.
-            batch_size_matting: Number of images processed per one matting neural network call.
-            device: Processing device
-            fp16: Use half precision. Reduce memory usage and increase speed. Experimental support
-            trimap_prob_threshold: Probability threshold at which the prob_filter and prob_as_unknown_area operations will be applied
-            trimap_dilation: The size of the offset radius from the object mask in pixels when forming an unknown area
-            trimap_erosion_iters: The number of iterations of erosion that the object's mask will be subjected to before forming an unknown area
-            refine_mask_size: The size of the input image for the refinement neural network.
-            batch_size_refine: Number of images processed per one refinement neural network call.
+            object_type (str, default=object): Interest object type. Can be "object" or "hairs-like".
+            matting_mask_size (int, default=2048):  The size of the input image for the matting neural network.
+            seg_mask_size (int, default=640): The size of the input image for the segmentation neural network.
+            batch_size_pre (int, default=5: Number of images processed per one preprocessing method call.
+            batch_size_seg (int, default=2): Number of images processed per one segmentation neural network call.
+            batch_size_matting (int, matting=1): Number of images processed per one matting neural network call.
+            device (Literal[cpu, cuda], default=cpu): Processing device
+            fp16 (bool, default=False): Use half precision. Reduce memory usage and increase speed.
+            .. CAUTION:: ⚠️ **Experimental support**
+            trimap_prob_threshold (int, default=231): Probability threshold at which the prob_filter and prob_as_unknown_area operations will be applied
+            trimap_dilation (int, default=30): The size of the offset radius from the object mask in pixels when forming an unknown area
+            trimap_erosion_iters (int, default=5): The number of iterations of erosion that the object's mask will be subjected to before forming an unknown area
+            refine_mask_size (int, default=900): The size of the input image for the refinement neural network.
+            batch_size_refine (int, default=1): Number of images processed per one refinement neural network call.
 
-        Notes:
-            1. Changing seg_mask_size may cause an out-of-memory error if the value is too large, and it may also
-            result in reduced precision. I do not recommend changing this value. You can change matting_mask_size in
-            range from (1024 to 4096) to improve object edge refining quality, but it will cause extra large RAM and
+
+        .. NOTE::
+            1. Changing seg_mask_size may cause an `out-of-memory` error if the value is too large, and it may also
+            result in reduced precision. I do not recommend changing this value. You can change `matting_mask_size` in
+            range from `(1024 to 4096)` to improve object edge refining quality, but it will cause extra large RAM and
             video memory consume. Also, you can change batch size to accelerate background removal, but it also causes
             extra large video memory consume, if value is too big.
-
-            2. Changing trimap_prob_threshold, trimap_kernel_size, trimap_erosion_iters may improve object edge
-            refining quality,
+            2. Changing `trimap_prob_threshold`, `trimap_kernel_size`, `trimap_erosion_iters` may improve object edge
+            refining quality.
         """
         preprocess_pipeline = None
 

@@ -1,6 +1,6 @@
 """
 Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
-Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
+Author: Nikita Selin [OPHoperHPO](https://github.com/OPHoperHPO).
 License: Apache License 2.0
 """
 import pathlib
@@ -38,13 +38,13 @@ class TracerUniversalB7(TracerDecoder):
         Initialize the TRACER model
 
         Args:
-            layers_cfg: neural network layers configuration
-            device: processing device
-            input_image_size: input image size
-            batch_size: the number of images that the neural network processes in one run
-            load_pretrained: loading pretrained model
-            fp16: use fp16 precision
-
+            device (Literal[cpu, cuda], default=cpu): processing device
+            input_image_size (Union[List[int], int], default=640): input image size
+            batch_size(int, default=4): the number of images that the neural network processes in one run
+            load_pretrained(bool, default=True): loading pretrained model
+            fp16 (bool, default=False): use fp16 precision
+            model_path (Union[str, pathlib.Path], default=None): path to the model
+            .. note:: REDO
         """
         if model_path is None:
             model_path = tracer_b7_carveset_finetuned()
@@ -82,10 +82,10 @@ class TracerUniversalB7(TracerDecoder):
         Transform input image to suitable data format for neural network
 
         Args:
-            data: input image
+            data (PIL.Image.Image): input image
 
         Returns:
-            input for neural network
+            torch.FloatTensor: input for neural network
 
         """
 
@@ -100,11 +100,11 @@ class TracerUniversalB7(TracerDecoder):
         format for using with other components of this framework.
 
         Args:
-            data: output data from neural network
-            original_image: input image which was used for predicted data
+            data (torch.Tensor): output data from neural network
+            original_image (PIL.Image.Image): input image which was used for predicted data
 
         Returns:
-            Segmentation mask as PIL Image instance
+            PIL.Image.Image: Segmentation mask
 
         """
         output = (data.type(torch.FloatTensor).detach().cpu().numpy() * 255.0).astype(
@@ -122,10 +122,10 @@ class TracerUniversalB7(TracerDecoder):
         Passes input images though neural network and returns segmentation masks as PIL.Image.Image instances
 
         Args:
-            images: input images
+            images (List[Union[str, pathlib.Path, PIL.Image.Image]]): input images
 
         Returns:
-            segmentation masks as for input images, as PIL.Image.Image instances
+            List[PIL.Image.Image]: segmentation masks as for input images
 
         """
         collect_masks = []

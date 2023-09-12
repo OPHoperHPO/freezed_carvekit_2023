@@ -1,6 +1,7 @@
 """
 Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
-Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
+Author: Nikita Selin [OPHoperHPO](https://github.com/OPHoperHPO).
+
 License: Apache License 2.0
 """
 import pathlib
@@ -34,12 +35,11 @@ class BASNET(BASNet):
         Initialize the BASNET model
 
         Args:
-            device: processing device
-            input_image_size: input image size
-            batch_size: the number of images that the neural network processes in one run
-            load_pretrained: loading pretrained model
-            fp16: use fp16 precision // not supported at this moment
-
+            device (Literal[cpu, cuda], default=cpu): processing device
+            input_image_size (Union[List[int], int], default=320): input image size
+            batch_size (int, default=10): the number of images that the neural network processes in one run
+            load_pretrained (bool, default=True): loading pretrained model
+            fp16 (bool, default=True): use fp16 precision **not supported at this moment**
         """
         super(BASNET, self).__init__(n_channels=3, n_classes=1)
         self.device = device
@@ -60,10 +60,10 @@ class BASNET(BASNet):
         Transform input image to suitable data format for neural network
 
         Args:
-            data: input image
+            data (PIL.Image.Image): input image
 
         Returns:
-            input for neural network
+            torch.Tensor: input for neural network
 
         """
         resized = data.resize(self.input_image_size)
@@ -81,18 +81,18 @@ class BASNET(BASNet):
 
     @staticmethod
     def data_postprocessing(
-        data: torch.tensor, original_image: PIL.Image.Image
+        data: torch.Tensor, original_image: PIL.Image.Image
     ) -> PIL.Image.Image:
         """
         Transforms output data from neural network to suitable data
         format for using with other components of this framework.
 
         Args:
-            data: output data from neural network
-            original_image: input image which was used for predicted data
+            data (torch.Tensor): output data from neural network
+            original_image (PIL.Image.Image): input image which was used for predicted data
 
         Returns:
-            Segmentation mask as PIL Image instance
+            PIL.Image.Image: Segmentation mask as `PIL Image` instance
 
         """
         data = data.unsqueeze(0)
@@ -109,13 +109,13 @@ class BASNET(BASNet):
         self, images: List[Union[str, pathlib.Path, PIL.Image.Image]]
     ) -> List[PIL.Image.Image]:
         """
-        Passes input images through neural network and returns segmentation masks as PIL.Image.Image instances
+        Passes input images through neural network and returns segmentation masks as `PIL.Image.Image` instances
 
         Args:
-            images: input images
+            images (List[Union[str, pathlib.Path, PIL.Image.Image]]): input images
 
         Returns:
-            segmentation masks as for input images, as PIL.Image.Image instances
+            List[PIL.Image.Image]: segmentation masks as for input images, as `PIL.Image.Image` instances
 
         """
         collect_masks = []

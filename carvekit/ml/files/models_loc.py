@@ -1,6 +1,7 @@
 """
 Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
-Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
+Author: Nikita Selin [OPHoperHPO](https://github.com/OPHoperHPO).
+
 License: Apache License 2.0
 """
 import pathlib
@@ -12,7 +13,7 @@ def u2net_full_pretrained() -> pathlib.Path:
     """Returns u2net pretrained model location
 
     Returns:
-        pathlib.Path to model location
+        pathlib.Path: model location
     """
     return downloader("u2net.pth")
 
@@ -41,7 +42,7 @@ def basnet_pretrained() -> pathlib.Path:
     """Returns basnet pretrained model location
 
     Returns:
-        pathlib.Path to model location
+        pathlib.Path: model location
     """
     return downloader("basnet.pth")
 
@@ -50,7 +51,7 @@ def deeplab_pretrained() -> pathlib.Path:
     """Returns basnet pretrained model location
 
     Returns:
-        pathlib.Path to model location
+        pathlib.Path: model location
     """
     return downloader("deeplab.pth")
 
@@ -59,7 +60,7 @@ def fba_pretrained() -> pathlib.Path:
     """Returns basnet pretrained model location
 
     Returns:
-        pathlib.Path to model location
+        pathlib.Path: model location
     """
     return downloader("fba_matting.pth")
 
@@ -68,7 +69,7 @@ def tracer_b7_pretrained() -> pathlib.Path:
     """Returns TRACER with EfficientNet v1 b7 encoder pretrained model location
 
     Returns:
-        pathlib.Path to model location
+        pathlib.Path: model location
     """
     return downloader("tracer_b7.pth")
 
@@ -95,7 +96,7 @@ def scene_classifier_pretrained() -> pathlib.Path:
     more info: https://huggingface.co/Carve/scene_classifier
 
     Returns:
-        pathlib.Path to model location
+        pathlib.Path: model location
     """
     return downloader("scene_classifier.pth")
 

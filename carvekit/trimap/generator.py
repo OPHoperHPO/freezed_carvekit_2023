@@ -1,6 +1,6 @@
 """
 Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
-Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
+Author: Nikita Selin [OPHoperHPO](https://github.com/OPHoperHPO).
 License: Apache License 2.0
 """
 from PIL import Image
@@ -26,11 +26,11 @@ class TrimapGenerator(CV2TrimapGenerator):
         Initialize a TrimapGenerator instance
 
         Args:
-            prob_threshold: Probability threshold at which the
+            prob_threshold (int, default=231): Probability threshold at which the
             prob_filter and prob_as_unknown_area operations will be applied
-            kernel_size: The size of the offset from the object mask
+            kernel_size (int, default=30): The size of the offset from the object mask
             in pixels when an unknown area is detected in the trimap
-            erosion_iters: The number of iterations of erosion that
+            erosion_iters (int, default=5): The number of iterations of erosion that
             the object's mask will be subjected to before forming an unknown area
             filter_threshold: setup mask filter for very low prob.
         """
@@ -43,12 +43,13 @@ class TrimapGenerator(CV2TrimapGenerator):
         """
         Generates trimap based on predicted object mask to refine object mask borders.
         Based on cv2 erosion algorithm and additional prob. filters.
+
         Args:
-            original_image: Original image
-            mask: Predicted object mask
+            original_image (Image.Image): Original image
+            mask (Image.Image): Predicted object mask
 
         Returns:
-            Generated trimap for image.
+            Image.Image: Generated trimap for image.
         """
         mask = low_prob_filter(mask, self.filter_threshold)  # filter low prob noise
 

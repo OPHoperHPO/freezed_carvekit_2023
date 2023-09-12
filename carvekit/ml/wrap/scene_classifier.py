@@ -1,6 +1,6 @@
 """
 Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
-Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
+Author: Nikita Selin [OPHoperHPO](https://github.com/OPHoperHPO).
 License: Apache License 2.0
 """
 import pathlib
@@ -91,7 +91,7 @@ class SceneClassifier:
 
         return torch.unsqueeze(self.transform(data), 0).type(torch.FloatTensor)
 
-    def data_postprocessing(self, data: torch.tensor) -> Tuple[List[str], List[float]]:
+    def data_postprocessing(self, data: torch.Tensor) -> Tuple[List[str], List[float]]:
         """
         Transforms output data from neural network to suitable data
         format for using with other components of this framework.

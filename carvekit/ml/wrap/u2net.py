@@ -1,6 +1,6 @@
 """
 Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
-Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
+Author: Nikita Selin [OPHoperHPO](https://github.com/OPHoperHPO).
 License: Apache License 2.0
 """
 import pathlib
@@ -66,10 +66,10 @@ class U2NET(U2NETArchitecture):
         Transform input image to suitable data format for neural network
 
         Args:
-            data: input image
+            data (PIL.Image.Image): input image
 
         Returns:
-            input for neural network
+            torch.FloatTensor: input for neural network
 
         """
         resized = data.resize(self.input_image_size, resample=3)
@@ -87,18 +87,18 @@ class U2NET(U2NETArchitecture):
 
     @staticmethod
     def data_postprocessing(
-        data: torch.tensor, original_image: PIL.Image.Image
+        data: torch.Tensor, original_image: PIL.Image.Image
     ) -> PIL.Image.Image:
         """
         Transforms output data from neural network to suitable data
         format for using with other components of this framework.
 
         Args:
-            data: output data from neural network
-            original_image: input image which was used for predicted data
+            data (torch.Tensor): output data from neural network
+            original_image (PIL.Image.Image): input image which was used for predicted data
 
         Returns:
-            Segmentation mask as PIL Image instance
+            PIL.Image.Image: Segmentation mask as `PIL Image` instance
 
         """
         data = data.unsqueeze(0)

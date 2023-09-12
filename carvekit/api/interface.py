@@ -1,6 +1,6 @@
 """
 Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
-Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
+Author: Nikita Selin [OPHoperHPO](https://github.com/OPHoperHPO).
 License: Apache License 2.0
 """
 from pathlib import Path
@@ -32,10 +32,10 @@ class Interface:
         Initializes an object for interacting with pipelines and other components of the CarveKit framework.
 
         Args:
-            pre_pipe: Initialized pre-processing pipeline object
-            seg_pipe: Initialized segmentation network object
-            post_pipe: Initialized postprocessing pipeline object
-            device: The processing device that will be used to apply the masks to the images.
+            pre_pipe (Union[U2NET, BASNET, DeepLabV3, TracerUniversalB7]): Initialized pre-processing pipeline object
+            seg_pipe (Optional[Union[PreprocessingStub]]): Initialized segmentation network object
+            post_pipe (Optional[Union[MattingMethod]]): Initialized postprocessing pipeline object
+            device (Literal[cpu, cuda], default=cpu): The processing device that will be used to apply the masks to the images.
         """
         self.device = device
         self.preprocessing_pipeline = pre_pipe

@@ -1,6 +1,6 @@
 """
 Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
-Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
+Author: Nikita Selin [OPHoperHPO](https://github.com/OPHoperHPO).
 License: Apache License 2.0
 """
 import pathlib
@@ -189,7 +189,7 @@ class CascadePSP(RefinementModule):
 
     @staticmethod
     def data_postprocessing(
-        data: torch.tensor, mask: PIL.Image.Image
+        data: torch.Tensor, mask: PIL.Image.Image
     ) -> PIL.Image.Image:
         """
         Transforms output data from neural network to suitable data

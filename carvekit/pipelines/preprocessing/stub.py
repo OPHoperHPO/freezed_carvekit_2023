@@ -1,6 +1,6 @@
 """
 Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
-Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
+Author: Nikita Selin [OPHoperHPO](https://github.com/OPHoperHPO).
 License: Apache License 2.0
 """
 from pathlib import Path
@@ -16,11 +16,11 @@ class PreprocessingStub:
 
     def __call__(self, interface, images: List[Union[str, Path, Image.Image]]):
         """
-        Passes data though interface.segmentation_pipeline() method
+        Passes data though `interface.segmentation_pipeline()` method
 
         Args:
-            interface: Interface instance
-            images: list of images
+        - `interface`: Interface instance
+        - `images`: list of images
 
         Returns:
             the result of passing data through segmentation_pipeline method of interface
