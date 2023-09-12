@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>carvekit.api.high API documentation</title>
-<meta name="description" content="Source url: https://github.com/OPHoperHPO/image-background-remove-tool …" />
+<meta name="description" content="Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
+Author: Nikita Selin [OPHoperHPO](https://github.com/OPHoperHPO) …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,17 +23,16 @@
 <h1 class="title">Module <code>carvekit.api.high</code></h1>
 </header>
 <section id="section-intro">
-<p>Source url: <a href="https://github.com/OPHoperHPO/image-background-remove-tool">https://github.com/OPHoperHPO/image-background-remove-tool</a></p>
-<p>Author: Nikita Selin (OPHoperHPO)[<a href="https://github.com/OPHoperHPO].">https://github.com/OPHoperHPO].</a></p>
+<p>Source url: <a href="https://github.com/OPHoperHPO/freezed_carvekit_2023">https://github.com/OPHoperHPO/freezed_carvekit_2023</a>
+Author: Nikita Selin <a href="https://github.com/OPHoperHPO">OPHoperHPO</a>.</p>
 <p>License: Apache License 2.0</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;
-Source url: https://github.com/OPHoperHPO/image-background-remove-tool
-
-Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
+Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
+Author: Nikita Selin [OPHoperHPO](https://github.com/OPHoperHPO).
 
 License: Apache License 2.0
 &#34;&#34;&#34;
@@ -44,7 +44,7 @@ from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
 from carvekit.ml.wrap.cascadepsp import CascadePSP
 from carvekit.ml.wrap.scene_classifier import SceneClassifier
 from carvekit.pipelines.preprocessing import AutoScene
-from carvekit.ml.wrap.u2net import U2NET
+from carvekit.ml.wrap.isnet import ISNet
 from carvekit.pipelines.postprocessing import CasMattingMethod
 from carvekit.trimap.generator import TrimapGenerator
 
@@ -54,11 +54,11 @@ class HiInterface(Interface):
         self,
         object_type: str = &#34;auto&#34;,
         batch_size_pre=5,
-        batch_size_seg=2,
+        batch_size_seg=1,
         batch_size_matting=1,
         batch_size_refine=1,
         device=&#34;cpu&#34;,
-        seg_mask_size=640,
+        seg_mask_size=960,
         matting_mask_size=2048,
         refine_mask_size=900,
         trimap_prob_threshold=231,
@@ -105,7 +105,7 @@ class HiInterface(Interface):
                 fp16=fp16,
             )
         elif object_type == &#34;hairs-like&#34;:
-            self._segnet = U2NET(
+            self._segnet = ISNet(
                 device=device,
                 batch_size=batch_size_seg,
                 input_image_size=seg_mask_size,
@@ -177,7 +177,7 @@ class HiInterface(Interface):
 <dl>
 <dt id="carvekit.api.high.HiInterface"><code class="flex name class">
 <span>class <span class="ident">HiInterface</span></span>
-<span>(</span><span>object_type: str = 'auto', batch_size_pre=5, batch_size_seg=2, batch_size_matting=1, batch_size_refine=1, device='cpu', seg_mask_size=640, matting_mask_size=2048, refine_mask_size=900, trimap_prob_threshold=231, trimap_dilation=30, trimap_erosion_iters=5, fp16=False)</span>
+<span>(</span><span>object_type: str = 'auto', batch_size_pre=5, batch_size_seg=1, batch_size_matting=1, batch_size_refine=1, device='cpu', seg_mask_size=960, matting_mask_size=2048, refine_mask_size=900, trimap_prob_threshold=231, trimap_dilation=30, trimap_erosion_iters=5, fp16=False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Initializes High Level interface.</p>
@@ -235,11 +235,11 @@ refining quality.</li>
         self,
         object_type: str = &#34;auto&#34;,
         batch_size_pre=5,
-        batch_size_seg=2,
+        batch_size_seg=1,
         batch_size_matting=1,
         batch_size_refine=1,
         device=&#34;cpu&#34;,
-        seg_mask_size=640,
+        seg_mask_size=960,
         matting_mask_size=2048,
         refine_mask_size=900,
         trimap_prob_threshold=231,
@@ -286,7 +286,7 @@ refining quality.</li>
                 fp16=fp16,
             )
         elif object_type == &#34;hairs-like&#34;:
-            self._segnet = U2NET(
+            self._segnet = ISNet(
                 device=device,
                 batch_size=batch_size_seg,
                 input_image_size=seg_mask_size,

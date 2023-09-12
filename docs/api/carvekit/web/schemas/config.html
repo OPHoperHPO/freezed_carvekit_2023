@@ -49,7 +49,7 @@ class MLConfig(BaseModel):
     &#34;&#34;&#34;Config for ml part of framework&#34;&#34;&#34;
 
     segmentation_network: Literal[
-        &#34;u2net&#34;, &#34;deeplabv3&#34;, &#34;basnet&#34;, &#34;tracer_b7&#34;
+        &#34;u2net&#34;, &#34;deeplabv3&#34;, &#34;basnet&#34;, &#34;tracer_b7&#34;, &#34;isnet&#34;
     ] = &#34;tracer_b7&#34;
     &#34;&#34;&#34;Segmentation Network&#34;&#34;&#34;
     preprocessing_method: Literal[&#34;none&#34;, &#34;stub&#34;, &#34;autoscene&#34;, &#34;auto&#34;] = &#34;autoscene&#34;
@@ -60,13 +60,13 @@ class MLConfig(BaseModel):
     &#34;&#34;&#34;Processing device&#34;&#34;&#34;
     batch_size_pre: int = 5
     &#34;&#34;&#34;Batch size for preprocessing method&#34;&#34;&#34;
-    batch_size_seg: int = 5
+    batch_size_seg: int = 1
     &#34;&#34;&#34;Batch size for segmentation network&#34;&#34;&#34;
     batch_size_matting: int = 1
     &#34;&#34;&#34;Batch size for matting network&#34;&#34;&#34;
     batch_size_refine: int = 1
     &#34;&#34;&#34;Batch size for refine network&#34;&#34;&#34;
-    seg_mask_size: int = 640
+    seg_mask_size: int = 960
     &#34;&#34;&#34;The size of the input image for the segmentation neural network.&#34;&#34;&#34;
     matting_mask_size: int = 2048
     &#34;&#34;&#34;The size of the input image for the matting neural network.&#34;&#34;&#34;
@@ -149,7 +149,10 @@ class WebAPIConfig(BaseModel):
 <dd>
 <div class="desc"><p>Config for web api token authentication</p>
 <p>Create a new model by parsing and validating input data from keyword arguments.</p>
-<p>Raises ValidationError if the input data cannot be parsed to form a valid model.</p></div>
+<p>Raises [<code>ValidationError</code>][pydantic_core.ValidationError] if the input data cannot be
+validated to form a valid model.</p>
+<p><code>__init__</code> uses <code>__pydantic_self__</code> instead of the more common <code>self</code> for the first arg to
+allow <code>self</code> as a field name.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -167,7 +170,6 @@ class WebAPIConfig(BaseModel):
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>pydantic.main.BaseModel</li>
-<li>pydantic.utils.Representation</li>
 </ul>
 <h3>Class variables</h3>
 <dl>
@@ -183,6 +185,14 @@ class WebAPIConfig(BaseModel):
 <dd>
 <div class="desc"><p>Enables Token Authentication for API</p></div>
 </dd>
+<dt id="carvekit.web.schemas.config.AuthConfig.model_config"><code class="name">var <span class="ident">model_config</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.web.schemas.config.AuthConfig.model_fields"><code class="name">var <span class="ident">model_fields</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 </dl>
 </dd>
 <dt id="carvekit.web.schemas.config.MLConfig"><code class="flex name class">
@@ -192,7 +202,10 @@ class WebAPIConfig(BaseModel):
 <dd>
 <div class="desc"><p>Config for ml part of framework</p>
 <p>Create a new model by parsing and validating input data from keyword arguments.</p>
-<p>Raises ValidationError if the input data cannot be parsed to form a valid model.</p></div>
+<p>Raises [<code>ValidationError</code>][pydantic_core.ValidationError] if the input data cannot be
+validated to form a valid model.</p>
+<p><code>__init__</code> uses <code>__pydantic_self__</code> instead of the more common <code>self</code> for the first arg to
+allow <code>self</code> as a field name.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -201,7 +214,7 @@ class WebAPIConfig(BaseModel):
     &#34;&#34;&#34;Config for ml part of framework&#34;&#34;&#34;
 
     segmentation_network: Literal[
-        &#34;u2net&#34;, &#34;deeplabv3&#34;, &#34;basnet&#34;, &#34;tracer_b7&#34;
+        &#34;u2net&#34;, &#34;deeplabv3&#34;, &#34;basnet&#34;, &#34;tracer_b7&#34;, &#34;isnet&#34;
     ] = &#34;tracer_b7&#34;
     &#34;&#34;&#34;Segmentation Network&#34;&#34;&#34;
     preprocessing_method: Literal[&#34;none&#34;, &#34;stub&#34;, &#34;autoscene&#34;, &#34;auto&#34;] = &#34;autoscene&#34;
@@ -212,13 +225,13 @@ class WebAPIConfig(BaseModel):
     &#34;&#34;&#34;Processing device&#34;&#34;&#34;
     batch_size_pre: int = 5
     &#34;&#34;&#34;Batch size for preprocessing method&#34;&#34;&#34;
-    batch_size_seg: int = 5
+    batch_size_seg: int = 1
     &#34;&#34;&#34;Batch size for segmentation network&#34;&#34;&#34;
     batch_size_matting: int = 1
     &#34;&#34;&#34;Batch size for matting network&#34;&#34;&#34;
     batch_size_refine: int = 1
     &#34;&#34;&#34;Batch size for refine network&#34;&#34;&#34;
-    seg_mask_size: int = 640
+    seg_mask_size: int = 960
     &#34;&#34;&#34;The size of the input image for the segmentation neural network.&#34;&#34;&#34;
     matting_mask_size: int = 2048
     &#34;&#34;&#34;The size of the input image for the matting neural network.&#34;&#34;&#34;
@@ -274,7 +287,6 @@ class WebAPIConfig(BaseModel):
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>pydantic.main.BaseModel</li>
-<li>pydantic.utils.Representation</li>
 </ul>
 <h3>Class variables</h3>
 <dl>
@@ -306,11 +318,19 @@ class WebAPIConfig(BaseModel):
 <dd>
 <div class="desc"><p>The size of the input image for the matting neural network.</p></div>
 </dd>
+<dt id="carvekit.web.schemas.config.MLConfig.model_config"><code class="name">var <span class="ident">model_config</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.web.schemas.config.MLConfig.model_fields"><code class="name">var <span class="ident">model_fields</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
 <dt id="carvekit.web.schemas.config.MLConfig.postprocessing_method"><code class="name">var <span class="ident">postprocessing_method</span> : Literal['fba', 'cascade_fba', 'none']</code></dt>
 <dd>
 <div class="desc"><p>Post-Processing Network</p></div>
 </dd>
-<dt id="carvekit.web.schemas.config.MLConfig.preprocessing_method"><code class="name">var <span class="ident">preprocessing_method</span> : Literal['none', '<a title="stub" href="../../../stub.html">stub</a>', 'autoscene', 'auto']</code></dt>
+<dt id="carvekit.web.schemas.config.MLConfig.preprocessing_method"><code class="name">var <span class="ident">preprocessing_method</span> : Literal['none', 'stub', 'autoscene', 'auto']</code></dt>
 <dd>
 <div class="desc"><p>Pre-processing Method</p></div>
 </dd>
@@ -322,7 +342,7 @@ class WebAPIConfig(BaseModel):
 <dd>
 <div class="desc"><p>The size of the input image for the segmentation neural network.</p></div>
 </dd>
-<dt id="carvekit.web.schemas.config.MLConfig.segmentation_network"><code class="name">var <span class="ident">segmentation_network</span> : Literal['<a title="u2net" href="../../../u2net.html">u2net</a>', 'deeplabv3', '<a title="basnet" href="../../../basnet.html">basnet</a>', '<a title="tracer_b7" href="../../../tracer_b7.html">tracer_b7</a>']</code></dt>
+<dt id="carvekit.web.schemas.config.MLConfig.segmentation_network"><code class="name">var <span class="ident">segmentation_network</span> : Literal['u2net', 'deeplabv3', 'basnet', 'tracer_b7', 'isnet']</code></dt>
 <dd>
 <div class="desc"><p>Segmentation Network</p></div>
 </dd>
@@ -438,7 +458,10 @@ def seg_mask_size_validator(cls, value: int, values):
 <dd>
 <div class="desc"><p>FastAPI app config</p>
 <p>Create a new model by parsing and validating input data from keyword arguments.</p>
-<p>Raises ValidationError if the input data cannot be parsed to form a valid model.</p></div>
+<p>Raises [<code>ValidationError</code>][pydantic_core.ValidationError] if the input data cannot be
+validated to form a valid model.</p>
+<p><code>__init__</code> uses <code>__pydantic_self__</code> instead of the more common <code>self</code> for the first arg to
+allow <code>self</code> as a field name.</p></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -458,7 +481,6 @@ def seg_mask_size_validator(cls, value: int, values):
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>pydantic.main.BaseModel</li>
-<li>pydantic.utils.Representation</li>
 </ul>
 <h3>Class variables</h3>
 <dl>
@@ -473,6 +495,14 @@ def seg_mask_size_validator(cls, value: int, values):
 <dt id="carvekit.web.schemas.config.WebAPIConfig.ml"><code class="name">var <span class="ident">ml</span> : <a title="carvekit.web.schemas.config.MLConfig" href="#carvekit.web.schemas.config.MLConfig">MLConfig</a></code></dt>
 <dd>
 <div class="desc"><p>Config for ml part of framework</p></div>
+</dd>
+<dt id="carvekit.web.schemas.config.WebAPIConfig.model_config"><code class="name">var <span class="ident">model_config</span></code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.web.schemas.config.WebAPIConfig.model_fields"><code class="name">var <span class="ident">model_fields</span></code></dt>
+<dd>
+<div class="desc"></div>
 </dd>
 <dt id="carvekit.web.schemas.config.WebAPIConfig.port"><code class="name">var <span class="ident">port</span> : int</code></dt>
 <dd>
@@ -502,6 +532,8 @@ def seg_mask_size_validator(cls, value: int, values):
 <li><code><a title="carvekit.web.schemas.config.AuthConfig.admin_token" href="#carvekit.web.schemas.config.AuthConfig.admin_token">admin_token</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.AuthConfig.allowed_tokens" href="#carvekit.web.schemas.config.AuthConfig.allowed_tokens">allowed_tokens</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.AuthConfig.auth" href="#carvekit.web.schemas.config.AuthConfig.auth">auth</a></code></li>
+<li><code><a title="carvekit.web.schemas.config.AuthConfig.model_config" href="#carvekit.web.schemas.config.AuthConfig.model_config">model_config</a></code></li>
+<li><code><a title="carvekit.web.schemas.config.AuthConfig.model_fields" href="#carvekit.web.schemas.config.AuthConfig.model_fields">model_fields</a></code></li>
 </ul>
 </li>
 <li>
@@ -518,6 +550,8 @@ def seg_mask_size_validator(cls, value: int, values):
 <li><code><a title="carvekit.web.schemas.config.MLConfig.fp16" href="#carvekit.web.schemas.config.MLConfig.fp16">fp16</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.MLConfig.matting_mask_size" href="#carvekit.web.schemas.config.MLConfig.matting_mask_size">matting_mask_size</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.MLConfig.matting_mask_size_validator" href="#carvekit.web.schemas.config.MLConfig.matting_mask_size_validator">matting_mask_size_validator</a></code></li>
+<li><code><a title="carvekit.web.schemas.config.MLConfig.model_config" href="#carvekit.web.schemas.config.MLConfig.model_config">model_config</a></code></li>
+<li><code><a title="carvekit.web.schemas.config.MLConfig.model_fields" href="#carvekit.web.schemas.config.MLConfig.model_fields">model_fields</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.MLConfig.postprocessing_method" href="#carvekit.web.schemas.config.MLConfig.postprocessing_method">postprocessing_method</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.MLConfig.preprocessing_method" href="#carvekit.web.schemas.config.MLConfig.preprocessing_method">preprocessing_method</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.MLConfig.refine_mask_size" href="#carvekit.web.schemas.config.MLConfig.refine_mask_size">refine_mask_size</a></code></li>
@@ -531,10 +565,12 @@ def seg_mask_size_validator(cls, value: int, values):
 </li>
 <li>
 <h4><code><a title="carvekit.web.schemas.config.WebAPIConfig" href="#carvekit.web.schemas.config.WebAPIConfig">WebAPIConfig</a></code></h4>
-<ul class="">
+<ul class="two-column">
 <li><code><a title="carvekit.web.schemas.config.WebAPIConfig.auth" href="#carvekit.web.schemas.config.WebAPIConfig.auth">auth</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.WebAPIConfig.host" href="#carvekit.web.schemas.config.WebAPIConfig.host">host</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.WebAPIConfig.ml" href="#carvekit.web.schemas.config.WebAPIConfig.ml">ml</a></code></li>
+<li><code><a title="carvekit.web.schemas.config.WebAPIConfig.model_config" href="#carvekit.web.schemas.config.WebAPIConfig.model_config">model_config</a></code></li>
+<li><code><a title="carvekit.web.schemas.config.WebAPIConfig.model_fields" href="#carvekit.web.schemas.config.WebAPIConfig.model_fields">model_fields</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.WebAPIConfig.port" href="#carvekit.web.schemas.config.WebAPIConfig.port">port</a></code></li>
 </ul>
 </li>

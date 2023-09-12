@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 <meta name="generator" content="pdoc 0.10.0" />
 <title>carvekit.utils.models_utils API documentation</title>
-<meta name="description" content="Source url: https://github.com/OPHoperHPO/image-background-remove-tool …" />
+<meta name="description" content="Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
+Author: Nikita Selin [OPHoperHPO](https://github.com/OPHoperHPO) …" />
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
 <link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
 <link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/github.min.css" crossorigin>
@@ -22,17 +23,16 @@
 <h1 class="title">Module <code>carvekit.utils.models_utils</code></h1>
 </header>
 <section id="section-intro">
-<p>Source url: <a href="https://github.com/OPHoperHPO/image-background-remove-tool">https://github.com/OPHoperHPO/image-background-remove-tool</a></p>
-<p>Author: Nikita Selin (OPHoperHPO)[<a href="https://github.com/OPHoperHPO].">https://github.com/OPHoperHPO].</a></p>
+<p>Source url: <a href="https://github.com/OPHoperHPO/freezed_carvekit_2023">https://github.com/OPHoperHPO/freezed_carvekit_2023</a>
+Author: Nikita Selin <a href="https://github.com/OPHoperHPO">OPHoperHPO</a>.</p>
 <p>License: Apache License 2.0</p>
 <details class="source">
 <summary>
 <span>Expand source code</span>
 </summary>
 <pre><code class="python">&#34;&#34;&#34;
-Source url: https://github.com/OPHoperHPO/image-background-remove-tool
-
-Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
+Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
+Author: Nikita Selin [OPHoperHPO](https://github.com/OPHoperHPO).
 
 License: Apache License 2.0
 &#34;&#34;&#34;
@@ -236,7 +236,7 @@ def suppress_warnings():
 </details>
 </dd>
 <dt id="carvekit.utils.models_utils.get_precision_autocast"><code class="name flex">
-<span>def <span class="ident">get_precision_autocast</span></span>(<span>device='cpu', fp16=True, override_dtype=None) ‑> Union[Tuple[<a title="carvekit.utils.models_utils.EmptyAutocast" href="#carvekit.utils.models_utils.EmptyAutocast">EmptyAutocast</a>, Union[torch.dtype, Any]], Tuple[torch.autocast_mode.autocast, Union[torch.dtype, Any]]]</span>
+<span>def <span class="ident">get_precision_autocast</span></span>(<span>device='cpu', fp16=True, override_dtype=None) ‑> Union[Tuple[<a title="carvekit.utils.models_utils.EmptyAutocast" href="#carvekit.utils.models_utils.EmptyAutocast">EmptyAutocast</a>, Union[torch.dtype, Any]], Tuple[torch.amp.autocast_mode.autocast, Union[torch.dtype, Any]]]</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Returns precision and auto-cast settings for given device and fp16 settings.</p>

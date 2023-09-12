@@ -1,7 +1,7 @@
 """
 Source url: https://github.com/Karel911/TRACER
 Author: Min Seok Lee and Wooseok Shin
-Modified by Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
+Modified by Nikita Selin [OPHoperHPO](https://github.com/OPHoperHPO).
 License: Apache License 2.0
 Changes:
     - Refactored code

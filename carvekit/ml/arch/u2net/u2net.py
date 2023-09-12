@@ -1,5 +1,5 @@
 """
-Modified by Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
+Modified by Nikita Selin [OPHoperHPO](https://github.com/OPHoperHPO).
 Source url: https://github.com/xuebinqin/U-2-Net
 License: Apache License 2.0
 """

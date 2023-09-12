@@ -1,6 +1,6 @@
 """
 Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
-Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
+Author: Nikita Selin [OPHoperHPO](https://github.com/OPHoperHPO).
 License: Apache License 2.0
 """
 from collections import Counter
@@ -29,6 +29,9 @@ __all__ = ["AutoInterface"]
 
 
 class AutoInterface(Interface):
+    """
+    Interface with automatic scene and object classification for automated choice of statistically best processing pipeline
+    """
     def __init__(
         self,
         scene_classifier: SceneClassifier,

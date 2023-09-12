@@ -1695,6 +1695,7 @@ registered hooks while the latter silently ignores them.</p>
 </dd>
 <dt id="carvekit.ml.arch.tracerb7.effi_utils.MemoryEfficientSwish"><code class="flex name class">
 <span>class <span class="ident">MemoryEfficientSwish</span></span>
+<span>(</span><span>*args, **kwargs)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Base class for all neural network modules.</p>
@@ -1764,6 +1765,7 @@ registered hooks while the latter silently ignores them.</p>
 </dd>
 <dt id="carvekit.ml.arch.tracerb7.effi_utils.Swish"><code class="flex name class">
 <span>class <span class="ident">Swish</span></span>
+<span>(</span><span>*args, **kwargs)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Base class for all neural network modules.</p>
@@ -1846,7 +1848,8 @@ correct methods on <code>ctx</code> and validating your backward function using
 :func:<code>torch.autograd.gradcheck</code>.</p>
 <p>See :ref:<code>extending-autograd</code> for more details on how to use this class.</p>
 <p>Examples::</p>
-<pre><code>&gt;&gt;&gt; class Exp(Function):
+<pre><code>&gt;&gt;&gt; # xdoctest: +REQUIRES(env:TORCH_DOCTEST_AUTOGRAD)
+&gt;&gt;&gt; class Exp(Function):
 &gt;&gt;&gt;     @staticmethod
 &gt;&gt;&gt;     def forward(ctx, i):
 &gt;&gt;&gt;         result = i.exp()
@@ -1859,6 +1862,7 @@ correct methods on <code>ctx</code> and validating your backward function using
 &gt;&gt;&gt;         return grad_output * result
 &gt;&gt;&gt;
 &gt;&gt;&gt; # Use it by calling the apply method:
+&gt;&gt;&gt; # xdoctest: +SKIP
 &gt;&gt;&gt; output = Exp.apply(input)
 </code></pre></div>
 <details class="source">
@@ -1881,6 +1885,7 @@ correct methods on <code>ctx</code> and validating your backward function using
 <h3>Ancestors</h3>
 <ul class="hlist">
 <li>torch.autograd.function.Function</li>
+<li>torch.autograd.function._SingleLevelFunction</li>
 <li>torch._C._FunctionBase</li>
 <li>torch.autograd.function.FunctionCtx</li>
 <li>torch.autograd.function._HookMixin</li>
@@ -1923,10 +1928,35 @@ def backward(ctx, grad_output):
 <span>def <span class="ident">forward</span></span>(<span>ctx, i)</span>
 </code></dt>
 <dd>
-<div class="desc"><p>Performs the operation.</p>
-<p>This function is to be overridden by all subclasses.</p>
-<p>It must accept a context ctx as the first argument, followed by any
-number of arguments (tensors or other types).</p>
+<div class="desc"><p>This function is to be overridden by all subclasses. There are two ways
+to define forward:</p>
+<p>Usage 1 (Combined forward and ctx)::</p>
+<pre><code>@staticmethod
+def forward(ctx: Any, *args: Any, **kwargs: Any) -&gt; Any:
+    pass
+</code></pre>
+<ul>
+<li>It must accept a context ctx as the first argument, followed by any
+number of arguments (tensors or other types).</li>
+<li>See :ref:<code>combining-forward-context</code> for more details</li>
+</ul>
+<p>Usage 2 (Separate forward and ctx)::</p>
+<pre><code>@staticmethod
+def forward(*args: Any, **kwargs: Any) -&gt; Any:
+    pass
+
+@staticmethod
+def setup_context(ctx: Any, inputs: Tuple[Any, ...], output: Any) -&gt; None:
+    pass
+</code></pre>
+<ul>
+<li>The forward no longer accepts a ctx argument.</li>
+<li>Instead, you must also override the :meth:<code>torch.autograd.Function.setup_context</code>
+staticmethod to handle setting up the <code>ctx</code> object.
+<code>output</code> is the output of the forward, <code>inputs</code> are a Tuple of inputs
+to the forward.</li>
+<li>See :ref:<code>extending-autograd</code> for more details</li>
+</ul>
 <p>The context can be used to store arbitrary data that can be then
 retrieved during the backward pass. Tensors should not be stored
 directly on <code>ctx</code> (though this is not currently enforced for

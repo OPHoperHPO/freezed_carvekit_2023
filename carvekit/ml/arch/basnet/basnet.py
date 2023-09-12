@@ -1,6 +1,6 @@
 """
 Source url: https://github.com/NathanUA/BASNet
-Modified by Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
+Modified by Nikita Selin [OPHoperHPO](https://github.com/OPHoperHPO).
 License: MIT License
 """
 import torch
