@@ -113,8 +113,8 @@ async def removebg(
                 scale=scale,
                 position=position,
                 channels=channels,
-                add_shadow=add_shadow,
-                semitransparency=semitransparency,
+                add_shadow="false",
+                semitransparency="false",
                 bg_color=bg_color,
             )
         except ValidationError as e:
