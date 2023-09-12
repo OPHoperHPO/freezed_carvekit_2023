@@ -46,6 +46,9 @@ Background removal is used in various applied solutions across different fields.
 - Easy integration with your code
 - Models hosted on [HuggingFace](https://huggingface.co/Carve)
 
+## Architecture
+[Descritpion](/docs/readme/architecture/en.md))
+
 ## ⛓️ How does it work?
 It can be briefly described as
 1. The user selects a picture or a folder with pictures for processing
