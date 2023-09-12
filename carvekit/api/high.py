@@ -1,6 +1,5 @@
 """
-Source url: https://github.com/OPHoperHPO/image-background-remove-tool
-
+Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
 Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
 
 License: Apache License 2.0
@@ -13,7 +12,7 @@ from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
 from carvekit.ml.wrap.cascadepsp import CascadePSP
 from carvekit.ml.wrap.scene_classifier import SceneClassifier
 from carvekit.pipelines.preprocessing import AutoScene
-from carvekit.ml.wrap.u2net import U2NET
+from carvekit.ml.wrap.isnet import ISNet
 from carvekit.pipelines.postprocessing import CasMattingMethod
 from carvekit.trimap.generator import TrimapGenerator
 
@@ -23,11 +22,11 @@ class HiInterface(Interface):
         self,
         object_type: str = "auto",
         batch_size_pre=5,
-        batch_size_seg=2,
+        batch_size_seg=1,
         batch_size_matting=1,
         batch_size_refine=1,
         device="cpu",
-        seg_mask_size=640,
+        seg_mask_size=960,
         matting_mask_size=2048,
         refine_mask_size=900,
         trimap_prob_threshold=231,
@@ -74,7 +73,7 @@ class HiInterface(Interface):
                 fp16=fp16,
             )
         elif object_type == "hairs-like":
-            self._segnet = U2NET(
+            self._segnet = ISNet(
                 device=device,
                 batch_size=batch_size_seg,
                 input_image_size=seg_mask_size,

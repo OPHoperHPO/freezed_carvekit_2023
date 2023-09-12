@@ -1,5 +1,5 @@
 """
-Source url: https://github.com/OPHoperHPO/image-background-remove-tool
+Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
 Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
 License: Apache License 2.0
 """
@@ -60,6 +60,26 @@ MODELS_URLS = {
         "revision": "3ca1e5e432344b1277bc88d1c6d4265c46cff62f",
         "filename": "cascadepsp.pth",
     },
+    "isnet.pth": {
+        "repository": "Carve/isnet",
+        "revision": "91475fcb280243259a551653597c4702eabe9ff1",
+        "filename": "isnet.pth",
+    },
+    "isnet-97-carveset.pth": {
+        "repository": "Carve/isnet",
+        "revision": "743f5677b76322c87f09288cf913023a284f75c6",
+        "filename": "isnet-97-carveset.pth",
+    },
+    "tracer-b7-carveset-finetuned.pth": {
+        "repository": "Carve/tracer_b7",
+        "revision": "c5cd31d81855f1b6fe4188fa226cb468494cea85",
+        "filename": "tracer-b7-carveset-finetuned.pth",
+    },
+    "cascadepsp_finetuned_carveset.pth": {
+        "repository": "Carve/cascadepsp",
+        "revision": "f29a969d48f5266e4727668cbca78723a518d1cd",
+        "filename": "cascadepsp_finetuned_carveset.pth",
+    },
 }
 """
 All data needed to build path relative to huggingface.co for model download
@@ -80,7 +100,15 @@ MODELS_CHECKSUMS = {
     "341a4895ee99ed65cedcb79b80775db14c3ffcfc0aad2caec1d85140678852039d2d4e76b4",
     "yolov4_coco_with_classes.pth": "44b6ec2dd35dc3802bf8c512002f76e00e97bfbc86bc7af6de2fafce229a41b4ca"
     "12c6f3d7589278c71cd4ddd62df80389b148c19b84fa03216905407a107fff",
-    "cascadepsp.pth": "3f895f5126d80d6f73186f045557ea7c8eab4dfa3d69a995815bb2c03d564573f36c474f04d7bf0022a27829f583a1a793b036adf801cb423e41a4831b830122",
+    "cascadepsp.pth": "3f895f5126d80d6f73186f045557ea7c8eab4dfa3d69a995815bb2c03d564573f36c474f0"
+    "4d7bf0022a27829f583a1a793b036adf801cb423e41a4831b830122",
+    "isnet.pth": "e996b95c78aefe4573950ce1ed2eec20fa3c869381e9b5233c361a8e1dff09f"
+    "844f6c054c9cfa55377ae16a4cf55e727926599df0b1b8af65de478eccfac4708",
+    "isnet-97-carveset.pth": "8df0bd65367928ebb81b6f0fdb24ae991dc8c574a39d5e353d86844366b21d0c483ed71b035"
+                             "2d752ae5792b3dc6adc46bfb72934046656239cb2ddc615953365",
+    "tracer-b7-carveset-finetuned.pth": "6e6f553580a5db48fb27a145132b32481bceb55ef5b39b1"
+                                        "b1fa2e3fda97c44625d0fba24153209efb737cdcb4c1ef781138e3ea95e766c379915bf76a28c92e6",
+    "cascadepsp_finetuned_carveset.pth":"44e045eb9f9551b53e0554041c7939340056db129b6c6351011e8db86e5ef4cb49c210722feffa4587f747dfb8c0299ee1609da4986c9223c4d474ae7bcea71b",
 }
 """
 Model -> checksum dictionary

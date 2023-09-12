@@ -1,5 +1,5 @@
 """
-Source url: https://github.com/OPHoperHPO/image-background-remove-tool
+Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
 Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
 License: Apache License 2.0
 """
@@ -31,6 +31,28 @@ def prob_filter(mask: Image.Image, prob_threshold=231) -> Image.Image:
     return Image.fromarray(mask_array).convert("L")
 
 
+def low_prob_filter(mask: Image.Image, filter_threshold=-1) -> Image.Image:
+    """
+    Applies a filter to the mask by the probability of locating an object in the object area.
+
+    Args:
+        filter_threshold: Threshold of probability for mark area as background.
+        mask: Predicted object mask
+
+    Raises:
+        ValueError if mask or trimap has wrong color mode
+
+    Returns:
+        Generated trimap for image.
+    """
+    if mask.mode != "L":
+        raise ValueError("Input mask has wrong color mode.")
+    # noinspection PyTypeChecker
+    mask_array = np.array(mask)
+    mask_array[mask_array <= filter_threshold] = 0
+    return Image.fromarray(mask_array).convert("L")
+
+
 def prob_as_unknown_area(
     trimap: Image.Image, mask: Image.Image, prob_threshold=255
 ) -> Image.Image:
@@ -54,7 +76,7 @@ def prob_as_unknown_area(
     mask_array = np.array(mask)
     # noinspection PyTypeChecker
     trimap_array = np.array(trimap)
-    trimap_array[np.logical_and(mask_array <= prob_threshold, mask_array > 0)] = 127
+    trimap_array[np.logical_and(mask_array <= prob_threshold, mask_array > 0)] = 128
     return Image.fromarray(trimap_array).convert("L")
 
 
@@ -76,14 +98,14 @@ def post_erosion(trimap: Image.Image, erosion_iters=1) -> Image.Image:
     trimap_array = np.array(trimap)
     if erosion_iters > 0:
         without_unknown_area = trimap_array.copy()
-        without_unknown_area[without_unknown_area == 127] = 0
+        without_unknown_area[without_unknown_area == 128] = 0
 
         erosion_kernel = np.ones((3, 3), np.uint8)
         erode = cv2.erode(
             without_unknown_area, erosion_kernel, iterations=erosion_iters
         )
         erode = np.where(erode == 0, 0, without_unknown_area)
-        trimap_array[np.logical_and(erode == 0, without_unknown_area > 0)] = 127
+        trimap_array[np.logical_and(erode == 0, without_unknown_area > 0)] = 128
         erode = trimap_array.copy()
     else:
         erode = trimap_array.copy()

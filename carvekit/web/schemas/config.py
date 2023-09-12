@@ -21,7 +21,7 @@ class MLConfig(BaseModel):
     """Config for ml part of framework"""
 
     segmentation_network: Literal[
-        "u2net", "deeplabv3", "basnet", "tracer_b7"
+        "u2net", "deeplabv3", "basnet", "tracer_b7", "isnet"
     ] = "tracer_b7"
     """Segmentation Network"""
     preprocessing_method: Literal["none", "stub", "autoscene", "auto"] = "autoscene"
@@ -32,13 +32,13 @@ class MLConfig(BaseModel):
     """Processing device"""
     batch_size_pre: int = 5
     """Batch size for preprocessing method"""
-    batch_size_seg: int = 5
+    batch_size_seg: int = 1
     """Batch size for segmentation network"""
     batch_size_matting: int = 1
     """Batch size for matting network"""
     batch_size_refine: int = 1
     """Batch size for refine network"""
-    seg_mask_size: int = 640
+    seg_mask_size: int = 960
     """The size of the input image for the segmentation neural network."""
     matting_mask_size: int = 2048
     """The size of the input image for the matting neural network."""

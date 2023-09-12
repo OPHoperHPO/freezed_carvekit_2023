@@ -1,5 +1,5 @@
 """
-Source url: https://github.com/OPHoperHPO/image-background-remove-tool
+Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
 Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
 License: Apache License 2.0
 """
@@ -33,16 +33,18 @@ class FBAMatting(FBA):
     def __init__(
         self,
         device="cpu",
-        input_tensor_size: Union[List[int], int] = 2048,
+        input_tensor_size: Union[List[int], int] = 2048,  # 1500,
         batch_size: int = 2,
         encoder="resnet50_GN_WS",
         load_pretrained: bool = True,
         fp16: bool = False,
+        disable_noise_filter=False,
     ):
         """
         Initialize the FBAMatting model
 
         Args:
+<<<<<<< HEAD
             device (Literal[cpu, cuda], default=cpu): processing device
             input_tensor_size (Union[List[int], int], default=2048): input image size
             batch_size (int, default=2): the number of images that the neural network processes in one run
@@ -51,12 +53,22 @@ class FBAMatting(FBA):
                 Add more encoders to documentation as Literal typehint.
             load_pretrained (bool, default=True): loading pretrained model
             fp16 (bool, default=False): use half precision
+=======
+            device: processing device
+            input_tensor_size: input image size
+            batch_size: the number of images that the neural network processes in one run
+            encoder: neural network encoder head
+            load_pretrained: loading pretrained model
+            fp16: use half precision
+            disable_noise_filter: disables noise filter
+>>>>>>> 3625679df2315c3365cc3f4ea9578ea95b20fafd
 
         """
         super(FBAMatting, self).__init__(encoder=encoder)
         self.fp16 = fp16
         self.device = device
         self.batch_size = batch_size
+        self.disable_noise_filter = disable_noise_filter
         if isinstance(input_tensor_size, list):
             self.input_image_size = input_tensor_size[:2]
         else:
@@ -114,9 +126,8 @@ class FBAMatting(FBA):
                 .float(),
             )
 
-    @staticmethod
     def data_postprocessing(
-        data: torch.Tensor, trimap: PIL.Image.Image
+        self, data: torch.tensor, trimap: PIL.Image.Image
     ) -> PIL.Image.Image:
         """
         Transforms output data from neural network to suitable data
@@ -139,7 +150,8 @@ class FBAMatting(FBA):
         trimap_arr = np.array(trimap.copy())
         pred[trimap_arr[:, :] == 0] = 0
         # pred[trimap_arr[:, :] == 255] = 1
-        pred[pred < 0.3] = 0
+        if not self.disable_noise_filter:
+            pred[pred < 0.3] = 0
         return Image.fromarray(pred * 255).convert("L")
 
     def __call__(

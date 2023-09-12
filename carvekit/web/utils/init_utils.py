@@ -5,6 +5,7 @@ from typing import Union
 from loguru import logger
 
 from carvekit.ml.wrap.cascadepsp import CascadePSP
+from carvekit.ml.wrap.isnet import ISNet
 from carvekit.ml.wrap.scene_classifier import SceneClassifier
 from carvekit.web.schemas.config import WebAPIConfig, MLConfig, AuthConfig
 
@@ -141,6 +142,13 @@ def init_interface(config: Union[WebAPIConfig, MLConfig]) -> Interface:
     else:
         if config.segmentation_network == "u2net":
             seg_net = U2NET(
+                device=config.device,
+                batch_size=config.batch_size_seg,
+                input_image_size=config.seg_mask_size,
+                fp16=config.fp16,
+            )
+        elif config.segmentation_network == "isnet":
+            seg_net = ISNet(
                 device=config.device,
                 batch_size=config.batch_size_seg,
                 input_image_size=config.seg_mask_size,

@@ -1,5 +1,5 @@
 """
-Source url: https://github.com/OPHoperHPO/image-background-remove-tool
+Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
 Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
 License: Apache License 2.0
 """
@@ -18,7 +18,7 @@ from carvekit.ml.arch.cascadepsp.utils import (
     process_im_single_pass,
     process_high_res_im,
 )
-from carvekit.ml.files.models_loc import cascadepsp_pretrained
+from carvekit.ml.files.models_loc import cascadepsp_finetuned, cascadepsp_pretrained
 from carvekit.utils.image_utils import convert_image, load_image
 from carvekit.utils.models_utils import get_precision_autocast, cast_network
 from carvekit.utils.pool_utils import batch_generator, thread_pool_processing
@@ -72,9 +72,17 @@ class CascadePSP(RefinementModule):
                 " Please, don't use it if you have GPU with small memory!"
             )
         if load_pretrained:
-            self.load_state_dict(
-                torch.load(cascadepsp_pretrained(), map_location=self.device)
-            )
+            if self.device == "cpu":
+                warnings.warn("The CascadePSP finetuned model has an extremely slow processing bug on the CPU. "
+                              "Use GPU to load it. "
+                              "Using pretrained model instead.")
+                self.load_state_dict(
+                    torch.load(cascadepsp_pretrained(), map_location=self.device)
+                )
+            else:
+                self.load_state_dict(
+                    torch.load(cascadepsp_finetuned(), map_location=self.device)
+                )
         self.eval()
 
         self._image_transform = transforms.Compose(
@@ -308,3 +316,5 @@ class CascadePSP(RefinementModule):
                     range(len(inpt_masks)),
                 )
             return collect_masks
+
+

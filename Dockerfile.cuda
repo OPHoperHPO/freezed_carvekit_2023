@@ -14,7 +14,7 @@ COPY ./carvekit/ml/files/models_loc.py ./carvekit/ml/files/models_loc.py
 RUN python3 -c "from carvekit.ml.files.models_loc import download_all; download_all();"
 RUN rm -rf ./carvekit
 
-FROM pytorch/pytorch:1.11.0-cuda11.3-cudnn8-runtime
+FROM pytorch/pytorch:2.0.1-cuda11.7-cudnn8-runtime
 WORKDIR /app
 
 RUN apt-get update && apt-get -y install libgl1 libglib2.0-0  # Install cv2 dep.
@@ -39,10 +39,10 @@ ENV CARVEKIT_PREPROCESSING_METHOD 'none'
 ENV CARVEKIT_POSTPROCESSING_METHOD 'cascade_fba'
 ENV CARVEKIT_DEVICE 'cuda'
 ENV CARVEKIT_BATCH_SIZE_PRE=5
-ENV CARVEKIT_BATCH_SIZE_SEG '5'
+ENV CARVEKIT_BATCH_SIZE_SEG '1'
 ENV CARVEKIT_BATCH_SIZE_MATTING '1'
 ENV CARVEKIT_BATCH_SIZE_REFINE '1'
-ENV CARVEKIT_SEG_MASK_SIZE '640'
+ENV CARVEKIT_SEG_MASK_SIZE '960'
 ENV CARVEKIT_MATTING_MASK_SIZE '2048'
 ENV CARVEKIT_REFINE_MASK_SIZE '900'
 ENV CARVEKIT_AUTH_ENABLE '1'

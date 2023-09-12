@@ -1,5 +1,5 @@
 """
-Source url: https://github.com/OPHoperHPO/image-background-remove-tool
+Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
 Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
 License: Apache License 2.0
 """
@@ -20,7 +20,8 @@ class MattingMethod:
     """
     Improving the edges of the object mask using neural networks for matting and algorithms for creating trimap.
     Neural network for matting performs accurate object edge detection by using a special map called trimap,
-    with unknown area that we scan for boundary, already known general object area and the background."""
+    with unknown area that we scan for boundary, already known general object area and the background.
+    """
 
     def __init__(
         self,

@@ -4,77 +4,59 @@ Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
 License: Apache License 2.0
 """
 import pathlib
-from typing import List, Union
 
 import PIL.Image
 import numpy as np
 import torch
-import torchvision.transforms as transforms
 from PIL import Image
+from typing import List, Union
+from torchvision.transforms.functional import normalize
 
-from carvekit.ml.arch.tracerb7.efficientnet import EfficientEncoderB7
-from carvekit.ml.arch.tracerb7.tracer import TracerDecoder
-from carvekit.ml.files.models_loc import tracer_b7_pretrained, tracer_b7_carveset_finetuned
+from carvekit.ml.arch.isnet.isnet import ISNetDIS
+from carvekit.ml.files.models_loc import isnet_carveset_pretrained, isnet_full_pretrained
 from carvekit.utils.image_utils import load_image, convert_image
 from carvekit.utils.models_utils import get_precision_autocast, cast_network
 from carvekit.utils.pool_utils import thread_pool_processing, batch_generator
 
-__all__ = ["TracerUniversalB7"]
+__all__ = ["ISNet"]
 
 
-class TracerUniversalB7(TracerDecoder):
-    """TRACER B7 model interface"""
+class ISNet(ISNetDIS):
+    """ISNet model interface"""
 
     def __init__(
             self,
             device="cpu",
-            input_image_size: Union[List[int], int] = 960,
+            input_image_size: Union[List[int], int] = 1024,
             batch_size: int = 1,
             load_pretrained: bool = True,
             fp16: bool = False,
-            model_path: Union[str, pathlib.Path] = None,
     ):
         """
-        Initialize the TRACER model
+        Initialize the ISNet model
 
         Args:
-            device (Literal[cpu, cuda], default=cpu): processing device
-            input_image_size (Union[List[int], int], default=640): input image size
-            batch_size(int, default=4): the number of images that the neural network processes in one run
-            load_pretrained(bool, default=True): loading pretrained model
-            fp16 (bool, default=False): use fp16 precision
-            model_path (Union[str, pathlib.Path], default=None): path to the model
-            .. note:: REDO
-        """
-        if model_path is None:
-            model_path = tracer_b7_carveset_finetuned()
-        super(TracerUniversalB7, self).__init__(
-            encoder=EfficientEncoderB7(),
-            rfb_channel=[32, 64, 128],
-            features_channels=[48, 80, 224, 640],
-        )
+            device: processing device
+            input_image_size: input image size
+            batch_size: the number of images that the neural network processes in one run
+            load_pretrained: loading pretrained model
+            fp16: use fp16 precision
 
-        self.fp16 = fp16
+        """
+        super(ISNet, self).__init__()
         self.device = device
         self.batch_size = batch_size
+        self.fp16 = fp16
         if isinstance(input_image_size, list):
             self.input_image_size = input_image_size[:2]
         else:
             self.input_image_size = (input_image_size, input_image_size)
-
-        self.transform = transforms.Compose(
-            [
-                transforms.ToTensor(),
-                transforms.Resize(self.input_image_size),
-                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-            ]
-        )
         self.to(device)
         if load_pretrained:
-            # TODO remove edge detector from weights. It doesn't work well with this model!
             self.load_state_dict(
-                torch.load(model_path, map_location=self.device), strict=False
+                torch.load(isnet_carveset_pretrained(), map_location=self.device)
             )
+
         self.eval()
 
     def data_preprocessing(self, data: PIL.Image.Image) -> torch.FloatTensor:
@@ -82,14 +64,19 @@ class TracerUniversalB7(TracerDecoder):
         Transform input image to suitable data format for neural network
 
         Args:
-            data (PIL.Image.Image): input image
+            data: input image
 
         Returns:
-            torch.FloatTensor: input for neural network
+            input for neural network
 
         """
-
-        return torch.unsqueeze(self.transform(data), 0).type(torch.FloatTensor)
+        resized = data.resize(self.input_image_size, resample=3)
+        # noinspection PyTypeChecker
+        resized_arr = torch.from_numpy(np.array(resized, dtype=float)).permute(2, 0, 1)
+        resized_arr = resized_arr.unsqueeze(0)
+        resized_arr = resized_arr / 255.0
+        resized_arr = normalize(resized_arr, [0.5, 0.5, 0.5], [1.0, 1.0, 1.0])
+        return resized_arr.type(torch.FloatTensor)
 
     @staticmethod
     def data_postprocessing(
@@ -100,19 +87,21 @@ class TracerUniversalB7(TracerDecoder):
         format for using with other components of this framework.
 
         Args:
-            data (torch.Tensor): output data from neural network
-            original_image (PIL.Image.Image): input image which was used for predicted data
+            data: output data from neural network
+            original_image: input image which was used for predicted data
 
         Returns:
-            PIL.Image.Image: Segmentation mask
+            Segmentation mask as PIL Image instance
 
         """
-        output = (data.type(torch.FloatTensor).detach().cpu().numpy() * 255.0).astype(
-            np.uint8
-        )
-        output = output.squeeze(0)
-        mask = Image.fromarray(output).convert("L")
-        mask = mask.resize(original_image.size, resample=Image.BILINEAR)
+        data = data.squeeze(0)
+        ma = torch.max(data)
+        mi = torch.min(data)
+        data = (data - mi) / (ma - mi)
+        mask = Image.fromarray(
+            (data * 255).cpu().data.numpy().astype(np.uint8)
+        ).convert("L")
+        mask = mask.resize(original_image.size, resample=3)
         return mask
 
     def __call__(
@@ -122,10 +111,10 @@ class TracerUniversalB7(TracerDecoder):
         Passes input images though neural network and returns segmentation masks as PIL.Image.Image instances
 
         Args:
-            images (List[Union[str, pathlib.Path, PIL.Image.Image]]): input images
+            images: input images
 
         Returns:
-            List[PIL.Image.Image]: segmentation masks as for input images
+            segmentation masks as for input images, as PIL.Image.Image instances
 
         """
         collect_masks = []
@@ -141,7 +130,7 @@ class TracerUniversalB7(TracerDecoder):
                 )
                 with torch.no_grad():
                     batches = batches.to(self.device)
-                    masks = super(TracerDecoder, self).__call__(batches)
+                    masks = super(ISNetDIS, self).__call__(batches)[0][0]
                     masks_cpu = masks.cpu()
                     del batches, masks
                 masks = thread_pool_processing(
@@ -151,20 +140,24 @@ class TracerUniversalB7(TracerDecoder):
                     range(len(converted_images)),
                 )
                 collect_masks += masks
-
         return collect_masks
 
 
-class TracerUniversalB7Pretrained(TracerUniversalB7):
-    """TRACER B7 model interface"""
+class ISNetDISPretrained(ISNet):
+    """ISNet model interface"""
 
-    def __init__(self, device="cpu", input_image_size: Union[List[int], int] = 640, batch_size: int = 4,
-                 load_pretrained: bool = True, fp16: bool = False, model_path: Union[str, pathlib.Path] = None):
+    def __init__(
+            self,
+            device="cpu",
+            input_image_size: Union[List[int], int] = 1024,
+            batch_size: int = 1,
+            load_pretrained: bool = True,
+            fp16: bool = False,
+    ):
         """
-        Initialize the TRACER model
+        Initialize the ISNet model
 
         Args:
-            layers_cfg: neural network layers configuration
             device: processing device
             input_image_size: input image size
             batch_size: the number of images that the neural network processes in one run
@@ -172,4 +165,9 @@ class TracerUniversalB7Pretrained(TracerUniversalB7):
             fp16: use fp16 precision
 
         """
-        super().__init__(device, input_image_size, batch_size, load_pretrained, fp16, tracer_b7_pretrained())
+        super().__init__(device, input_image_size, batch_size, load_pretrained, fp16)
+        if load_pretrained:
+            self.load_state_dict(
+                torch.load(isnet_full_pretrained(), map_location=self.device)
+            )
+

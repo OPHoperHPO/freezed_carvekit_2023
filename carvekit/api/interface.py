@@ -1,5 +1,5 @@
 """
-Source url: https://github.com/OPHoperHPO/image-background-remove-tool
+Source url: https://github.com/OPHoperHPO/freezed_carvekit_2023
 Author: Nikita Selin (OPHoperHPO)[https://github.com/OPHoperHPO].
 License: Apache License 2.0
 """
@@ -11,6 +11,7 @@ from PIL import Image
 from carvekit.ml.wrap.basnet import BASNET
 from carvekit.ml.wrap.deeplab_v3 import DeepLabV3
 from carvekit.ml.wrap.u2net import U2NET
+from carvekit.ml.wrap.isnet import ISNet
 from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
 from carvekit.pipelines.preprocessing import PreprocessingStub, AutoScene
 from carvekit.pipelines.postprocessing import MattingMethod, CasMattingMethod
@@ -22,7 +23,7 @@ from carvekit.utils.pool_utils import thread_pool_processing
 class Interface:
     def __init__(
         self,
-        seg_pipe: Optional[Union[U2NET, BASNET, DeepLabV3, TracerUniversalB7]],
+        seg_pipe: Optional[Union[U2NET, BASNET, DeepLabV3, TracerUniversalB7, ISNet]],
         pre_pipe: Optional[Union[PreprocessingStub, AutoScene]] = None,
         post_pipe: Optional[Union[MattingMethod, CasMattingMethod]] = None,
         device="cpu",

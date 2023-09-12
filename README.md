@@ -3,11 +3,8 @@
 <p align="center"> <img src="docs/imgs/logo.png"> </p>
 
 <p align="center">
-<img src="https://github.com/OPHoperHPO/image-background-remove-tool/actions/workflows/master_docker.yaml/badge.svg">
-<img src="https://github.com/OPHoperHPO/image-background-remove-tool/actions/workflows/master.yml/badge.svg">
-<a href="https://colab.research.google.com/github/OPHoperHPO/image-background-remove-tool/blob/master/docs/other/carvekit_try.ipynb">
-<img src="https://camo.githubusercontent.com/52feade06f2fecbf006889a904d221e6a730c194/68747470733a2f2f636f6c61622e72657365617263682e676f6f676c652e636f6d2f6173736574732f636f6c61622d62616467652e737667"></a>
-
+<img src="https://github.com/OPHoperHPO/freezed_carvekit_2023/actions/workflows/master_docker.yaml/badge.svg">
+<img src="https://github.com/OPHoperHPO/freezed_carvekit_2023/actions/workflows/master.yml/badge.svg">
 </p>
 
 
@@ -21,8 +18,20 @@
 [Russian](docs/readme/ru.md)
 [English](README.md)
 
-## 📄 Description:  
+## 📄 About project:  
 Automated high-quality background removal framework for an image using neural networks.
+
+### Area of application of the project:
+Currently, background removal solutions are in high demand in various fields:
+
+Advertising Industry: In this case, background removal is necessary for creating various advertising materials, banners, and logos. This speeds up and simplifies the work of designers, as manual background removal takes a lot of time. It's also important to consider the need for high-quality images, which plays a significant role in the perception of various advertising products.
+
+Online Retail: For the e-commerce sector, where it is crucial to present the product in the most favorable light and more qualitatively for the purpose of sales, background removal is an essential part of the process. For instance, the online marketplace "Amazon" has strict product image guidelines, including the requirement that the primary image be of good quality and on a clean white background. This rule ensures that the main focus remains solely on the product and maintains a uniform appearance of products on their platform.
+Medical and Scientific Research and Diagnostics: For types of research such as computed tomography and magnetic resonance imaging, background removal can solve the problem of obtaining higher-quality images for diagnosing various diseases, including in the early stages.
+
+Computer Vision and Artificial Intelligence: Background removal is widely used in the field of computer vision and artificial intelligence for detecting and classifying objects in images. By removing the background, the image processing task can be simplified and the accuracy of object recognition algorithms can be improved. One application is in the scientific field of nuclear technology and radiation safety for visualizing radioactive materials, for image processing and data display, which contributes to more accurate analysis, classification, and management of radioactive materials and ensures safety.
+
+Background removal is used in various applied solutions across different fields. The software suite can be reconfigured to suit various tasks and needs.
 
 ## 🎆 Features:  
 - High Quality
@@ -37,7 +46,6 @@ Automated high-quality background removal framework for an image using neural ne
 - Easy integration with your code
 - Models hosted on [HuggingFace](https://huggingface.co/Carve)
 
-## ⛱ Try yourself on [Google Colab](https://colab.research.google.com/github/OPHoperHPO/image-background-remove-tool/blob/master/docs/other/carvekit_try.ipynb) 
 ## ⛓️ How does it work?
 It can be briefly described as
 1. The user selects a picture or a folder with pictures for processing
@@ -45,24 +53,28 @@ It can be briefly described as
 3. Using machine learning technology, the background of the image is removed
 4. Image post-processing to improve the quality of the processed image
 ## 🎓 Implemented Neural Networks:
-|        Networks         |                   Target                    |             Accuracy             |
-|:-----------------------:|:-------------------------------------------:|:--------------------------------:|
-| **Tracer-B7** (default) |     **General** (objects, animals, etc)     | **90%** (mean F1-Score, DUTS-TE) |
-|         U^2-net         | **Hairs** (hairs, people, animals, objects) |  80.4% (mean F1-Score, DUTS-TE)  |
-|         BASNet          |        **General** (people, objects)        |  80.3% (mean F1-Score, DUTS-TE)  |
-|        DeepLabV3        |         People, Animals, Cars, etc          |  67.4% (mean IoU, COCO val2017)  |
+|        Networks         |                   Target                    |                   Accuracy                   |
+|:-----------------------:|:-------------------------------------------:|:--------------------------------------------:|
+| **Tracer-B7** (default) |     **General** (objects, animals, etc)     | **96.2%** (mean F1-Score, CarveSet/test, HR) |
+|        **ISNet**        |     **Hairs** (hairs, people, animals)      |  **97%** (mean F1-Score, CarveSet/test, HR)  |
+|         U^2-net         | **Hairs** (hairs, people, animals, objects) |      80.4% (mean F1-Score, DUTS-TE, LR)      |
+|         BASNet          |        **General** (people, objects)        |      80.3% (mean F1-Score, DUTS-TE, LR)      |
+|        DeepLabV3        |         People, Animals, Cars, etc          |      67.4% (mean IoU, COCO val2017, LR)      |
 
+> HR - High resolution images.
+> LR - Low resolution images.
 ### Recommended parameters for different models
 |  Networks   | Segmentation mask  size | Trimap parameters (dilation, erosion) |
 |:-----------:|:-----------------------:|:-------------------------------------:|
-| `tracer_b7` |           640           |                (30, 5)                |
+| `tracer_b7` |           960           |                (30, 5)                |
+|   `isnet`   |          1024           |                (30, 5)                |
 |   `u2net`   |           320           |                (30, 5)                |
 |  `basnet`   |           320           |                (30, 5)                |
 | `deeplabv3` |          1024           |               (40, 20)                |
 
 > ### Notes: 
 > 1. The final quality may depend on the resolution of your image, the type of scene or object.
-> 2. Use **U2-Net for hairs** and **Tracer-B7 for general images** and correct parameters. \
+> 2. Use **ISNet for hairs** or **U2-Net for hairs** and **Tracer-B7 for general images** and correct parameters. \
 > It is very important for final quality! Example images was taken by using U2-Net and FBA post-processing.
 ## 🖼️ Image pre-processing and post-processing methods:
 ### 🔍 Preprocessing methods:
@@ -80,13 +92,15 @@ It can be briefly described as
 * `cascade_fba` (default) - This algorithm refines the segmentation mask using CascadePSP neural network and then applies the FBA algorithm.
 
 ## 🏷 Setup for CPU processing:
-1. `pip install carvekit --extra-index-url https://download.pytorch.org/whl/cpu`
+1. `pip install git+https://github.com/OPHoperHPO/freezed_carvekit_2023 --extra-index-url https://download.pytorch.org/whl/cpu`
 > The project supports python versions from 3.8 to 3.10.4
 ## 🏷 Setup for GPU processing:  
 1. Make sure you have an NVIDIA GPU with 8 GB VRAM.
 2. Install `CUDA Toolkit and Video Driver for your GPU`
-3. `pip install carvekit --extra-index-url https://download.pytorch.org/whl/cu113`
+3. `pip install git+https://github.com/OPHoperHPO/freezed_carvekit_2023 --extra-index-url https://download.pytorch.org/whl/cu113`
 > The project supports python versions from 3.8 to 3.10.4
+> Please, build and install carvekit directly from this repo. 
+> Don't use prebuilt binaries from PyPI or other already links. It's only for main repo.
 ## 🧰 Interact via code:  
 ### If you don't need deep configuration or don't want to deal with it
 ``` python
@@ -95,12 +109,12 @@ from carvekit.api.high import HiInterface
 
 # Check doc strings for more information
 interface = HiInterface(object_type="auto",  # Can be "object" or "hairs-like" or "auto"
-                        batch_size_seg=5,
+                        batch_size_seg=1,
                         batch_size_pre=5,
                         batch_size_matting=1,
                         batch_size_refine=1,
                         device='cuda' if torch.cuda.is_available() else 'cpu',
-                        seg_mask_size=640,  # Use 640 for Tracer B7 and 320 for U2Net
+                        seg_mask_size=960,  # Use 960 for Tracer B7 and 320 for U2Net
                         matting_mask_size=2048,
                         refine_mask_size=900,
                         trimap_prob_threshold=231,
@@ -215,8 +229,8 @@ Options:
   --batch_size_refine 1        Batch size for list of images to be
                                   processed by refining network
 
-  --seg_mask_size 640          The size of the input image for the
-                               segmentation neural network. Use 640 for Tracer B7 and 320 for U2Net
+  --seg_mask_size 960          The size of the input image for the
+                               segmentation neural network. Use 960 for Tracer B7 and 1024 for ISNet
 
   --matting_mask_size 2048     The size of the input image for the matting
                                neural network.
@@ -281,20 +295,28 @@ See `docker-compose.<device>.yml` for more information. \
 1. Run `docker-compose -f docker-compose.cpu.yml run carvekit_api pytest`  # For testing on CPU
 2. Run `docker-compose -f docker-compose.cuda.yml run carvekit_api pytest`  # For testing on GPU
 
+### 🖼️ CarveSet Dataset V1.0:
+<div> 
+<img src="./docs/imgs/carveset/carveset_pair_example.png"/>
+<img src="./docs/imgs/carveset/duts_hd.png"/> 
+
+</div>
+
+We have collected an extensive dataset covering the most common categories of objects intended for background removal.
+It includes about 179 object names belonging to 8 different categories. (CarveSet subset)
+
+Total number of images in the dataset: **20,155**.
+####  Information about the image database in the dataset
+1.  **CarveSet** - contains 4,583 high-quality images with a size of approximately 2500x2500 pixels.
+2.  **DUTS-HD** - consists of 15,572 images, magnified 4 times from the DUTS dataset,
+with a size of approximately 1600x1600 pixels. 
+The dataset was re-annotated with controlled enhancement of the output mask. 
+The images were upscaled, which added new details (see figure).
+
+More info: [CarveSet Dataset](docs/carveset/carveset.md)
+
 ## 👪 Credits: [More info](docs/CREDITS.md)
 
-## 💵 Support
-  You can thank me for developing this project and buy me a small cup of coffee ☕
-
-| Blockchain |           Cryptocurrency            |          Network          |                                             Wallet                                              |
-|:----------:|:-----------------------------------:|:-------------------------:|:-----------------------------------------------------------------------------------------------:|
-|  Ethereum  | ETH / USDT / USDC / BNB / Dogecoin  |          Mainnet          |                           0x7Ab1B8015020242D2a9bC48F09b2F34b994bc2F8                            |
-|  Ethereum  | ETH / USDT / USDC / BNB / Dogecoin  | BSC (Binance Smart Chain) |                           0x7Ab1B8015020242D2a9bC48F09b2F34b994bc2F8                            |
-|  Bitcoin   |                 BTC                 |             -             |                           bc1qmf4qedujhhvcsg8kxpg5zzc2s3jvqssmu7mmhq                            |
-|   ZCash    |                 ZEC                 |             -             |                               t1d7b9WxdboGFrcVVHG2ZuwWBgWEKhNUbtm                               |
-|    Tron    |                 TRX                 |             -             |                               TH12CADSqSTcNZPvG77GVmYKAe4nrrJB5X                                |
-|   Monero   |                 XMR                 |          Mainnet          | 48w2pDYgPtPenwqgnNneEUC9Qt1EE6eD5MucLvU3FGpY3SABudDa4ce5bT1t32oBwchysRCUimCkZVsD1HQRBbxVLF9GTh3 |
-|    TON     |                 TON                 |             -             |                        EQCznqTdfOKI3L06QX-3Q802tBL0ecSWIKfkSjU-qsoy0CWE                         |
 ## 📧 __Feedback__
 I will be glad to receive feedback on the project and suggestions for integration.
 

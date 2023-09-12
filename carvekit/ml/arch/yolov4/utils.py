@@ -65,7 +65,6 @@ def post_processing(conf_thresh, nms_thresh, output):
 
     bboxes_batch = []
     for i in range(box_array.shape[0]):
-
         argwhere = max_conf[i] > conf_thresh
         l_box_array = box_array[i, argwhere, :]
         l_max_conf = max_conf[i, argwhere]
@@ -74,7 +73,6 @@ def post_processing(conf_thresh, nms_thresh, output):
         bboxes = []
         # nms for each class
         for j in range(num_classes):
-
             cls_argwhere = l_max_id == j
             ll_box_array = l_box_array[cls_argwhere, :]
             ll_max_conf = l_max_conf[cls_argwhere]

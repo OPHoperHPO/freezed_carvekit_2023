@@ -56,7 +56,6 @@ def process_high_res_im(model, im, seg, L=900):
         used_start_idx = {}
         for x_idx in range((w) // step_size + 1):
             for y_idx in range((h) // step_size + 1):
-
                 start_x = x_idx * step_size
                 start_y = y_idx * step_size
                 end_x = start_x + step_len

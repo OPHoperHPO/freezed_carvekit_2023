@@ -1,0 +1,22 @@
+CarveKit
+Copyright 2023 Nikita Selin
+
+List of included files in this repository from the other projects with Apache 2.0 license:
+
+1. carvekit/ml/arch/isnet/isnet.py
+Authors: Xuebin Qin, Hang Dai, Xiaobin Hu, Deng-Ping Fan*, Ling Shao, Luc Van Gool.
+This file is part of the DIS project and copied from https://github.com/xuebinqin/DIS
+
+2. carvekit/ml/arch/tracerb7/*.py
+Authors: Lee, Min Seok and Shin, WooSeok and Han, Sung Won
+These files are part of the TRACER project and copied from https://github.com/Karel911/TRACER
+Some files taken from https://github.com/lukemelas/EfficientNet-PyTorch project. Author: lukemelas
+
+3. carvekit/ml/arch/u2net/u2net.py
+Authors: Xuebin Qin, Zichen Zhang, Chenyang Huang, Masood Dehghan, Osmar R. Zaiane and Martin Jagersand
+This file is part of the U^2-Net project and copied from https://github.com/xuebinqin/U-2-Net
+
+4. carvekit/ml/arch/yolov4/*.py
+Author: Tianxiaomo
+These files are part of the pytorch-YOLOv4 project and copied from https://github.com/Tianxiaomo/pytorch-YOLOv4
+
