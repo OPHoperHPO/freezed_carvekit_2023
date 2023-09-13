@@ -289,11 +289,11 @@ Using the API via docker is a **fast** and non-complex way to have a working API
 >2. Authentication is **enabled** by default. \
 > **Token keys are reset** on every container restart if ENV variables are not set. \
 See `docker-compose.<device>.yml` for more information. \
-> **You can see your access keys in the docker container logs(first line).**
+>3. **For default deployment API key is required to use frontend and API. You can see your access keys in the docker container logs(first line).**
 > 
->3. There are examples of interaction with the API.\
+>4. There are examples of interaction with the API.\
 > See `docs/code_examples/python` for more details
->4. Highly-likely the first image on newly upped container will be processed slowly due to time required to load models to GRAM. You can track state in the Network tab of Developer tools of your browser. There is a chance, that in future versions it will be fixed, but it's not an important part of the project and not a first-priority task.
+>5. Highly-likely the first image on newly upped container will be processed slowly due to time required to load models to GRAM. You can track state in the Network tab of Developer tools of your browser. There is a chance, that in future versions it will be fixed, but it's not an important part of the project and not a first-priority task.
 
 ### 🔨 Creating and running a container:
 1. Install `docker-compose`
@@ -312,6 +312,12 @@ See `docker-compose.<device>.yml` for more information. \
 > debconf: delaying package configuration, since apt-utils is not installed
 > 
 > can be ignored. It's a known issue of base python image and have no any influence on resulting image and it's functionality
+> 
+> Also additional hot machine dependencies exist for docker deployment via CUDA. 
+> 
+> For Arch-based distributive run yay -S nvidia-container-toolkit nvidia-container-runtime
+> 
+> For Debian-based distros follow [Nvidia instructions](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
 
 ## ☑️ Testing
 
