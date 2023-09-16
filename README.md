@@ -46,6 +46,9 @@ Background removal is used in various applied solutions across different fields.
 - Easy integration with your code
 - Models hosted on [HuggingFace](https://huggingface.co/Carve)
 
+## Architecture
+[Descritpion](/docs/readme/architecture/en.md))
+
 ## ⛓️ How does it work?
 It can be briefly described as
 1. The user selects a picture or a folder with pictures for processing
@@ -92,12 +95,32 @@ It can be briefly described as
 * `cascade_fba` (default) - This algorithm refines the segmentation mask using CascadePSP neural network and then applies the FBA algorithm.
 
 ## 🏷 Setup for CPU processing:
-1. `pip install git+https://github.com/OPHoperHPO/freezed_carvekit_2023 --extra-index-url https://download.pytorch.org/whl/cpu`
+1. 
+```bash
+# Arch/Arch-based
+pacman -S lib32-libglvnd
+# Debian/Ubuntu
+apt install libgl1
+```
+
+2. `pip install git+https://github.com/OPHoperHPO/freezed_carvekit_2023 --extra-index-url https://download.pytorch.org/whl/cpu`
 > The project supports python versions from 3.8 to 3.10.4
+
+> ### Note:
+> Warning about impossibility of CascadePSP finetuned model will be shown.
+> Using CPU processing is not meant to be a project goal and due to internal peculiarities of finetuned model and/or PyTorch by itself finetuned CascadePSP model cannot be used on CPU, pretrained model will used instead.
 ## 🏷 Setup for GPU processing:  
 1. Make sure you have an NVIDIA GPU with 8 GB VRAM.
 2. Install `CUDA Toolkit and Video Driver for your GPU`
-3. `pip install git+https://github.com/OPHoperHPO/freezed_carvekit_2023 --extra-index-url https://download.pytorch.org/whl/cu113`
+3. 
+```bash
+# Arch/Arch-based
+pacman -S lib32-libglvnd glib2 lib32-libglvnd
+# Debian/Ubuntu
+apt install libgl1 libglib2.0-0
+```
+
+4. `pip install git+https://github.com/OPHoperHPO/freezed_carvekit_2023 --extra-index-url https://download.pytorch.org/whl/cu113`
 > The project supports python versions from 3.8 to 3.10.4
 > Please, build and install carvekit directly from this repo. 
 > Don't use prebuilt binaries from PyPI or other already links. It's only for main repo.
@@ -207,53 +230,48 @@ Usage: carvekit [OPTIONS]
   Performs background removal on specified photos using console interface.
 
 Options:
-  -i ./2.jpg                   Path to input file or dir  [required]
-  -o ./2.png                   Path to output file or dir
-  --pre autoscene              Preprocessing method
-  --post cascade_fba           Postprocessing method.
-  --net tracer_b7              Segmentation Network. Check README for more info.
-  
-  --recursive                  Enables recursive search for images in a folder
-  --batch_size 10              Batch Size for list of images to be loaded to
-                               RAM
-                               
-  --batch_size_pre 5           Batch size for list of images to be
-                               processed by preprocessing method network
-                               
-  --batch_size_seg 5           Batch size for list of images to be processed
-                               by segmentation network
-
-  --batch_size_mat 1           Batch size for list of images to be processed
-                               by matting network
-
-  --batch_size_refine 1        Batch size for list of images to be
+  -i TEXT                         Path to input file or directory. Directory
+                                  MUST be provided if --recursive is used
+                                  [required]
+  -o TEXT                         Path to output file or dir. Defaults to
+                                  /<source file
+                                  location>/<file_name>_bg_removed.png
+  --pre [none|autoscene|auto]     Preprocessing method
+  --post [none|fba|cascade_fba]   Postprocessing method.
+  --net [u2net|deeplabv3|basnet|tracer_b7|isnet]
+                                  Segmentation Network
+  --recursive                     Enables recursive search for images in a
+                                  folder
+  --batch_size INTEGER            Batch Size for list of images to be loaded
+                                  to RAM
+  --batch_size_pre INTEGER        Batch size for list of images to be
+                                  processed by preprocessing method network
+  --batch_size_seg INTEGER        Batch size for list of images to be
+                                  processed by segmentation network
+  --batch_size_mat INTEGER        Batch size for list of images to be
+                                  processed by matting network
+  --batch_size_refine INTEGER     Batch size for list of images to be
                                   processed by refining network
-
-  --seg_mask_size 960          The size of the input image for the
-                               segmentation neural network. Use 960 for Tracer B7 and 1024 for ISNet
-
-  --matting_mask_size 2048     The size of the input image for the matting
-                               neural network.
-
-  --refine_mask_size 900       The size of the input image for the refining
+  --seg_mask_size INTEGER         The size of the input image for the
+                                  segmentation neural network.
+  --matting_mask_size INTEGER     The size of the input image for the matting
                                   neural network.
-
-  --trimap_dilation 30       The size of the offset radius from the
+  --refine_mask_size INTEGER      The size of the input image for the refining
+                                  neural network.
+  --trimap_dilation INTEGER       The size of the offset radius from the
                                   object mask in pixels when forming an
                                   unknown area
-  --trimap_erosion 5        The number of iterations of erosion that the
+  --trimap_erosion INTEGER        The number of iterations of erosion that the
                                   object's mask will be subjected to before
                                   forming an unknown area
-  --trimap_prob_threshold 231
+  --trimap_prob_threshold INTEGER
                                   Probability threshold at which the
                                   prob_filter and prob_as_unknown_area
                                   operations will be applied
-
-  --device cpu                 Processing Device.
-  --fp16                       Enables mixed precision processing. Use only with CUDA. CPU support is experimental!
-  --help                       Show this message and exit.
-
-
+  --device TEXT                   Processing Device.
+  --fp16                          Enables mixed precision processing. Not
+                                  supported for U2NET.
+  --help                          Show this message and exit.
 ````
 ## 📦 Running the Framework / FastAPI HTTP API server via Docker:
 Using the API via docker is a **fast** and non-complex way to have a working API.
@@ -271,10 +289,12 @@ Using the API via docker is a **fast** and non-complex way to have a working API
 >2. Authentication is **enabled** by default. \
 > **Token keys are reset** on every container restart if ENV variables are not set. \
 See `docker-compose.<device>.yml` for more information. \
-> **You can see your access keys in the docker container logs.**
+>3. **For default deployment API key is required to use frontend and API. You can see your access keys in the docker container logs(first line).**
 > 
->3. There are examples of interaction with the API.\
+>4. There are examples of interaction with the API.\
 > See `docs/code_examples/python` for more details
+>5. Highly-likely the first image on newly upped container will be processed slowly due to time required to load models to GRAM. You can track state in the Network tab of Developer tools of your browser. There is a chance, that in future versions it will be fixed, but it's not an important part of the project and not a first-priority task.
+
 ### 🔨 Creating and running a container:
 1. Install `docker-compose`
 2. Run `docker-compose -f docker-compose.cpu.yml up -d`  # For CPU Processing
@@ -284,6 +304,20 @@ See `docker-compose.<device>.yml` for more information. \
 > files in this folder. 
 
 > Building a docker image on Windows is not officially supported. You can try using WSL2 or "Linux Containers Mode" but I haven't tested this.
+
+
+>### Important Notes:
+> Warnings such as 
+> 
+> debconf: delaying package configuration, since apt-utils is not installed
+> 
+> can be ignored. It's a known issue of base python image and have no any influence on resulting image and it's functionality
+> 
+> Also additional hot machine dependencies exist for docker deployment via CUDA. 
+> 
+> For Arch-based distributive run yay -S nvidia-container-toolkit nvidia-container-runtime
+> 
+> For Debian-based distros follow [Nvidia instructions](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
 
 ## ☑️ Testing
 

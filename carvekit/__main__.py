@@ -14,15 +14,39 @@ from carvekit.utils.fs_utils import save_file
     "removebg",
     help="Performs background removal on specified photos using console interface.",
 )
-@click.option("-i", required=True, type=str, help="Path to input file or dir")
-@click.option("-o", default="none", type=str, help="Path to output file or dir")
-@click.option("--pre", default="autoscene", type=str, help="Preprocessing method")
-@click.option("--post", default="cascade_fba", type=str, help="Postprocessing method.")
-@click.option("--net", default="tracer_b7", type=str, help="Segmentation Network")
+@click.option(
+    "-i",
+    required=True,
+    type=str,
+    help="Path to input file or directory. Directory MUST be provided if --recursive is used")
+@click.option(
+    "-o",
+    default="none",
+    type=str,
+    help="Path to output file or dir. Defaults to /<source file location>/<file_name>_bg_removed.png"
+)
+@click.option(
+    "--pre",
+    default="autoscene",
+    type=click.Choice(["none", "autoscene", "auto"]),
+    help="Preprocessing method"
+)
+@click.option(
+    "--post",
+    default="cascade_fba",
+    type=click.Choice(["none", "fba", "cascade_fba"]),
+    help="Postprocessing method."
+)
+@click.option(
+    "--net",
+    default="tracer_b7",
+    type=click.Choice(["u2net", "deeplabv3", "basnet", "tracer_b7", "isnet"]),
+    help="Segmentation Network"
+)
 @click.option(
     "--recursive",
     default=False,
-    type=bool,
+    is_flag=True,
     help="Enables recursive search for images in a folder",
 )
 @click.option(
@@ -97,7 +121,7 @@ from carvekit.utils.fs_utils import save_file
 )
 @click.option("--device", default="cpu", type=str, help="Processing Device.")
 @click.option(
-    "--fp16", default=False, type=bool, help="Enables mixed precision processing."
+    "--fp16", default=False, is_flag=True, help="Enables mixed precision processing. Not supported for U2NET."
 )
 def removebg(
     i: str,
@@ -133,6 +157,12 @@ def removebg(
             if i.suffix.lower() in ALLOWED_SUFFIXES and "_bg_removed" not in i.name
         ]
     else:
+        if recursive:
+            print("Option -i must be set to directory path if --recursive is used")
+            return
+        if not input_path.exists():
+            print(f"File {input_path} not found.")
+            return
         all_images = [input_path]
 
     interface_config = MLConfig(
