@@ -145,10 +145,14 @@ def cascadepsp_finetuned() -> pathlib.Path:
 
 def download_all():
     u2net_full_pretrained()
-    fba_pretrained()
-    deeplab_pretrained()
+    isnet_full_pretrained()
+    isnet_carveset_pretrained()
     basnet_pretrained()
+    deeplab_pretrained()
+    fba_pretrained()
     tracer_b7_pretrained()
+    tracer_b7_carveset_finetuned()
     scene_classifier_pretrained()
     yolov4_coco_pretrained()
     cascadepsp_pretrained()
+    cascadepsp_finetuned()
