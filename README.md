@@ -47,7 +47,7 @@ Background removal is used in various applied solutions across different fields.
 - Models hosted on [HuggingFace](https://huggingface.co/Carve)
 
 ## Architecture
-[Descritpion](/docs/readme/architecture/en.md))
+[Descritpion](/docs/readme/architecture/en.md)
 
 ## ⛓️ How does it work?
 It can be briefly described as

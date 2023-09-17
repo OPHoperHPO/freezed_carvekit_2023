@@ -6,10 +6,11 @@ It is your responsibility to determine if you have permission to use the pretrai
 Any use of the pretrained model is strictly regulated by the licenses under which the model is distributed. \
 If you own the model and want to update it (file, segmentation quality information, etc.) or don't want your model to be included in this tool, please get in touch through a GitHub issue.
 
+
 ## Photos:
 The photos in the `docs/imgs/input/` and `docs/code_examples/python/input/` folders were taken from the Pexels website. \
 The original photos in the `docs/imgs/compare` folder were taken from the Unsplash site. \
-All images are copyrighted by their authors.
+
 
 ## References:
 1. https://pytorch.org/hub/pytorch_vision_deeplabv3_resnet101/

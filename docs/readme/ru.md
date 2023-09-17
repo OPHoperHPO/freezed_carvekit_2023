@@ -42,7 +42,7 @@
 - Модели размещены на [HuggingFace](https://huggingface.co/Carve
 
 ## Архитектура проекта
-[Описание](./architecture/ru.md))
+[Описание](./architecture/ru.md)
 
 ## ⛓️ Как это работает?
 
