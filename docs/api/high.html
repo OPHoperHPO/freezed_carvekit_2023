@@ -58,7 +58,7 @@ class HiInterface(Interface):
         batch_size_matting=1,
         batch_size_refine=1,
         device=&#34;cpu&#34;,
-        seg_mask_size=640,
+        seg_mask_size=960,
         matting_mask_size=2048,
         refine_mask_size=900,
         trimap_prob_threshold=231,
@@ -72,7 +72,7 @@ class HiInterface(Interface):
         Args:
             object_type (str, default=object): Interest object type. Can be &#34;object&#34; or &#34;hairs-like&#34;.
             matting_mask_size (int, default=2048):  The size of the input image for the matting neural network.
-            seg_mask_size (int, default=640): The size of the input image for the segmentation neural network.
+            seg_mask_size (int, default=960): The size of the input image for the segmentation neural network.
             batch_size_pre (int, default=5: Number of images processed per one preprocessing method call.
             batch_size_seg (int, default=2): Number of images processed per one segmentation neural network call.
             batch_size_matting (int, matting=1): Number of images processed per one matting neural network call.
@@ -177,7 +177,7 @@ class HiInterface(Interface):
 <dl>
 <dt id="high.HiInterface"><code class="flex name class">
 <span>class <span class="ident">HiInterface</span></span>
-<span>(</span><span>object_type: str = 'auto', batch_size_pre=5, batch_size_seg=2, batch_size_matting=1, batch_size_refine=1, device='cpu', seg_mask_size=640, matting_mask_size=2048, refine_mask_size=900, trimap_prob_threshold=231, trimap_dilation=30, trimap_erosion_iters=5, fp16=False)</span>
+<span>(</span><span>object_type: str = 'auto', batch_size_pre=5, batch_size_seg=2, batch_size_matting=1, batch_size_refine=1, device='cpu', seg_mask_size=960, matting_mask_size=2048, refine_mask_size=900, trimap_prob_threshold=231, trimap_dilation=30, trimap_erosion_iters=5, fp16=False)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Initializes High Level interface.</p>

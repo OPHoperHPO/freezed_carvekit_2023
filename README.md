@@ -1,6 +1,6 @@
 # <p align="center"> ✂️ CarveKit ✂️  </p>
 
-<p align="center"> <img src="docs/imgs/logo.png"> </p>
+<p align="center"> <img src="docs/readme/logo.png"> </p>
 
 <p align="center">
 <img src="https://github.com/OPHoperHPO/freezed_carvekit_2023/actions/workflows/master_docker.yaml/badge.svg">
@@ -9,92 +9,84 @@
 
 
 **********************************************************************
-<p align="center"> <img align="center" width="512" height="288" src="docs/imgs/compare/readme.jpg"> </p>
+<p align="center"> <img align="center" width="512" height="288" src="./docs/readme/example.png"> </p>
 
+## 📄 О проекте:
+Автоматизированное высококачественное удаление фона с изображения с использованием нейронных сетей
 
-> The higher resolution images from the picture above can be seen in the docs/imgs/compare/ and docs/imgs/input folders.
+### Область направлений применения проекта:
+В настоящее время решения для удаления фона имеют высокий спрос в различных областях: 
+1. 📢 Рекламная индустрия: в данном случае удаление фона необходимо, чтобы создавать различные рекламные материалы, баннеры и логотипы. Это позволяет ускорить и облегчить работу дизайнеров, так как ручное удаление фона занимает много времени. Также, необходимо учитывать необходимость в высококачественных изображениях, это играет важную роль в восприятии различных рекламных товаров. 
+2. 🛒 Продажа товаров через интернет: для сферы электронной коммерции, где важно представить товар в наиболее выгодном свете и более качественно презентовать с целью продажи, удаление фона является важной частью процессов. Например, торговая площадка “Amazon” имеет строгие рекомендации по изображению продукта, включая требование о том, чтобы основное изображение было хорошего качества на чистом белом фоне. Это правило гарантирует, что основное внимание остается исключительно на продукте, и обеспечивает единый внешний вид товаров на их платформе. 
+3. 🏥 Медицинские и научные исследования и диагностика: для таких видов исследований как компьютерная томография и магнитно-резонансная томография удаление фона может решать такую задачу как получение более качественных изображений для диагностики различных заболеваний, в том числе и на ранних стадиях.
+4. 👁️ Компьютерное зрение и искусственный интеллект: удаление фона широко используется в области компьютерного зрения и искусственного интеллекта для обнаружения и классификации объектов на изображениях. Путем удаления фона можно упростить процесс обработки изображений и увеличить точность алгоритмов распознавания объектов. Одним из вариантов является использование в научной области ядерной техники и радиационной безопасности для визуализации радиоактивных материалов, для обработки изображений и отображения данных, что способствует более точному анализу, классификации и управлению радиоактивными материалами и обеспечению безопасности. 
+Удаление фона используется в различных прикладных решениях в разных областях. Программный комплекс можно переконфигурировать под различные задачи и нужды.
 
-#### 📙 README Language
-[Russian](docs/readme/ru.md)
-[English](README.md)
+## 🖼️ Набор данных CarveSet V2.0:
+Мы собрали обширный набор данных, охватывающий наиболее распространенные классы объектов, 
+предназначенных для удаления фона.
 
-## 📄 About project:  
-Automated high-quality background removal framework for an image using neural networks.
+Он включает фотографии объектов, принадлежащих 9 различным классам.
 
-### Area of application of the project:
-Currently, background removal solutions are in high demand in various fields:
+#### Распределение классов объектов в наборе данных CarveSet V2.0:
 
-Advertising Industry: In this case, background removal is necessary for creating various advertising materials, banners, and logos. This speeds up and simplifies the work of designers, as manual background removal takes a lot of time. It's also important to consider the need for high-quality images, which plays a significant role in the perception of various advertising products.
+| Класс объектов                | Кол-во изображений |
+|-------------------------------|--------------------|
+| 🚗 автомобили                 | 1878               |
+| 👗 одежда                     | 1840               |
+| 🏠 предметы быта              | 1878               |
+| 📱 электроника                | 1806               |
+| 🧸 детские игрушки            | 1785               |
+| 🍳 кухонные принадлежности    | 1878               |
+| 👨‍👩‍👧‍👦 люди              | 1777               |
+| 🏡 объекты в жилых помещениях | 1777               |
+| 🐾 животные                   | 1878               |
 
-Online Retail: For the e-commerce sector, where it is crucial to present the product in the most favorable light and more qualitatively for the purpose of sales, background removal is an essential part of the process. For instance, the online marketplace "Amazon" has strict product image guidelines, including the requirement that the primary image be of good quality and on a clean white background. This rule ensures that the main focus remains solely on the product and maintains a uniform appearance of products on their platform.
-Medical and Scientific Research and Diagnostics: For types of research such as computed tomography and magnetic resonance imaging, background removal can solve the problem of obtaining higher-quality images for diagnosing various diseases, including in the early stages.
+Общее количество изображений в наборе данных: **16 497**.
+####  Информация о базе изображений в наборе данных
 
-Computer Vision and Artificial Intelligence: Background removal is widely used in the field of computer vision and artificial intelligence for detecting and classifying objects in images. By removing the background, the image processing task can be simplified and the accuracy of object recognition algorithms can be improved. One application is in the scientific field of nuclear technology and radiation safety for visualizing radioactive materials, for image processing and data display, which contributes to more accurate analysis, classification, and management of radioactive materials and ensures safety.
+1.  **CarveSet** - содержит 3 172 изображения высокого качества размером примерно 2500x2500 пикселей, собранных вручную из [Pexels](https://www.pexels.com/), [Unsplash](https://unsplash.com/).
+2.  **SOPG** - состоит из 13 325 изображений, увеличенных в 4 раза из набора данных [SOPG](https://huggingface.co/datasets/absinc/sopg), 
+размером примерно 2048x1536 пикселей. 
 
-Background removal is used in various applied solutions across different fields. The software suite can be reconfigured to suit various tasks and needs.
+Более подробная информация: [Набор данных CarveSet](./docs/readme/carveset/ru.md)
 
-## 🎆 Features:  
-- High Quality
-- Works offline
-- Batch Processing
-- NVIDIA CUDA and CPU processing
-- FP16 inference: Fast inference with low memory usage
-- Easy inference
-- 100% remove.bg compatible FastAPI HTTP API 
-- Removes background from hairs
-- Automatic best method selection for user's image
-- Easy integration with your code
-- Models hosted on [HuggingFace](https://huggingface.co/Carve)
+## 🎆 Особенности:  
+- Высокое качество выходного изображения
+- Работает в автономном режиме
+- Пакетная обработка изображений
+- Поддержка NVIDIA CUDA и процессорной обработки
+- Поддержка FP16: быстрая обработка с низким потреблением памяти
+- Легкое взаимодействие и запуск
+- 100% совместимое с remove.bg API(REST API реализован при посредством FastAPI)
+- Удаляет фон с волос
+- Автоматический выбор лучшего метода для изображения пользователя
+- Простая интеграция с вашим кодом
+- Модели размещены на [HuggingFace](https://huggingface.co/Carve)
 
-## Architecture
-[Descritpion](/docs/readme/architecture/en.md)
+## 🏛️ Архитектура проекта
+[Описание](./docs/readme/architecture/ru.md)
 
-## ⛓️ How does it work?
-It can be briefly described as
-1. The user selects a picture or a folder with pictures for processing
-2. The photo is preprocessed to ensure the best quality of the output image
-3. Using machine learning technology, the background of the image is removed
-4. Image post-processing to improve the quality of the processed image
-## 🎓 Implemented Neural Networks:
-|        Networks         |                   Target                    |                   Accuracy                   |
-|:-----------------------:|:-------------------------------------------:|:--------------------------------------------:|
-| **Tracer-B7** (default) |     **General** (objects, animals, etc)     | **96.2%** (mean F1-Score, CarveSet/test, HR) |
-|        **ISNet**        |     **Hairs** (hairs, people, animals)      |  **97%** (mean F1-Score, CarveSet/test, HR)  |
-|         U^2-net         | **Hairs** (hairs, people, animals, objects) |      80.4% (mean F1-Score, DUTS-TE, LR)      |
-|         BASNet          |        **General** (people, objects)        |      80.3% (mean F1-Score, DUTS-TE, LR)      |
-|        DeepLabV3        |         People, Animals, Cars, etc          |      67.4% (mean IoU, COCO val2017, LR)      |
+## 📑 Документация по реализованным алгоритмам и заметки по конфигурации параметров настройке ПО
+[Описание](./docs/readme/algos/ru.md)
 
-> HR - High resolution images.
-> LR - Low resolution images.
-### Recommended parameters for different models
-|  Networks   | Segmentation mask  size | Trimap parameters (dilation, erosion) |
-|:-----------:|:-----------------------:|:-------------------------------------:|
-| `tracer_b7` |           960           |                (30, 5)                |
-|   `isnet`   |          1024           |                (30, 5)                |
-|   `u2net`   |           320           |                (30, 5)                |
-|  `basnet`   |           320           |                (30, 5)                |
-| `deeplabv3` |          1024           |               (40, 20)                |
+## 🖼️ Методы пред и постобработки изображений:
+### 🔍 Предобработка изобрадений:
+* `none` - Предобработка не используется.
+* [`autoscene`](https://huggingface.co/Carve/scene_classifier/) - Автоматически определяет тип сцены с помощью классификатора и применяет соответствующую модель. (По умолчанию)
+* `auto` - Выполняет глубокий анализ изображения и более точно определяет лучший метод удаления фона. Использует классификатор объектов и классификатор сцены вместе.
+> ### Важно: 
+> 1. `AutoScene` и `auto` могут переопределить модель и параметры, указанные пользователем, без уведомления.
+> Итак, если вы хотите использовать конкретную модель, сделать все постоянными и т. д., вам следует сначала отключить методы автоматической предварительной обработки!
+> 2. На данный момент для метода `auto` выбираются универсальные модели для некоторых конкретных доменов, так как добавленных моделей в настоящее время недостаточно для такого количества типов сцен.
+> В будущем, когда будет добавлено некоторое разнообразие моделей, автоподбор будет переписан в лучшую сторону.
 
-> ### Notes: 
-> 1. The final quality may depend on the resolution of your image, the type of scene or object.
-> 2. Use **ISNet for hairs** or **U2-Net for hairs** and **Tracer-B7 for general images** and correct parameters. \
-> It is very important for final quality! Example images was taken by using U2-Net and FBA post-processing.
-## 🖼️ Image pre-processing and post-processing methods:
-### 🔍 Preprocessing methods:
-* `none` - No preprocessing methods used.
-* [`autoscene`](https://huggingface.co/Carve/scene_classifier/) - Automatically detects the scene type using classifier and applies the appropriate model. (default)
-* `auto` - Performs in-depth image analysis and more accurately determines the best background removal method. Uses object classifier and scene classifier together. 
-> ### Notes: 
-> 1. `AutoScene` and `auto` may override the model and parameters specified by the user without logging. 
-> So, if you want to use a specific model, make all constant etc., you should disable auto preprocessing methods first!
-> 2. At the moment for `auto` method universal models are selected for some specific domains, since the added models are currently not enough for so many types of scenes.
-> In the future, when some variety of models is added, auto-selection will be rewritten for the better.
-### ✂ Post-processing methods:
-* `none` - No post-processing methods used.
-* `fba` - This algorithm improves the borders of the image when removing the background from images with hair, etc. using FBA Matting neural network.
-* `cascade_fba` (default) - This algorithm refines the segmentation mask using CascadePSP neural network and then applies the FBA algorithm.
+### ✂ Методы постобработки:
+* `none` - методы постобработки не используются
+* `fba` - Этот алгоритм улучшает границы изображения при удалении фона с изображений с волосами и т.д. с помощью нейронной сети FBA Matting.
+* `cascade_fba` (по умолчанию) - Этот алгоритм уточняет маску сегментации с помощью нейронной сети CascadePSP, а затем применяет алгоритм FBA.
 
-## 🏷 Setup for CPU processing:
+## 🏷 Настройка для обработки на центральном процессоре:
 1. 
 ```bash
 # Arch/Arch-based
@@ -104,14 +96,17 @@ apt install libgl1
 ```
 
 2. `pip install git+https://github.com/OPHoperHPO/freezed_carvekit_2023 --extra-index-url https://download.pytorch.org/whl/cpu`
-> The project supports python versions from 3.8 to 3.10.4
+> Проект поддерживает версии Python от 3.8 до 3.10.4.
 
-> ### Note:
-> Warning about impossibility of CascadePSP finetuned model will be shown.
-> Using CPU processing is not meant to be a project goal and due to internal peculiarities of finetuned model and/or PyTorch by itself finetuned CascadePSP model cannot be used on CPU, pretrained model will used instead.
-## 🏷 Setup for GPU processing:  
-1. Make sure you have an NVIDIA GPU with 8 GB VRAM.
-2. Install `CUDA Toolkit and Video Driver for your GPU`
+> ### Важно:
+> В ходе работы программного комплекса на ЦП вы можете увидеть следующее предупреждение \
+> \
+> UserWarning: The CascadePSP finetuned model has an extremely slow processing bug on the CPU. Use GPU to load it. Using pretrained model instead. \
+> \
+> В связи с внутренними особенностями модели и/или PyTorch дообученная на нашем наборе данных модель не может быть использована на ЦП, в связи с чем используется стандартная. В связи с тем, что обработка на ЦП не является приоритетной для проекта и устройство соответствующее минимальным техническим требованиям способно обрабатывать изображения при помощи ГП, задача по исследованию и, возможно, устранению этой проблемы имеет низкий приоритет
+## 🏷 Настройка для обработки на графическом процессоре:  
+1. Убедитесь, что у вас есть графический процессор NVIDIA с 8 ГБ видеопамяти.
+2. Установите `CUDA Toolkit и Видеодрайвер для вашей видеокарты.`
 3. 
 ```bash
 # Arch/Arch-based
@@ -121,23 +116,23 @@ apt install libgl1 libglib2.0-0
 ```
 
 4. `pip install git+https://github.com/OPHoperHPO/freezed_carvekit_2023 --extra-index-url https://download.pytorch.org/whl/cu113`
-> The project supports python versions from 3.8 to 3.10.4
-> Please, build and install carvekit directly from this repo. 
-> Don't use prebuilt binaries from PyPI or other already links. It's only for main repo.
-## 🧰 Interact via code:  
-### If you don't need deep configuration or don't want to deal with it
+> Проект поддерживает версии Python от 3.8 до 3.10.4.
+> Пожалуйста, соберите и установите carvekit прямо из этого репозитория.
+> Не используйте готовые двоичные файлы из PyPI или других уже имеющихся ссылок. Это только для основного репозитория.
+## 🧰 Интеграция в код:  
+### Если вы хотите быстрее приступить к работе без дополнительной настройки
 ``` python
 import torch
 from carvekit.api.high import HiInterface
 
 # Check doc strings for more information
 interface = HiInterface(object_type="auto",  # Can be "object" or "hairs-like" or "auto"
-                        batch_size_seg=1,
+                        batch_size_seg=5,
                         batch_size_pre=5,
                         batch_size_matting=1,
                         batch_size_refine=1,
                         device='cuda' if torch.cuda.is_available() else 'cpu',
-                        seg_mask_size=960,  # Use 960 for Tracer B7 and 320 for U2Net
+                        seg_mask_size=960,  # Use 960 for Tracer B7 and 1024 for ISNet
                         matting_mask_size=2048,
                         refine_mask_size=900,
                         trimap_prob_threshold=231,
@@ -150,7 +145,7 @@ cat_wo_bg.save('2.png')
 
                    
 ```
-### Analogue of `auto` preprocessing method from cli
+### Аналог метода предварительной обработки `auto` из cli
 ``` python
 from carvekit.api.autointerface import AutoInterface
 from carvekit.ml.wrap.scene_classifier import SceneClassifier
@@ -173,7 +168,7 @@ images_without_background = interface(['./tests/data/cat.jpg'])
 cat_wo_bg = images_without_background[0]
 cat_wo_bg.save('2.png')
 ```
-### If you want control everything
+### Если вы хотите провести детальную настройку
 ``` python
 import PIL.Image
 
@@ -216,160 +211,126 @@ interface = Interface(pre_pipe=preprocessing,
 
 image = PIL.Image.open('tests/data/cat.jpg')
 cat_wo_bg = interface([image])[0]
-cat_wo_bg.save('2.png')      
+cat_wo_bg.save('2.png')     
 ```
 
 
-## 🧰 Running the CLI interface:  
+## 🧰 Запустить через консоль:  
  * ```python3 -m carvekit  -i <input_path> -o <output_path> --device <device>```  
  
-### Explanation of args:  
+### Все доступные аргументы:  
 ````
 Usage: carvekit [OPTIONS]
 
   Performs background removal on specified photos using console interface.
 
 Options:
-  -i TEXT                         Path to input file or directory. Directory
-                                  MUST be provided if --recursive is used
-                                  [required]
-  -o TEXT                         Path to output file or dir. Defaults to
-                                  /<source file
-                                  location>/<file_name>_bg_removed.png
-  --pre [none|autoscene|auto]     Preprocessing method
-  --post [none|fba|cascade_fba]   Postprocessing method.
+  -i ./2.jpg                   Путь до входного файла или директории. Путь до ДИРЕКТОРИИ должен 
+                               быть указан при использовании --recursive [обязателен]
+  -o ./2.png                   Путь для сохранения результата обработки. По умолчанию:
+                               /<путь до исходного файла>/<имя файла>_bg_removed.png
+  --pre [none|autoscene|auto]  Метод предобработки, по умолчанию: autoscene
+  --post [none|fba|cascade_fba]
+                               Метод постобработки, по умолчанию: cascade_fba
   --net [u2net|deeplabv3|basnet|tracer_b7|isnet]
-                                  Segmentation Network
-  --recursive                     Enables recursive search for images in a
-                                  folder
-  --batch_size INTEGER            Batch Size for list of images to be loaded
-                                  to RAM
-  --batch_size_pre INTEGER        Batch size for list of images to be
-                                  processed by preprocessing method network
-  --batch_size_seg INTEGER        Batch size for list of images to be
-                                  processed by segmentation network
-  --batch_size_mat INTEGER        Batch size for list of images to be
-                                  processed by matting network
-  --batch_size_refine INTEGER     Batch size for list of images to be
-                                  processed by refining network
-  --seg_mask_size INTEGER         The size of the input image for the
-                                  segmentation neural network.
-  --matting_mask_size INTEGER     The size of the input image for the matting
-                                  neural network.
-  --refine_mask_size INTEGER      The size of the input image for the refining
-                                  neural network.
-  --trimap_dilation INTEGER       The size of the offset radius from the
-                                  object mask in pixels when forming an
-                                  unknown area
-  --trimap_erosion INTEGER        The number of iterations of erosion that the
-                                  object's mask will be subjected to before
-                                  forming an unknown area
-  --trimap_prob_threshold INTEGER
-                                  Probability threshold at which the
-                                  prob_filter and prob_as_unknown_area
-                                  operations will be applied
-  --device TEXT                   Processing Device.
-  --fp16                          Enables mixed precision processing. Not
-                                  supported for U2NET.
-  --help                          Show this message and exit.
+                               Нейронная сеть для сегментации, по умолчанию: tracer_b7
+  --recursive                  Включение рекурсивного поиска изображений в папке
+  --batch_size 10              Размер пакета изображений, загруженных в ОЗУ 
+  --batch_size_pre 5           Размер пакета для списка изображений, которые будут обрабатываться
+                               методом предварительной обработки
+  --batch_size_seg 5           Размер пакета изображений для обработки с помощью
+                               сегментации
+
+  --batch_size_mat 1           Размер пакета изображений для обработки с помощью
+                               матирования
+
+  --batch_size_refine 1        Размер пакета для списка изображений, которые будут обрабатываться уточняющей сетью
+
+  --seg_mask_size 960          Размер исходного изображения для сегментирующей
+                               нейронной сети
+
+  --matting_mask_size 2048     Размер исходного изображения для матирующей
+                               нейронной сети
+  --refine_mask_size 900       Размер входного изображения для уточняющей нейронной сети.
+  --trimap_dilation 30         Размер радиуса смещения от маски объекта в пикселях при 
+                               формировании неизвестной области
+                               
+  --trimap_erosion 5           Количество итераций эрозии, которым будет подвергаться маска 
+                               объекта перед формированием неизвестной области.
+                               
+  --trimap_prob_threshold 231  Порог вероятности, при котором будут применяться
+                               операции prob_filter и prob_as_unknown_area
+
+  --device cpu                 Устройство обработки.
+  
+  --fp16                       Включает обработку со смешанной точностью. 
+                               Не поддерживается для модели U2NET
+                               Используйте только с CUDA. Поддержка процессора является экспериментальной!
+                               
+  --help                       Показать это сообщение и выйти.
+
 ````
-## 📦 Running the Framework / FastAPI HTTP API server via Docker:
-Using the API via docker is a **fast** and non-complex way to have a working API.
+## 📦 Запустить фреймворк / FastAPI HTTP API сервер с помощью Docker:
+
+Использование API через Docker — это **быстрый** и эффективный способ получить работающий API.\
+
 
 <p align="center"> 
-<img src="docs/imgs/screenshot/frontend.png"> 
-<img src="docs/imgs/screenshot/docs_fastapi.png"> 
+<img src="./docs/imgs/screenshot/frontend.png"> 
+<img src="./docs/imgs/screenshot/docs_fastapi.png"> 
 </p>
 
->### Important Notes:
->1. Docker image has default front-end at `/` url and FastAPI backend with docs at `/docs` url.
->2. Please note that after clicking the "Remove background" button, there may be a significant delay when processing the first image. Subsequent images are processed faster. You can track the status of the current request in the browser's developer tools under the "Network" tab. In future versions, the interface may be more user-friendly, but currently, the web version is not a priority as it only demonstrates the capabilities that can also be achieved using the CLI and code.
->3. Authentication is **enabled** by default. \
-> **Token keys are reset** on every container restart if ENV variables are not set. \
-See `docker-compose.<device>.yml` for more information. \
->3. **For default deployment API key is required to use frontend and API. You can see your access keys in the docker container logs(first line).**
->4. **When using the default settings for Frontend, an API key is required. You need to check your access keys in the logs of the Docker container. The first line of the container's logs should contain the following information:**
-> "auth":{"auth":true,"admin_token":"….","allowed_tokens":["…"]}} 
-> The `admin_token` is a key that you can use to access the processing on the Frontend, specifically the endpoints `/api/removebg`, `/api/admin/config`.
-> The `allowed_tokens` are keys that you can use to access the processing on the Frontend, specifically the endpoint `/api/removebg`.
->5. There are examples of interaction with the API.\
->See `docs/code_examples/python` for more details
+>### Важная информация:
+>1. Образ Docker имеет фронтенд по умолчанию по адресу `/` и документацию к API по адресу `/docs`.
+>2. Обратите внимание, после нажатия кнопки "Remove background" возможно длительное ожидание при условии обработки первого ихображения. Последующие обрабатываются быстрее. Отслеживать статус текущего запроса можно в инструментах разработчика в браузере на вкладке "Сеть". Возможно в будущих версиях интерфейс будет удобнее, но на текущий момент web версия не является приоритетной, поскольку реализует лишь демонстрацию возможностей, которая возможна и при помощи CLI и кода.
+>3. Аутентификация **включена** по умолчанию. \
+> **Ключи доступа сбрасываются** при каждом перезапуске контейнера, если не установлены специальные переменные окружения. \
+> `docker-compose.<device>.yml` для более подробной информации.
+>4. **При использовании настроек по умолчанию для использования фронтентда требуется API ключ.** \
+> Вы должны посмотреть свои ключи доступа в логах докер-контейнера. В первой строке логов контейнера api. \
+> "auth":{"auth":true,"admin_token":"….","allowed_tokens":["…"]}} \
+> admin_token — это ключ, который вы можете использовать для доступа к обработке на фронтенд, /api/removebg, /api/admin/config. \
+> allowed_tokens — это ключи, которые вы можете использовать для доступа к обработке на фронтенд, /api/removebg.
+>5. Примеры работы с API.\
+> См. `docs/code_examples/python` для уточнения деталей
+### 🔨 Создать и запустить контейнер:
+1. Установите `docker, docker-compose, дополнительные зависимости для хост системы. (см. ниже)`
+2. Соберите образ: `docker-compose -f docker-compose.cpu.yml build` для обработки на ЦП
+3. или `docker-compose -f docker-compose.cuda.yml build` для обработки на ГП.
+3. Запустите `docker-compose -f docker-compose.cpu.yml up -d`  # для обработки на ЦП
+4. Запустите `docker-compose -f docker-compose.cuda.yml up -d`  # для обработки на ГП
+> Также вы можете монтировать папки с вашего компьютера в docker container
+> и использовать интерфейс командной строки внутри контейнера докера для обработки
+> файлов в этой папке.
 
-### 🔨 Creating and running a container:
-1. Install `docker, docker-compose, additional host deps (see below)`
-2. Build images: `docker-compose -f docker-compose.cpu.yml build` for cpu 
-or `docker-compose -f docker-compose.cuda.yml build` for gpu.
-2. Run `docker-compose -f docker-compose.cpu.yml up -d`  # For CPU Processing
-3. Run `docker-compose -f docker-compose.cuda.yml up -d`  # For GPU Processing
-> Also you can mount folders from your host machine to docker container
-> and use the CLI interface inside the docker container to process 
-> files in this folder. 
-
-
-
->### Important Notes:
-> Warnings such as 
+> ### Важно:
+> При сборке контейнера могут появиться предупреждения вида
 > 
 > debconf: delaying package configuration, since apt-utils is not installed
 > 
-> can be ignored. It's a known issue of base python image and have no any influence on resulting image and it's functionality
+> Предупреждение связано с некорректно составленным базовым образом python и не может быть исправлено. В связи с тем, что на работоспособность и результаты сборки это предупреждение не влияет, игнорируйте его появление
 > 
-> Also additional host machine dependencies exist for docker deployment via CUDA. 
+> Так же при запуске с использованием ГП требуется установить дополнительные зависимости для доступа к ГП со стороны Docker.
 > 
-> For Arch-based distributive run yay -S nvidia-container-toolkit nvidia-container-runtime
+> Для Arch-based дистрибутивов установите пакеты nvidia-container-toolkit nvidia-container-runtime из aur
 > 
-> For Debian-based distros follow [Nvidia instructions](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
-> Building a docker image on Windows is not officially supported. You can try using WSL2 or "Linux Containers Mode" but I haven't tested this.
+> yay -S nvidia-container-toolkit nvidia-container-runtime
+> 
+> Для Debian-based дистрибутивов следуйте [инструкциям Nvidia](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
+> Создание docker образа в Windows официально не поддерживается. Однако вы можете попробовать использовать WSL2 или «Linux container mode» в Docker Desktop.
 
-## ☑️ Testing
+## ☑️ Тестирование
 
-### ☑️ Testing with local environment
+### ☑️ Тестирование с локальным окружением
 1. `pip install -r requirements_test.txt`
 2. `pytest`
 
-### ☑️ Testing with Docker
-1. Run `docker-compose -f docker-compose.cpu.yml run carvekit_api pytest`  # For testing on CPU
-2. Run `docker-compose -f docker-compose.cuda.yml run carvekit_api pytest`  # For testing on GPU
+### ☑️ Тестирование с Docker
+1. Запустите `docker-compose -f docker-compose.cpu.yml run carvekit_api pytest`  # для тестирования на ЦП
+2. Run `docker-compose -f docker-compose.cuda.yml run carvekit_api pytest`  # для тестирования на GPU
 
-### 🖼️ CarveSet V2.0 Dataset:
+## 👪 Ссылки, структура репозития и другая информация: [Больше информации](./docs/readme/other/ru.md)
+## 📧 __Обратная связь__
+Буду рад отзывам о проекте и предложениям об интеграции.
 
-<div> 
-<img src="../imgs/carveset/carveset_pair_example.png"/> 
-<img src="../imgs/carveset/duts_hd.png"/>
-</div>
-
-We have collected an extensive dataset covering the most common types of objects intended for background removal. 
-
-The dataset includes photographs of objects belonging to 9 different classes.
-
-#### Distribution of object classes in the CarveSet V2.0 dataset:
-
-| Object Class                 | Number of Images |
-|------------------------------|------------------|
-| Cars                         | 1878             |
-| Clothing                     | 1840             |
-| Household Items              | 1878             |
-| Electronics                  | 1806             |
-| Children's Toys              | 1785             |
-| Kitchenware                  | 1878             |
-| People                       | 1777             |
-| Objects in Residential Areas | 1777             |
-| Animals                      | 1878             |
-
-Total number of images in the dataset: **16,497**.
-
-#### Information about the image database in the dataset:
-
-1.  **CarveSet** - contains 3,172 high-quality images with a resolution of approximately 2500x2500 pixels, manually collected from [Pexels](https://www.pexels.com/) and [Unsplash](https://unsplash.com/).
-  
-2.  **SOPG** - consists of 13,325 images, scaled up by 4 times from the [SOPG](https://huggingface.co/datasets/absinc/sopg) dataset, with a resolution of approximately 2048x1536 pixels.
-
-For more detailed information: [CarveSet Dataset](/docs/carveset/carveset.md)
-
-
-## 👪 Credits: [More info](docs/CREDITS.md)
-
-## 📧 __Feedback__
-I will be glad to receive feedback on the project and suggestions for integration.
-
-For all questions write: [farvard34@gmail.com](mailto://farvard34@gmail.com)
+По всем вопросам писать: [farvard34@gmail.com](mailto://farvard34@gmail.com)

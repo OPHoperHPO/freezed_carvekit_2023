@@ -40,7 +40,7 @@ class HiInterface(Interface):
         Args:
             object_type (str, default=object): Interest object type. Can be "object" or "hairs-like".
             matting_mask_size (int, default=2048):  The size of the input image for the matting neural network.
-            seg_mask_size (int, default=640): The size of the input image for the segmentation neural network.
+            seg_mask_size (int, default=960): The size of the input image for the segmentation neural network.
             batch_size_pre (int, default=5: Number of images processed per one preprocessing method call.
             batch_size_seg (int, default=2): Number of images processed per one segmentation neural network call.
             batch_size_matting (int, matting=1): Number of images processed per one matting neural network call.

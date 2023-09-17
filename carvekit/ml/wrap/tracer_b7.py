@@ -39,7 +39,7 @@ class TracerUniversalB7(TracerDecoder):
 
         Args:
             device (Literal[cpu, cuda], default=cpu): processing device
-            input_image_size (Union[List[int], int], default=640): input image size
+            input_image_size (Union[List[int], int], default=960): input image size
             batch_size(int, default=4): the number of images that the neural network processes in one run
             load_pretrained(bool, default=True): loading pretrained model
             fp16 (bool, default=False): use fp16 precision

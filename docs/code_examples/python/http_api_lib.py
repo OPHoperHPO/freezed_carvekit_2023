@@ -28,8 +28,8 @@ settings = {  # API settings. See https://www.remove.bg/api for more details.
 }
 
 removebg.remove_bg_file(
-    str(Path("images/4.jpg").absolute()),
+    str(Path("../../imgs/example_images/cat.jpg").absolute()),
     raw=False,
-    out_path=str(Path("./4.png").absolute()),
+    out_path=str(Path("./cat.png").absolute()),
     data=settings,
 )
