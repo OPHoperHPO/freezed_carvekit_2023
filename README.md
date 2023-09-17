@@ -275,9 +275,6 @@ Options:
 ````
 ## 📦 Running the Framework / FastAPI HTTP API server via Docker:
 Using the API via docker is a **fast** and non-complex way to have a working API.
-> **Our docker images are available on [Docker Hub](https://hub.docker.com/r/anodev/carvekit).** \
-> Version tags are the same as the releases of the project with suffixes `-cpu` and `-cuda` for CPU and CUDA versions respectively.
-
 
 <p align="center"> 
 <img src="docs/imgs/screenshot/frontend.png"> 
@@ -286,24 +283,28 @@ Using the API via docker is a **fast** and non-complex way to have a working API
 
 >### Important Notes:
 >1. Docker image has default front-end at `/` url and FastAPI backend with docs at `/docs` url.
->2. Authentication is **enabled** by default. \
+>2. Please note that after clicking the "Remove background" button, there may be a significant delay when processing the first image. Subsequent images are processed faster. You can track the status of the current request in the browser's developer tools under the "Network" tab. In future versions, the interface may be more user-friendly, but currently, the web version is not a priority as it only demonstrates the capabilities that can also be achieved using the CLI and code.
+>3. Authentication is **enabled** by default. \
 > **Token keys are reset** on every container restart if ENV variables are not set. \
 See `docker-compose.<device>.yml` for more information. \
 >3. **For default deployment API key is required to use frontend and API. You can see your access keys in the docker container logs(first line).**
-> 
->4. There are examples of interaction with the API.\
-> See `docs/code_examples/python` for more details
->5. Highly-likely the first image on newly upped container will be processed slowly due to time required to load models to GRAM. You can track state in the Network tab of Developer tools of your browser. There is a chance, that in future versions it will be fixed, but it's not an important part of the project and not a first-priority task.
+>4. **When using the default settings for Frontend, an API key is required. You need to check your access keys in the logs of the Docker container. The first line of the container's logs should contain the following information:**
+> "auth":{"auth":true,"admin_token":"….","allowed_tokens":["…"]}} 
+> The `admin_token` is a key that you can use to access the processing on the Frontend, specifically the endpoints `/api/removebg`, `/api/admin/config`.
+> The `allowed_tokens` are keys that you can use to access the processing on the Frontend, specifically the endpoint `/api/removebg`.
+>5. There are examples of interaction with the API.\
+>See `docs/code_examples/python` for more details
 
 ### 🔨 Creating and running a container:
-1. Install `docker-compose`
+1. Install `docker, docker-compose, additional host deps (see below)`
+2. Build images: `docker-compose -f docker-compose.cpu.yml build` for cpu 
+or `docker-compose -f docker-compose.cuda.yml build` for gpu.
 2. Run `docker-compose -f docker-compose.cpu.yml up -d`  # For CPU Processing
 3. Run `docker-compose -f docker-compose.cuda.yml up -d`  # For GPU Processing
 > Also you can mount folders from your host machine to docker container
 > and use the CLI interface inside the docker container to process 
 > files in this folder. 
 
-> Building a docker image on Windows is not officially supported. You can try using WSL2 or "Linux Containers Mode" but I haven't tested this.
 
 
 >### Important Notes:
@@ -313,11 +314,12 @@ See `docker-compose.<device>.yml` for more information. \
 > 
 > can be ignored. It's a known issue of base python image and have no any influence on resulting image and it's functionality
 > 
-> Also additional hot machine dependencies exist for docker deployment via CUDA. 
+> Also additional host machine dependencies exist for docker deployment via CUDA. 
 > 
 > For Arch-based distributive run yay -S nvidia-container-toolkit nvidia-container-runtime
 > 
 > For Debian-based distros follow [Nvidia instructions](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html)
+> Building a docker image on Windows is not officially supported. You can try using WSL2 or "Linux Containers Mode" but I haven't tested this.
 
 ## ☑️ Testing
 
@@ -329,25 +331,41 @@ See `docker-compose.<device>.yml` for more information. \
 1. Run `docker-compose -f docker-compose.cpu.yml run carvekit_api pytest`  # For testing on CPU
 2. Run `docker-compose -f docker-compose.cuda.yml run carvekit_api pytest`  # For testing on GPU
 
-### 🖼️ CarveSet Dataset V1.0:
-<div> 
-<img src="./docs/imgs/carveset/carveset_pair_example.png"/>
-<img src="./docs/imgs/carveset/duts_hd.png"/> 
+### 🖼️ CarveSet V2.0 Dataset:
 
+<div> 
+<img src="../imgs/carveset/carveset_pair_example.png"/> 
+<img src="../imgs/carveset/duts_hd.png"/>
 </div>
 
-We have collected an extensive dataset covering the most common categories of objects intended for background removal.
-It includes about 179 object names belonging to 8 different categories. (CarveSet subset)
+We have collected an extensive dataset covering the most common types of objects intended for background removal. 
 
-Total number of images in the dataset: **20,155**.
-####  Information about the image database in the dataset
-1.  **CarveSet** - contains 4,583 high-quality images with a size of approximately 2500x2500 pixels.
-2.  **DUTS-HD** - consists of 15,572 images, magnified 4 times from the DUTS dataset,
-with a size of approximately 1600x1600 pixels. 
-The dataset was re-annotated with controlled enhancement of the output mask. 
-The images were upscaled, which added new details (see figure).
+The dataset includes photographs of objects belonging to 9 different classes.
 
-More info: [CarveSet Dataset](docs/carveset/carveset.md)
+#### Distribution of object classes in the CarveSet V2.0 dataset:
+
+| Object Class                 | Number of Images |
+|------------------------------|------------------|
+| Cars                         | 1878             |
+| Clothing                     | 1840             |
+| Household Items              | 1878             |
+| Electronics                  | 1806             |
+| Children's Toys              | 1785             |
+| Kitchenware                  | 1878             |
+| People                       | 1777             |
+| Objects in Residential Areas | 1777             |
+| Animals                      | 1878             |
+
+Total number of images in the dataset: **16,497**.
+
+#### Information about the image database in the dataset:
+
+1.  **CarveSet** - contains 3,172 high-quality images with a resolution of approximately 2500x2500 pixels, manually collected from [Pexels](https://www.pexels.com/) and [Unsplash](https://unsplash.com/).
+  
+2.  **SOPG** - consists of 13,325 images, scaled up by 4 times from the [SOPG](https://huggingface.co/datasets/absinc/sopg) dataset, with a resolution of approximately 2048x1536 pixels.
+
+For more detailed information: [CarveSet Dataset](/docs/carveset/carveset.md)
+
 
 ## 👪 Credits: [More info](docs/CREDITS.md)
 
