@@ -131,7 +131,8 @@ class ISNet(ISNetDIS):
                 )
                 with torch.no_grad():
                     batches = batches.to(self.device)
-                    masks = super(ISNetDIS, self).__call__(batches)[0]
+                    masks = super(ISNetDIS, self).__call__(batches)
+
                     masks_cpu = masks.cpu()
                     del batches, masks
                 masks = thread_pool_processing(
