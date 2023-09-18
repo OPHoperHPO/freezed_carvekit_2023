@@ -102,6 +102,7 @@ class ISNet(ISNetDIS):
             (data * 255).cpu().data.numpy().astype(np.uint8)
         ).convert("L")
         mask = mask.resize(original_image.size, resample=3)
+        mask.save("mask.png")
         return mask
 
     def __call__(
@@ -130,7 +131,7 @@ class ISNet(ISNetDIS):
                 )
                 with torch.no_grad():
                     batches = batches.to(self.device)
-                    masks = super(ISNetDIS, self).__call__(batches)[0][0]
+                    masks = super(ISNetDIS, self).__call__(batches)[0]
                     masks_cpu = masks.cpu()
                     del batches, masks
                 masks = thread_pool_processing(
