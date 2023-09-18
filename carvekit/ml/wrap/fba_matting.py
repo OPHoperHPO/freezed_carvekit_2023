@@ -12,7 +12,7 @@ import numpy as np
 import torch
 from PIL import Image
 
-from carvekit.ml.arch.fba_matting.models import FBA
+from carvekit.ml.arch.fba_matting.models import FBAJitTraced
 from carvekit.ml.arch.fba_matting.transforms import (
     trimap_transform,
     groupnorm_normalise_image,
@@ -25,7 +25,7 @@ from carvekit.utils.pool_utils import batch_generator, thread_pool_processing
 __all__ = ["FBAMatting"]
 
 
-class FBAMatting(FBA):
+class FBAMatting(FBAJitTraced):
     """
     FBA Matting Neural Network to improve edges on image.
     """

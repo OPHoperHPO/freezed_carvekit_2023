@@ -3,13 +3,18 @@ Modified by Nikita Selin [OPHoperHPO](https://github.com/OPHoperHPO).
 Source url: https://github.com/MarcoForte/FBA_Matting
 License: MIT License
 """
+import loguru
 import torch
 import torch.nn as nn
+from typing import Mapping, Any
+
 import carvekit.ml.arch.fba_matting.resnet_GN_WS as resnet_GN_WS
 import carvekit.ml.arch.fba_matting.layers_WS as L
 import carvekit.ml.arch.fba_matting.resnet_bn as resnet_bn
+from carvekit.utils.models_utils import save_optimized_model, get_optimized_model
+from carvekit.ml.files import checkpoints_dir
 from functools import partial
-
+from carvekit import version
 
 class FBA(nn.Module):
     def __init__(self, encoder: str):
@@ -21,6 +26,39 @@ class FBA(nn.Module):
         resnet_input = torch.cat((image_n, trimap_transformed, two_chan_trimap), 1)
         conv_out, indices = self.encoder(resnet_input, return_feature_maps=True)
         return self.decoder(conv_out, image, indices, two_chan_trimap)
+
+
+class FBAJitTraced(nn.Module):
+    def __init__(self, encoder: str, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        path = checkpoints_dir.joinpath("optimized_models").joinpath(f"fba-matting-{version}.pt")
+        if path.exists():
+            try:
+                self.fba = get_optimized_model(path)
+            except BaseException as e:
+                loguru.logger.warning(f"Failed to load optimized model: {e}")
+                path.unlink()
+        if not path.exists():
+            loguru.logger.info("Optimizing FBA Matting model! This runs only once. Please wait...")
+            with torch.jit.optimized_execution(True):
+                net = FBA(encoder)
+                net.eval()
+                self.fba = torch.jit.trace(net, (
+                    torch.rand(*[1, 3, 1368, 2048]),
+                    torch.rand(*[1, 2, 1368, 2048]),
+                    torch.rand(*[1, 3, 1368, 2048]),
+                    torch.rand(*[1, 6, 1368, 2048])))
+            loguru.logger.info("Optimized FBA Matting model!")
+            if not path.parent.exists():
+                path.parent.mkdir(parents=True, exist_ok=True)
+            save_optimized_model(self.fba, path)
+
+    def load_state_dict(self, state_dict: Mapping[str, Any],
+                        strict: bool = True):
+        self.fba.load_state_dict(state_dict, strict=strict)
+
+    def forward(self, *args, **kwargs):
+        return self.fba(*args, **kwargs)
 
 
 class ResnetDilatedBN(nn.Module):
@@ -190,14 +228,14 @@ def norm(dim, bn=False):
 
 
 def fba_fusion(alpha, img, F, B):
-    F = alpha * img + (1 - alpha**2) * F - alpha * (1 - alpha) * B
-    B = (1 - alpha) * img + (2 * alpha - alpha**2) * B - alpha * (1 - alpha) * F
+    F = alpha * img + (1 - alpha ** 2) * F - alpha * (1 - alpha) * B
+    B = (1 - alpha) * img + (2 * alpha - alpha ** 2) * B - alpha * (1 - alpha) * F
 
     F = torch.clamp(F, 0, 1)
     B = torch.clamp(B, 0, 1)
     la = 0.1
     alpha = (alpha * la + torch.sum((img - B) * (F - B), 1, keepdim=True)) / (
-        torch.sum((F - B) * (F - B), 1, keepdim=True) + la
+            torch.sum((F - B) * (F - B), 1, keepdim=True) + la
     )
     alpha = torch.clamp(alpha, 0, 1)
     return alpha, F, B

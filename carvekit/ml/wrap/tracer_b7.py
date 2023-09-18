@@ -13,7 +13,7 @@ import torchvision.transforms as transforms
 from PIL import Image
 
 from carvekit.ml.arch.tracerb7.efficientnet import EfficientEncoderB7
-from carvekit.ml.arch.tracerb7.tracer import TracerDecoder
+from carvekit.ml.arch.tracerb7.tracer import TracerDecoder, TracerJitTraced
 from carvekit.ml.files.models_loc import tracer_b7_pretrained, tracer_b7_carveset_finetuned
 from carvekit.utils.image_utils import load_image, convert_image
 from carvekit.utils.models_utils import get_precision_autocast, cast_network
@@ -22,7 +22,7 @@ from carvekit.utils.pool_utils import thread_pool_processing, batch_generator
 __all__ = ["TracerUniversalB7"]
 
 
-class TracerUniversalB7(TracerDecoder):
+class TracerUniversalB7(TracerJitTraced):
     """TRACER B7 model interface"""
 
     def __init__(
@@ -141,7 +141,7 @@ class TracerUniversalB7(TracerDecoder):
                 )
                 with torch.no_grad():
                     batches = batches.to(self.device)
-                    masks = super(TracerDecoder, self).__call__(batches)
+                    masks = super(TracerJitTraced, self).__call__(batches)
                     masks_cpu = masks.cpu()
                     del batches, masks
                 masks = thread_pool_processing(

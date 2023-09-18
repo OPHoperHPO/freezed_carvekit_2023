@@ -7,6 +7,7 @@ License: Apache License 2.0
 
 import random
 import warnings
+from pathlib import Path
 from typing import Union, Tuple, Any
 
 import torch
@@ -29,7 +30,7 @@ class EmptyAutocast(object):
 
 
 def get_precision_autocast(
-    device="cpu", fp16=True, override_dtype=None
+        device="cpu", fp16=True, override_dtype=None
 ) -> Union[
     Tuple[EmptyAutocast, Union[torch.dtype, Any]],
     Tuple[autocast, Union[torch.dtype, Any]],
@@ -123,7 +124,31 @@ def suppress_warnings():
         "ignore",
         category=UserWarning,
         message="Note that order of the arguments: ceil_mode and "
-        "return_indices will changeto match the args list "
-        "in nn.MaxPool2d in a future release.",
+                "return_indices will changeto match the args list "
+                "in nn.MaxPool2d in a future release.",
         module="torch",
     )
+
+
+def save_optimized_model(model: torch.nn.Module, path: Path):
+    """
+    Save optimized model
+
+    Args:
+        model (torch.nn.Module): Model to be saved
+        path (Path): Path to save model to
+    """
+    if path.exists():
+        path.unlink()
+    torch.jit.save(model, path)
+    return True
+
+
+def get_optimized_model(path: Path):
+    """
+    Get optimized model
+
+    Args:
+        path (Path): Path to load model from
+    """
+    return torch.jit.load(path)

@@ -8,30 +8,71 @@ Changes:
     - Removed unused code
     - Added comments
 """
+from typing import List, Optional, Mapping, Any
 
+import loguru
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from typing import List, Optional, Tuple
-
 from torch import Tensor
 
-from carvekit.ml.arch.tracerb7.efficientnet import EfficientEncoderB7
+from carvekit import version
 from carvekit.ml.arch.tracerb7.att_modules import (
     RFB_Block,
     aggregation,
     ObjectAttention,
 )
+from carvekit.ml.arch.tracerb7.efficientnet import EfficientEncoderB7
+from carvekit.ml.files import checkpoints_dir
+from carvekit.utils.models_utils import save_optimized_model, get_optimized_model
+
+
+class TracerJitTraced(nn.Module):
+    def __init__(self,
+                 encoder: EfficientEncoderB7,
+                 features_channels: Optional[List[int]] = None,
+                 rfb_channel: Optional[List[int]] = None, ):
+        super().__init__()
+        path = checkpoints_dir.joinpath("optimized_models").joinpath(f"tracer-b7-{version}.pt")
+        if path.exists():
+            try:
+                self.net = get_optimized_model(path)
+            except BaseException as e:
+                loguru.logger.warning(f"Failed to load optimized model: {e}")
+                path.unlink()
+        if not path.exists():
+            loguru.logger.info("Optimizing Tracer model! This runs only once. Please wait...")
+            with torch.jit.optimized_execution(True):
+                net = TracerDecoder(encoder=encoder,
+                                    features_channels=features_channels,
+                                    rfb_channel=rfb_channel)
+                net.eval()
+                self.net = torch.jit.trace(net, (
+                    torch.rand(*[1, 3, 960, 960])))
+            loguru.logger.info("Optimized Tracer model!")
+            if not path.parent.exists():
+                path.parent.mkdir(parents=True, exist_ok=True)
+            save_optimized_model(self.net, path)
+        else:
+            self.net = get_optimized_model(path)
+        self.is_optimized = False
+
+    def load_state_dict(self, state_dict: Mapping[str, Any],
+                        strict: bool = True):
+        self.net.load_state_dict(state_dict, strict=strict)
+
+    def forward(self, *args, **kwargs):
+        return self.net(*args, **kwargs)
 
 
 class TracerDecoder(nn.Module):
     """Tracer Decoder"""
 
     def __init__(
-        self,
-        encoder: EfficientEncoderB7,
-        features_channels: Optional[List[int]] = None,
-        rfb_channel: Optional[List[int]] = None,
+            self,
+            encoder: EfficientEncoderB7,
+            features_channels: Optional[List[int]] = None,
+            rfb_channel: Optional[List[int]] = None,
     ):
         """
         Initialize the tracer decoder.

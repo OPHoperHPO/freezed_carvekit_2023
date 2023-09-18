@@ -4,15 +4,15 @@ Author: Nikita Selin [OPHoperHPO](https://github.com/OPHoperHPO).
 License: Apache License 2.0
 """
 import pathlib
+from typing import List, Union
 
 import PIL.Image
 import numpy as np
 import torch
 from PIL import Image
-from typing import List, Union
 from torchvision.transforms.functional import normalize
 
-from carvekit.ml.arch.isnet.isnet import ISNetDIS
+from carvekit.ml.arch.isnet.isnet import ISNetJitTraced
 from carvekit.ml.files.models_loc import isnet_carveset_pretrained, isnet_full_pretrained
 from carvekit.utils.image_utils import load_image, convert_image
 from carvekit.utils.models_utils import get_precision_autocast, cast_network
@@ -21,7 +21,7 @@ from carvekit.utils.pool_utils import thread_pool_processing, batch_generator
 __all__ = ["ISNet"]
 
 
-class ISNet(ISNetDIS):
+class ISNet(ISNetJitTraced):
     """ISNet model interface"""
 
     def __init__(
@@ -130,7 +130,7 @@ class ISNet(ISNetDIS):
                 )
                 with torch.no_grad():
                     batches = batches.to(self.device)
-                    masks = super(ISNetDIS, self).__call__(batches)[0][0]
+                    masks = super(ISNetJitTraced, self).__call__(batches)[0][0]
                     masks_cpu = masks.cpu()
                     del batches, masks
                 masks = thread_pool_processing(

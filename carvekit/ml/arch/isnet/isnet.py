@@ -3,9 +3,15 @@ Modified by Nikita Selin [OPHoperHPO](https://github.com/OPHoperHPO).
 Source url: https://github.com/xuebinqin/DIS
 License: Apache License 2.0
 """
+import loguru
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from typing import Mapping, Any
+
+from carvekit.ml.files import checkpoints_dir
+from carvekit.utils.models_utils import save_optimized_model, get_optimized_model
+from carvekit import version
 
 
 class REBNCONV(nn.Module):
@@ -317,14 +323,14 @@ class RSU4F(nn.Module):
 
 class myrebnconv(nn.Module):
     def __init__(
-        self,
-        in_ch=3,
-        out_ch=1,
-        kernel_size=3,
-        stride=1,
-        padding=1,
-        dilation=1,
-        groups=1,
+            self,
+            in_ch=3,
+            out_ch=1,
+            kernel_size=3,
+            stride=1,
+            padding=1,
+            dilation=1,
+            groups=1,
     ):
         super(myrebnconv, self).__init__()
 
@@ -456,3 +462,33 @@ class ISNetDIS(nn.Module):
             F.sigmoid(d5),
             F.sigmoid(d6),
         ], [hx1d, hx2d, hx3d, hx4d, hx5d, hx6]
+
+
+class ISNetJitTraced(nn.Module):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        path = checkpoints_dir.joinpath("optimized_models").joinpath(f"isnet-{version}.pt")
+        if path.exists():
+            try:
+                self.net = get_optimized_model(path)
+            except BaseException as e:
+                loguru.logger.warning(f"Failed to load optimized model: {e}")
+                path.unlink()
+        if not path.exists():
+            loguru.logger.info("Optimizing ISNet model! This runs only once. Please wait...")
+            with torch.jit.optimized_execution(True):
+                net = ISNetDIS()
+                net.eval()
+                self.net = torch.jit.trace(net, (
+                    torch.rand(*[1, 3, 1024, 1024])))
+            loguru.logger.info("Optimized ISNet model!")
+            if not path.parent.exists():
+                path.parent.mkdir(parents=True, exist_ok=True)
+            save_optimized_model(self.net, path)
+
+    def load_state_dict(self, state_dict: Mapping[str, Any],
+                        strict: bool = True):
+        self.net.load_state_dict(state_dict, strict=strict)
+
+    def forward(self, *args, **kwargs):
+        return self.net(*args, **kwargs)
