@@ -18,30 +18,31 @@ from carvekit.utils.fs_utils import save_file
     "-i",
     required=True,
     type=str,
-    help="Path to input file or directory. Directory MUST be provided if --recursive is used")
+    help="Path to input file or directory. Directory MUST be provided if --recursive is used",
+)
 @click.option(
     "-o",
     default="none",
     type=str,
-    help="Path to output file or dir. Defaults to /<source file location>/<file_name>_bg_removed.png"
+    help="Path to output file or dir. Defaults to /<source file location>/<file_name>_bg_removed.png",
 )
 @click.option(
     "--pre",
     default="autoscene",
     type=click.Choice(["none", "autoscene", "auto"]),
-    help="Preprocessing method"
+    help="Preprocessing method",
 )
 @click.option(
     "--post",
     default="cascade_fba",
     type=click.Choice(["none", "fba", "cascade_fba"]),
-    help="Postprocessing method."
+    help="Postprocessing method.",
 )
 @click.option(
     "--net",
     default="tracer_b7",
     type=click.Choice(["u2net", "deeplabv3", "basnet", "tracer_b7", "isnet"]),
-    help="Segmentation Network"
+    help="Segmentation Network",
 )
 @click.option(
     "--recursive",
@@ -98,6 +99,12 @@ from carvekit.utils.fs_utils import save_file
     help="The size of the input image for the refining neural network.",
 )
 @click.option(
+    "--trimap_filter_threshold",
+    default=-1,
+    type=int,
+    help="Filter_threshold parameter for the trimap generator.",
+)
+@click.option(
     "--trimap_dilation",
     default=30,
     type=int,
@@ -121,7 +128,10 @@ from carvekit.utils.fs_utils import save_file
 )
 @click.option("--device", default="cpu", type=str, help="Processing Device.")
 @click.option(
-    "--fp16", default=False, is_flag=True, help="Enables mixed precision processing. Not supported for U2NET."
+    "--fp16",
+    default=False,
+    is_flag=True,
+    help="Enables mixed precision processing. Not supported for U2NET.",
 )
 def removebg(
     i: str,
@@ -140,6 +150,7 @@ def removebg(
     refine_mask_size: int,
     device: str,
     fp16: bool,
+    trimap_filter_threshold: int,
     trimap_dilation: int,
     trimap_erosion: int,
     trimap_prob_threshold: int,
@@ -177,6 +188,7 @@ def removebg(
         matting_mask_size=matting_mask_size,
         refine_mask_size=refine_mask_size,
         fp16=fp16,
+        trimap_filter_threshold=trimap_filter_threshold,
         trimap_dilation=trimap_dilation,
         trimap_erosion=trimap_erosion,
         trimap_prob_threshold=trimap_prob_threshold,

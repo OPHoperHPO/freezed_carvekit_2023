@@ -29,6 +29,7 @@ class HiInterface(Interface):
         seg_mask_size=960,
         matting_mask_size=2048,
         refine_mask_size=900,
+        trimap_filter_threshold=-1,
         trimap_prob_threshold=231,
         trimap_dilation=30,
         trimap_erosion_iters=5,
@@ -47,6 +48,7 @@ class HiInterface(Interface):
             device (Literal[cpu, cuda], default=cpu): Processing device
             fp16 (bool, default=False): Use half precision. Reduce memory usage and increase speed.
             .. CAUTION:: ⚠️ **Experimental support**
+            trimap_filter_threshold (int, default=-1): Threshold for the filter operation in the trimap generator. (-1 - disable)
             trimap_prob_threshold (int, default=231): Probability threshold at which the prob_filter and prob_as_unknown_area operations will be applied
             trimap_dilation (int, default=30): The size of the offset radius from the object mask in pixels when forming an unknown area
             trimap_erosion_iters (int, default=5): The number of iterations of erosion that the object's mask will be subjected to before forming an unknown area
@@ -117,6 +119,7 @@ class HiInterface(Interface):
             fp16=fp16,
         )
         self._trimap_generator = TrimapGenerator(
+            filter_threshold=trimap_filter_threshold,
             prob_threshold=trimap_prob_threshold,
             kernel_size=trimap_dilation,
             erosion_iters=trimap_erosion_iters,

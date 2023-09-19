@@ -46,6 +46,8 @@ class MLConfig(BaseModel):
     """The size of the input image for the refine neural network."""
     fp16: bool = False
     """Use half precision for inference"""
+    trimap_filter_threshold: int = -1
+    """Threshold for trimap filter"""
     trimap_dilation: int = 30
     """Dilation size for trimap"""
     trimap_erosion: int = 5

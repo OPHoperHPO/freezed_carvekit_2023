@@ -153,36 +153,53 @@ apt install libgl1 libglib2.0-0
 
 
 ## 🧰 Интеграция в код:  
-### Если вы хотите быстрее приступить к работе без дополнительной настройки
+### Взаимодействие с методом AutoInterface и настройка параметров Trimap.
 ``` python
-import torch
-from carvekit.api.high import HiInterface
+from typing import Union
 
-# Check doc strings for more information
-interface = HiInterface(object_type="auto",  # Can be "object" or "hairs-like" or "auto"
-                        batch_size_seg=5,
-                        batch_size_pre=5,
-                        batch_size_matting=1,
-                        batch_size_refine=1,
-                        device='cuda' if torch.cuda.is_available() else 'cpu',
-                        seg_mask_size=960,  # Use 960 for Tracer B7 and 1024 for ISNet
-                        matting_mask_size=2048,
-                        refine_mask_size=900,
-                        trimap_prob_threshold=231,
-                        trimap_dilation=30,
-                        trimap_erosion_iters=5,
-                        fp16=False)
-images_without_background = interface(['./tests/data/cat.jpg'])
-cat_wo_bg = images_without_background[0]
-cat_wo_bg.save('2.png')
-
-                   
-```
-### Аналог метода предварительной обработки `auto` из cli
-``` python
 from carvekit.api.autointerface import AutoInterface
+from carvekit.ml.wrap.deeplab_v3 import DeepLabV3
+from carvekit.ml.wrap.isnet import ISNet
 from carvekit.ml.wrap.scene_classifier import SceneClassifier
+from carvekit.ml.wrap.tracer_b7 import TracerUniversalB7
+from carvekit.ml.wrap.u2net import U2NET
 from carvekit.ml.wrap.yolov4 import SimplifiedYoloV4
+
+# Параметры trimap указаны для изображений-примеров в docs/imgs/example_images! 
+# Для ваших изображений может потребоваться дополнительная настройка согласно документации!
+
+# override the default trimap parameters for the networks
+def select_params_for_net(net: Union[TracerUniversalB7, U2NET, DeepLabV3]):
+    """
+    Selects the parameters for the network depending on the scene
+
+    Args:
+        net: network base class
+    """
+    if net == TracerUniversalB7:  # Objects
+        return {
+            "trimap_generator": {
+                "prob_threshold": 231,
+                "kernel_size": 30,
+                "erosion_iters": 5,
+            },
+            "matting_module": {"disable_noise_filter": False},
+            "refining": {"enabled": True, "mask_binary_threshold": 128},
+        }
+    elif net == ISNet:  # Hairs on the simple background
+        return {
+            "trimap_generator": { # Check TrimapGenerator doc string for more information
+                "prob_threshold": 100,
+                "kernel_size": 30,
+                "erosion_iters": 5,
+                "filter_threshold": 20,
+            },
+            "matting_module": {"disable_noise_filter": True},  # Check FBA Matting doc string for more information
+            "refining": {"enabled": False, "mask_binary_threshold": 128},  # Check Cascade PSP doc string for more information
+        }
+    else:
+        raise ValueError("Unknown network type")
+
 
 scene_classifier = SceneClassifier(device="cpu", batch_size=1)
 object_classifier = SimplifiedYoloV4(device="cpu", batch_size=1)
@@ -196,12 +213,40 @@ interface = AutoInterface(scene_classifier=scene_classifier,
                           refining_image_size=900,
                           segmentation_device="cpu",
                           fp16=False,
-                          postprocessing_device="cpu")
-images_without_background = interface(['./tests/data/cat.jpg'])
+                          postprocessing_device="cpu",
+                          override_trimap_params=select_params_for_net)
+images_without_background = interface(['./docs/imgs/example_images/cat.jpg'])
 cat_wo_bg = images_without_background[0]
 cat_wo_bg.save('2.png')
 ```
-### Если вы хотите провести детальную настройку
+### Взаимодействие с методом HiInterface и настройка параметров Trimap.
+``` python
+import torch
+from carvekit.api.high import HiInterface
+
+# Параметры trimap требуют корректировки!
+# Check doc strings for more information
+interface = HiInterface(object_type="auto",  # Can be "object" (tracer-b7) or "hairs-like" (isnet) or "auto" (autoscene)
+                        batch_size_seg=5,
+                        batch_size_pre=5,
+                        batch_size_matting=1,
+                        batch_size_refine=1,
+                        device='cuda' if torch.cuda.is_available() else 'cpu',
+                        seg_mask_size=960,  # Use 960 for Tracer B7 and 1024 for ISNet
+                        matting_mask_size=2048,
+                        refine_mask_size=900,
+                        trimap_filter_threshold=-1,  # -1 for disable
+                        trimap_prob_threshold=231,
+                        trimap_dilation=30,
+                        trimap_erosion_iters=5,
+                        fp16=False)
+images_without_background = interface(['./tests/data/cat.jpg'])
+cat_wo_bg = images_without_background[0]
+cat_wo_bg.save('2.png')
+
+                   
+```
+### Детальная настройка нейронных сетей и их параметров.
 ``` python
 import PIL.Image
 
@@ -214,9 +259,11 @@ from carvekit.pipelines.postprocessing import CasMattingMethod
 from carvekit.pipelines.preprocessing import AutoScene
 from carvekit.trimap.generator import TrimapGenerator
 
+
+# Параметры trimap требуют корректировки!
 # Check doc strings for more information
 seg_net = TracerUniversalB7(device='cpu',
-                            batch_size=1, fp16=False)
+                            batch_size=1, fp16=False)  # or ISNet, DeepLabV3, etc
 cascade_psp = CascadePSP(device='cpu',
                          batch_size=1,
                          input_tensor_size=900,
@@ -227,12 +274,12 @@ fba = FBAMatting(device='cpu',
                  input_tensor_size=2048,
                  batch_size=1, fp16=False)
 
-trimap = TrimapGenerator(prob_threshold=231, kernel_size=30, erosion_iters=5)
+trimap = TrimapGenerator(filter_threshold=-1, prob_threshold=231, kernel_size=30, erosion_iters=5)
 
 scene_classifier = SceneClassifier(device='cpu', batch_size=5)
-preprocessing = AutoScene(scene_classifier=scene_classifier)
+preprocessing = AutoScene(scene_classifier=scene_classifier) # or None
 
-postprocessing = CasMattingMethod(
+postprocessing = CasMattingMethod(  # or MattingMethod
     refining_module=cascade_psp,
     matting_module=fba,
     trimap_generator=trimap,
@@ -246,7 +293,6 @@ image = PIL.Image.open('tests/data/cat.jpg')
 cat_wo_bg = interface([image])[0]
 cat_wo_bg.save('2.png')     
 ```
-
 
 ## 🧰 Запустить через консоль:  
  * ```python3 -m carvekit  -i <input_path> -o <output_path> --device <device>```  
@@ -285,6 +331,11 @@ Options:
   --matting_mask_size 2048     Размер исходного изображения для матирующей
                                нейронной сети
   --refine_mask_size 900       Размер входного изображения для уточняющей нейронной сети.
+  
+  --trimap_filter_threshold -1 Пороговое значение для фильтрации маски объекта.
+                               -1 для отключения фильтрации. (см. документацию)
+
+
   --trimap_dilation 30         Размер радиуса смещения от маски объекта в пикселях при 
                                формировании неизвестной области
                                

@@ -41,27 +41,27 @@ class FBAMatting(FBA):
         disable_noise_filter=False,
     ):
         """
-        Initialize the FBAMatting model
+                Initialize the FBAMatting model
 
-        Args:
-<<<<<<< HEAD
-            device (Literal[cpu, cuda], default=cpu): processing device
-            input_tensor_size (Union[List[int], int], default=2048): input image size
-            batch_size (int, default=2): the number of images that the neural network processes in one run
-            encoder (str, default=resnet50_GN_WS): neural network encoder head
-            .. TODO::
-                Add more encoders to documentation as Literal typehint.
-            load_pretrained (bool, default=True): loading pretrained model
-            fp16 (bool, default=False): use half precision
-=======
-            device: processing device
-            input_tensor_size: input image size
-            batch_size: the number of images that the neural network processes in one run
-            encoder: neural network encoder head
-            load_pretrained: loading pretrained model
-            fp16: use half precision
-            disable_noise_filter: disables noise filter
->>>>>>> 3625679df2315c3365cc3f4ea9578ea95b20fafd
+                Args:
+        <<<<<<< HEAD
+                    device (Literal[cpu, cuda], default=cpu): processing device
+                    input_tensor_size (Union[List[int], int], default=2048): input image size
+                    batch_size (int, default=2): the number of images that the neural network processes in one run
+                    encoder (str, default=resnet50_GN_WS): neural network encoder head
+                    .. TODO::
+                        Add more encoders to documentation as Literal typehint.
+                    load_pretrained (bool, default=True): loading pretrained model
+                    fp16 (bool, default=False): use half precision
+        =======
+                    device: processing device
+                    input_tensor_size: input image size
+                    batch_size: the number of images that the neural network processes in one run
+                    encoder: neural network encoder head
+                    load_pretrained: loading pretrained model
+                    fp16: use half precision
+                    disable_noise_filter: disables noise filter
+        >>>>>>> 3625679df2315c3365cc3f4ea9578ea95b20fafd
 
         """
         super(FBAMatting, self).__init__(encoder=encoder)

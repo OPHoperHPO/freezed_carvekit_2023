@@ -107,6 +107,12 @@ def init_config() -&gt; WebAPIConfig:
                     )
                 ),
                 fp16=bool(int(getenv(&#34;CARVEKIT_FP16&#34;, default_config.ml.fp16))),
+                trimap_filter_threshold=int(
+                    getenv(
+                        &#34;CARVEKIT_TRIMAP_FILTER_THRESHOLD&#34;,
+                        default_config.ml.trimap_filter_threshold,
+                    )
+                ),
                 trimap_prob_threshold=int(
                     getenv(
                         &#34;CARVEKIT_TRIMAP_PROB_THRESHOLD&#34;,
@@ -351,6 +357,12 @@ def init_interface(config: Union[WebAPIConfig, MLConfig]) -&gt; Interface:
                     )
                 ),
                 fp16=bool(int(getenv(&#34;CARVEKIT_FP16&#34;, default_config.ml.fp16))),
+                trimap_filter_threshold=int(
+                    getenv(
+                        &#34;CARVEKIT_TRIMAP_FILTER_THRESHOLD&#34;,
+                        default_config.ml.trimap_filter_threshold,
+                    )
+                ),
                 trimap_prob_threshold=int(
                     getenv(
                         &#34;CARVEKIT_TRIMAP_PROB_THRESHOLD&#34;,

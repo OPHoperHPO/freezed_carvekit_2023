@@ -73,9 +73,11 @@ class CascadePSP(RefinementModule):
             )
         if load_pretrained:
             if self.device == "cpu":
-                warnings.warn("The CascadePSP finetuned model has an extremely slow processing bug on the CPU. "
-                              "Use GPU to load it. "
-                              "Using pretrained model instead.")
+                warnings.warn(
+                    "The CascadePSP finetuned model has an extremely slow processing bug on the CPU. "
+                    "Use GPU to load it. "
+                    "Using pretrained model instead."
+                )
                 self.load_state_dict(
                     torch.load(cascadepsp_pretrained(), map_location=self.device)
                 )
@@ -316,5 +318,3 @@ class CascadePSP(RefinementModule):
                     range(len(inpt_masks)),
                 )
             return collect_masks
-
-

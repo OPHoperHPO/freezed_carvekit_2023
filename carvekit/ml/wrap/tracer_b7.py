@@ -14,7 +14,10 @@ from PIL import Image
 
 from carvekit.ml.arch.tracerb7.efficientnet import EfficientEncoderB7
 from carvekit.ml.arch.tracerb7.tracer import TracerDecoder
-from carvekit.ml.files.models_loc import tracer_b7_pretrained, tracer_b7_carveset_finetuned
+from carvekit.ml.files.models_loc import (
+    tracer_b7_pretrained,
+    tracer_b7_carveset_finetuned,
+)
 from carvekit.utils.image_utils import load_image, convert_image
 from carvekit.utils.models_utils import get_precision_autocast, cast_network
 from carvekit.utils.pool_utils import thread_pool_processing, batch_generator
@@ -26,13 +29,13 @@ class TracerUniversalB7(TracerDecoder):
     """TRACER B7 model interface"""
 
     def __init__(
-            self,
-            device="cpu",
-            input_image_size: Union[List[int], int] = 960,
-            batch_size: int = 1,
-            load_pretrained: bool = True,
-            fp16: bool = False,
-            model_path: Union[str, pathlib.Path] = None,
+        self,
+        device="cpu",
+        input_image_size: Union[List[int], int] = 960,
+        batch_size: int = 1,
+        load_pretrained: bool = True,
+        fp16: bool = False,
+        model_path: Union[str, pathlib.Path] = None,
     ):
         """
         Initialize the TRACER model
@@ -93,7 +96,7 @@ class TracerUniversalB7(TracerDecoder):
 
     @staticmethod
     def data_postprocessing(
-            data: torch.tensor, original_image: PIL.Image.Image
+        data: torch.tensor, original_image: PIL.Image.Image
     ) -> PIL.Image.Image:
         """
         Transforms output data from neural network to suitable data
@@ -116,7 +119,7 @@ class TracerUniversalB7(TracerDecoder):
         return mask
 
     def __call__(
-            self, images: List[Union[str, pathlib.Path, PIL.Image.Image]]
+        self, images: List[Union[str, pathlib.Path, PIL.Image.Image]]
     ) -> List[PIL.Image.Image]:
         """
         Passes input images though neural network and returns segmentation masks as PIL.Image.Image instances
@@ -158,8 +161,15 @@ class TracerUniversalB7(TracerDecoder):
 class TracerUniversalB7Pretrained(TracerUniversalB7):
     """TRACER B7 model interface"""
 
-    def __init__(self, device="cpu", input_image_size: Union[List[int], int] = 640, batch_size: int = 4,
-                 load_pretrained: bool = True, fp16: bool = False, model_path: Union[str, pathlib.Path] = None):
+    def __init__(
+        self,
+        device="cpu",
+        input_image_size: Union[List[int], int] = 640,
+        batch_size: int = 4,
+        load_pretrained: bool = True,
+        fp16: bool = False,
+        model_path: Union[str, pathlib.Path] = None,
+    ):
         """
         Initialize the TRACER model
 
@@ -172,4 +182,11 @@ class TracerUniversalB7Pretrained(TracerUniversalB7):
             fp16: use fp16 precision
 
         """
-        super().__init__(device, input_image_size, batch_size, load_pretrained, fp16, tracer_b7_pretrained())
+        super().__init__(
+            device,
+            input_image_size,
+            batch_size,
+            load_pretrained,
+            fp16,
+            tracer_b7_pretrained(),
+        )

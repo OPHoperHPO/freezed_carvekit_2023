@@ -7,7 +7,7 @@ from collections import Counter
 from pathlib import Path
 
 from PIL import Image
-from typing import Union, List, Dict
+from typing import Union, List, Dict, Callable
 
 from carvekit.api.interface import Interface
 from carvekit.ml.wrap.basnet import BASNET
@@ -32,6 +32,7 @@ class AutoInterface(Interface):
     """
     Interface with automatic scene and object classification for automated choice of statistically best processing pipeline
     """
+
     def __init__(
         self,
         scene_classifier: SceneClassifier,
@@ -44,11 +45,34 @@ class AutoInterface(Interface):
         segmentation_device: str = "cpu",
         postprocessing_device: str = "cpu",
         fp16=False,
+        override_trimap_params: Callable = None,
     ):
         """
+
+        Initializes High Level interface.
+
         Args:
-            scene_classifier: SceneClassifier instance
-            object_classifier: YoloV4_COCO instance
+            scene_classifier (object, default=SceneClassifier): Scene classifier
+            object_classifier (object, default=SimplifiedYoloV4): Object classifier
+            segmentation_batch_size (int, default=1): Segmentation batch size
+            refining_batch_size (int, default=1): Refining batch size
+            refining_image_size (int, default=900): Refining image size
+            postprocessing_batch_size (int, default=1): Postprocessing batch size
+            postprocessing_image_size (int, default=2048): Postprocessing image size
+            segmentation_device (str, default="cpu"): Segmentation device
+            postprocessing_device (str, default="cpu"): Postprocessing device
+            fp16 (bool, default=False): Use fp16
+            override_trimap_params (Callable, default=None): Override trimap params function
+
+
+        .. NOTE::
+            1. Changing seg_mask_size may cause an `out-of-memory` error if the value is too large, and it may also
+            result in reduced precision. I do not recommend changing this value. You can change `matting_mask_size` in
+            range from `(1024 to 4096)` to improve object edge refining quality, but it will cause extra large RAM and
+            video memory consume. Also, you can change batch size to accelerate background removal, but it also causes
+            extra large video memory consume, if value is too big.
+            2. Changing `trimap_prob_threshold`, `trimap_kernel_size`, `trimap_erosion_iters`, `filter_threshold` may improve object edge
+            refining quality. Please, check README.md for example of trimap params overriding.
         """
         self.scene_classifier = scene_classifier
         self.object_classifier = object_classifier
@@ -60,6 +84,11 @@ class AutoInterface(Interface):
         self.segmentation_device = segmentation_device
         self.postprocessing_device = postprocessing_device
         self.fp16 = fp16
+
+        if override_trimap_params is None:
+            override_trimap_params = self.select_params_for_net
+        self.override_trimap_params = override_trimap_params
+
         super().__init__(
             seg_pipe=None, post_pipe=None, pre_pipe=None
         )  # just for compatibility with Interface class
@@ -196,7 +225,6 @@ class AutoInterface(Interface):
                     "net"
                 ] = TracerUniversalB7  # It seems that the image is empty, but we will try to process it
 
-
     def __call__(self, images: List[Union[str, Path, Image.Image]]):
         """
         Automatically detects the scene and selects the appropriate network for segmentation
@@ -267,7 +295,7 @@ class AutoInterface(Interface):
                 groups[net].append(image_info)
             for net, gimages_info in list(groups.items()):
                 # Configure custom pipeline for image group
-                config_params = self.select_params_for_net(net)
+                config_params = self.override_trimap_params(net)
                 trimap_generator = TrimapGenerator(**config_params["trimap_generator"])
                 fba.disable_noise_filter = config_params["matting_module"][
                     "disable_noise_filter"

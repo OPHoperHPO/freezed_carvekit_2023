@@ -106,9 +106,11 @@ class CascadePSP(RefinementModule):
             )
         if load_pretrained:
             if self.device == &#34;cpu&#34;:
-                warnings.warn(&#34;The CascadePSP finetuned model has an extremely slow processing bug on the CPU. &#34;
-                              &#34;Use GPU to load it. &#34;
-                              &#34;Using pretrained model instead.&#34;)
+                warnings.warn(
+                    &#34;The CascadePSP finetuned model has an extremely slow processing bug on the CPU. &#34;
+                    &#34;Use GPU to load it. &#34;
+                    &#34;Using pretrained model instead.&#34;
+                )
                 self.load_state_dict(
                     torch.load(cascadepsp_pretrained(), map_location=self.device)
                 )
@@ -437,9 +439,11 @@ class CascadePSP(RefinementModule):
             )
         if load_pretrained:
             if self.device == &#34;cpu&#34;:
-                warnings.warn(&#34;The CascadePSP finetuned model has an extremely slow processing bug on the CPU. &#34;
-                              &#34;Use GPU to load it. &#34;
-                              &#34;Using pretrained model instead.&#34;)
+                warnings.warn(
+                    &#34;The CascadePSP finetuned model has an extremely slow processing bug on the CPU. &#34;
+                    &#34;Use GPU to load it. &#34;
+                    &#34;Using pretrained model instead.&#34;
+                )
                 self.load_state_dict(
                     torch.load(cascadepsp_pretrained(), map_location=self.device)
                 )
@@ -686,6 +690,21 @@ class CascadePSP(RefinementModule):
 <li><a title="carvekit.ml.arch.cascadepsp.pspnet.RefinementModule" href="../arch/cascadepsp/pspnet.html#carvekit.ml.arch.cascadepsp.pspnet.RefinementModule">RefinementModule</a></li>
 <li>torch.nn.modules.module.Module</li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="carvekit.ml.wrap.cascadepsp.CascadePSP.call_super_init"><code class="name">var <span class="ident">call_super_init</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.wrap.cascadepsp.CascadePSP.dump_patches"><code class="name">var <span class="ident">dump_patches</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.wrap.cascadepsp.CascadePSP.training"><code class="name">var <span class="ident">training</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Static methods</h3>
 <dl>
 <dt id="carvekit.ml.wrap.cascadepsp.CascadePSP.data_postprocessing"><code class="name flex">
@@ -905,10 +924,13 @@ def data_postprocessing(
 <ul>
 <li>
 <h4><code><a title="carvekit.ml.wrap.cascadepsp.CascadePSP" href="#carvekit.ml.wrap.cascadepsp.CascadePSP">CascadePSP</a></code></h4>
-<ul class="">
+<ul class="two-column">
+<li><code><a title="carvekit.ml.wrap.cascadepsp.CascadePSP.call_super_init" href="#carvekit.ml.wrap.cascadepsp.CascadePSP.call_super_init">call_super_init</a></code></li>
 <li><code><a title="carvekit.ml.wrap.cascadepsp.CascadePSP.data_postprocessing" href="#carvekit.ml.wrap.cascadepsp.CascadePSP.data_postprocessing">data_postprocessing</a></code></li>
 <li><code><a title="carvekit.ml.wrap.cascadepsp.CascadePSP.data_preprocessing" href="#carvekit.ml.wrap.cascadepsp.CascadePSP.data_preprocessing">data_preprocessing</a></code></li>
+<li><code><a title="carvekit.ml.wrap.cascadepsp.CascadePSP.dump_patches" href="#carvekit.ml.wrap.cascadepsp.CascadePSP.dump_patches">dump_patches</a></code></li>
 <li><code><a title="carvekit.ml.wrap.cascadepsp.CascadePSP.safe_forward" href="#carvekit.ml.wrap.cascadepsp.CascadePSP.safe_forward">safe_forward</a></code></li>
+<li><code><a title="carvekit.ml.wrap.cascadepsp.CascadePSP.training" href="#carvekit.ml.wrap.cascadepsp.CascadePSP.training">training</a></code></li>
 </ul>
 </li>
 </ul>

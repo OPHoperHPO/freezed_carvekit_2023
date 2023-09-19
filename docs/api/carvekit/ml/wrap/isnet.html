@@ -46,7 +46,10 @@ from typing import List, Union
 from torchvision.transforms.functional import normalize
 
 from carvekit.ml.arch.isnet.isnet import ISNetDIS
-from carvekit.ml.files.models_loc import isnet_carveset_pretrained, isnet_full_pretrained
+from carvekit.ml.files.models_loc import (
+    isnet_carveset_pretrained,
+    isnet_full_pretrained,
+)
 from carvekit.utils.image_utils import load_image, convert_image
 from carvekit.utils.models_utils import get_precision_autocast, cast_network
 from carvekit.utils.pool_utils import thread_pool_processing, batch_generator
@@ -58,12 +61,12 @@ class ISNet(ISNetDIS):
     &#34;&#34;&#34;ISNet model interface&#34;&#34;&#34;
 
     def __init__(
-            self,
-            device=&#34;cpu&#34;,
-            input_image_size: Union[List[int], int] = 1024,
-            batch_size: int = 1,
-            load_pretrained: bool = True,
-            fp16: bool = False,
+        self,
+        device=&#34;cpu&#34;,
+        input_image_size: Union[List[int], int] = 1024,
+        batch_size: int = 1,
+        load_pretrained: bool = True,
+        fp16: bool = False,
     ):
         &#34;&#34;&#34;
         Initialize the ISNet model
@@ -113,7 +116,7 @@ class ISNet(ISNetDIS):
 
     @staticmethod
     def data_postprocessing(
-            data: torch.tensor, original_image: PIL.Image.Image
+        data: torch.tensor, original_image: PIL.Image.Image
     ) -&gt; PIL.Image.Image:
         &#34;&#34;&#34;
         Transforms output data from neural network to suitable data
@@ -138,7 +141,7 @@ class ISNet(ISNetDIS):
         return mask
 
     def __call__(
-            self, images: List[Union[str, pathlib.Path, PIL.Image.Image]]
+        self, images: List[Union[str, pathlib.Path, PIL.Image.Image]]
     ) -&gt; List[PIL.Image.Image]:
         &#34;&#34;&#34;
         Passes input images though neural network and returns segmentation masks as PIL.Image.Image instances
@@ -163,7 +166,8 @@ class ISNet(ISNetDIS):
                 )
                 with torch.no_grad():
                     batches = batches.to(self.device)
-                    masks = super(ISNetDIS, self).__call__(batches)[0][0]
+                    masks = super(ISNetDIS, self).__call__(batches)
+
                     masks_cpu = masks.cpu()
                     del batches, masks
                 masks = thread_pool_processing(
@@ -180,12 +184,12 @@ class ISNetDISPretrained(ISNet):
     &#34;&#34;&#34;ISNet model interface&#34;&#34;&#34;
 
     def __init__(
-            self,
-            device=&#34;cpu&#34;,
-            input_image_size: Union[List[int], int] = 1024,
-            batch_size: int = 1,
-            load_pretrained: bool = True,
-            fp16: bool = False,
+        self,
+        device=&#34;cpu&#34;,
+        input_image_size: Union[List[int], int] = 1024,
+        batch_size: int = 1,
+        load_pretrained: bool = True,
+        fp16: bool = False,
     ):
         &#34;&#34;&#34;
         Initialize the ISNet model
@@ -242,12 +246,12 @@ class ISNetDISPretrained(ISNet):
     &#34;&#34;&#34;ISNet model interface&#34;&#34;&#34;
 
     def __init__(
-            self,
-            device=&#34;cpu&#34;,
-            input_image_size: Union[List[int], int] = 1024,
-            batch_size: int = 1,
-            load_pretrained: bool = True,
-            fp16: bool = False,
+        self,
+        device=&#34;cpu&#34;,
+        input_image_size: Union[List[int], int] = 1024,
+        batch_size: int = 1,
+        load_pretrained: bool = True,
+        fp16: bool = False,
     ):
         &#34;&#34;&#34;
         Initialize the ISNet model
@@ -297,7 +301,7 @@ class ISNetDISPretrained(ISNet):
 
     @staticmethod
     def data_postprocessing(
-            data: torch.tensor, original_image: PIL.Image.Image
+        data: torch.tensor, original_image: PIL.Image.Image
     ) -&gt; PIL.Image.Image:
         &#34;&#34;&#34;
         Transforms output data from neural network to suitable data
@@ -322,7 +326,7 @@ class ISNetDISPretrained(ISNet):
         return mask
 
     def __call__(
-            self, images: List[Union[str, pathlib.Path, PIL.Image.Image]]
+        self, images: List[Union[str, pathlib.Path, PIL.Image.Image]]
     ) -&gt; List[PIL.Image.Image]:
         &#34;&#34;&#34;
         Passes input images though neural network and returns segmentation masks as PIL.Image.Image instances
@@ -347,7 +351,8 @@ class ISNetDISPretrained(ISNet):
                 )
                 with torch.no_grad():
                     batches = batches.to(self.device)
-                    masks = super(ISNetDIS, self).__call__(batches)[0][0]
+                    masks = super(ISNetDIS, self).__call__(batches)
+
                     masks_cpu = masks.cpu()
                     del batches, masks
                 masks = thread_pool_processing(
@@ -368,10 +373,25 @@ class ISNetDISPretrained(ISNet):
 <ul class="hlist">
 <li>carvekit.ml.wrap.isnet.ISNetDISPretrained</li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="carvekit.ml.wrap.isnet.ISNet.call_super_init"><code class="name">var <span class="ident">call_super_init</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.wrap.isnet.ISNet.dump_patches"><code class="name">var <span class="ident">dump_patches</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.wrap.isnet.ISNet.training"><code class="name">var <span class="ident">training</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Static methods</h3>
 <dl>
 <dt id="carvekit.ml.wrap.isnet.ISNet.data_postprocessing"><code class="name flex">
-<span>def <span class="ident">data_postprocessing</span></span>(<span>data: <built-in method tensor of type object at 0x7fd04f331e60>, original_image: PIL.Image.Image) ‑> PIL.Image.Image</span>
+<span>def <span class="ident">data_postprocessing</span></span>(<span>data: <built-in method tensor of type object at 0x110e8f290>, original_image: PIL.Image.Image) ‑> PIL.Image.Image</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Transforms output data from neural network to suitable data
@@ -391,7 +411,7 @@ format for using with other components of this framework.</p>
 </summary>
 <pre><code class="python">@staticmethod
 def data_postprocessing(
-        data: torch.tensor, original_image: PIL.Image.Image
+    data: torch.tensor, original_image: PIL.Image.Image
 ) -&gt; PIL.Image.Image:
     &#34;&#34;&#34;
     Transforms output data from neural network to suitable data
@@ -484,8 +504,11 @@ def data_postprocessing(
 <li>
 <h4><code><a title="carvekit.ml.wrap.isnet.ISNet" href="#carvekit.ml.wrap.isnet.ISNet">ISNet</a></code></h4>
 <ul class="">
+<li><code><a title="carvekit.ml.wrap.isnet.ISNet.call_super_init" href="#carvekit.ml.wrap.isnet.ISNet.call_super_init">call_super_init</a></code></li>
 <li><code><a title="carvekit.ml.wrap.isnet.ISNet.data_postprocessing" href="#carvekit.ml.wrap.isnet.ISNet.data_postprocessing">data_postprocessing</a></code></li>
 <li><code><a title="carvekit.ml.wrap.isnet.ISNet.data_preprocessing" href="#carvekit.ml.wrap.isnet.ISNet.data_preprocessing">data_preprocessing</a></code></li>
+<li><code><a title="carvekit.ml.wrap.isnet.ISNet.dump_patches" href="#carvekit.ml.wrap.isnet.ISNet.dump_patches">dump_patches</a></code></li>
+<li><code><a title="carvekit.ml.wrap.isnet.ISNet.training" href="#carvekit.ml.wrap.isnet.ISNet.training">training</a></code></li>
 </ul>
 </li>
 </ul>
