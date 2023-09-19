@@ -459,33 +459,23 @@ evaluation mode.
 <li><a title="carvekit.ml.arch.tracerb7.efficientnet.EfficientNet" href="#carvekit.ml.arch.tracerb7.efficientnet.EfficientNet">EfficientNet</a></li>
 <li>torch.nn.modules.module.Module</li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="carvekit.ml.arch.tracerb7.efficientnet.EfficientEncoderB7.call_super_init"><code class="name">var <span class="ident">call_super_init</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.tracerb7.efficientnet.EfficientEncoderB7.dump_patches"><code class="name">var <span class="ident">dump_patches</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.tracerb7.efficientnet.EfficientEncoderB7.training"><code class="name">var <span class="ident">training</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
-<dt id="carvekit.ml.arch.tracerb7.efficientnet.EfficientEncoderB7.forward"><code class="name flex">
-<span>def <span class="ident">forward</span></span>(<span>self, inputs: torch.Tensor) ‑> List[Any]</span>
-</code></dt>
-<dd>
-<div class="desc"><p>Defines the computation performed at every call.</p>
-<p>Should be overridden by all subclasses.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Although the recipe for forward pass needs to be defined within
-this function, one should call the :class:<code>Module</code> instance afterwards
-instead of this since the former takes care of running the
-registered hooks while the latter silently ignores them.</p>
-</div></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">def forward(self, inputs: torch.Tensor) -&gt; List[Any]:
-    B, C, H, W = inputs.size()
-    x = self.initial_conv(inputs)  # Prepare input for the backbone
-    return self.get_blocks(
-        x, H, W, block_idx=self.block_idx
-    )  # Get backbone features and edge maps</code></pre>
-</details>
-</dd>
 <dt id="carvekit.ml.arch.tracerb7.efficientnet.EfficientEncoderB7.get_blocks"><code class="name flex">
 <span>def <span class="ident">get_blocks</span></span>(<span>self, x, H, W, block_idx)</span>
 </code></dt>
@@ -535,6 +525,7 @@ registered hooks while the latter silently ignores them.</p>
 <ul class="hlist">
 <li><code><b><a title="carvekit.ml.arch.tracerb7.efficientnet.EfficientNet" href="#carvekit.ml.arch.tracerb7.efficientnet.EfficientNet">EfficientNet</a></b></code>:
 <ul class="hlist">
+<li><code><a title="carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.forward" href="#carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.forward">forward</a></code></li>
 <li><code><a title="carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.set_swish" href="#carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.set_swish">set_swish</a></code></li>
 </ul>
 </li>
@@ -694,6 +685,21 @@ evaluation mode.
 <ul class="hlist">
 <li><a title="carvekit.ml.arch.tracerb7.efficientnet.EfficientEncoderB7" href="#carvekit.ml.arch.tracerb7.efficientnet.EfficientEncoderB7">EfficientEncoderB7</a></li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.call_super_init"><code class="name">var <span class="ident">call_super_init</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.dump_patches"><code class="name">var <span class="ident">dump_patches</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.training"><code class="name">var <span class="ident">training</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.extract_endpoints"><code class="name flex">
@@ -729,6 +735,37 @@ evaluation mode.
     endpoints[&#34;reduction_{}&#34;.format(len(endpoints) + 1)] = x
 
     return endpoints</code></pre>
+</details>
+</dd>
+<dt id="carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.forward"><code class="name flex">
+<span>def <span class="ident">forward</span></span>(<span>self, *input: Any) ‑> None</span>
+</code></dt>
+<dd>
+<div class="desc"><p>Defines the computation performed at every call.</p>
+<p>Should be overridden by all subclasses.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Although the recipe for forward pass needs to be defined within
+this function, one should call the :class:<code>Module</code> instance afterwards
+instead of this since the former takes care of running the
+registered hooks while the latter silently ignores them.</p>
+</div></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def _forward_unimplemented(self, *input: Any) -&gt; None:
+    r&#34;&#34;&#34;Defines the computation performed at every call.
+
+    Should be overridden by all subclasses.
+
+    .. note::
+        Although the recipe for forward pass needs to be defined within
+        this function, one should call the :class:`Module` instance afterwards
+        instead of this since the former takes care of running the
+        registered hooks while the latter silently ignores them.
+    &#34;&#34;&#34;
+    raise NotImplementedError(f&#34;Module [{type(self).__name__}] is missing the required \&#34;forward\&#34; function&#34;)</code></pre>
 </details>
 </dd>
 <dt id="carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.set_swish"><code class="name flex">
@@ -929,6 +966,21 @@ evaluation mode.
 <ul class="hlist">
 <li>torch.nn.modules.module.Module</li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="carvekit.ml.arch.tracerb7.efficientnet.MBConvBlock.call_super_init"><code class="name">var <span class="ident">call_super_init</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.tracerb7.efficientnet.MBConvBlock.dump_patches"><code class="name">var <span class="ident">dump_patches</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.tracerb7.efficientnet.MBConvBlock.training"><code class="name">var <span class="ident">training</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="carvekit.ml.arch.tracerb7.efficientnet.MBConvBlock.forward"><code class="name flex">
@@ -1044,23 +1096,32 @@ evaluation mode.
 <li>
 <h4><code><a title="carvekit.ml.arch.tracerb7.efficientnet.EfficientEncoderB7" href="#carvekit.ml.arch.tracerb7.efficientnet.EfficientEncoderB7">EfficientEncoderB7</a></code></h4>
 <ul class="">
-<li><code><a title="carvekit.ml.arch.tracerb7.efficientnet.EfficientEncoderB7.forward" href="#carvekit.ml.arch.tracerb7.efficientnet.EfficientEncoderB7.forward">forward</a></code></li>
+<li><code><a title="carvekit.ml.arch.tracerb7.efficientnet.EfficientEncoderB7.call_super_init" href="#carvekit.ml.arch.tracerb7.efficientnet.EfficientEncoderB7.call_super_init">call_super_init</a></code></li>
+<li><code><a title="carvekit.ml.arch.tracerb7.efficientnet.EfficientEncoderB7.dump_patches" href="#carvekit.ml.arch.tracerb7.efficientnet.EfficientEncoderB7.dump_patches">dump_patches</a></code></li>
 <li><code><a title="carvekit.ml.arch.tracerb7.efficientnet.EfficientEncoderB7.get_blocks" href="#carvekit.ml.arch.tracerb7.efficientnet.EfficientEncoderB7.get_blocks">get_blocks</a></code></li>
 <li><code><a title="carvekit.ml.arch.tracerb7.efficientnet.EfficientEncoderB7.initial_conv" href="#carvekit.ml.arch.tracerb7.efficientnet.EfficientEncoderB7.initial_conv">initial_conv</a></code></li>
+<li><code><a title="carvekit.ml.arch.tracerb7.efficientnet.EfficientEncoderB7.training" href="#carvekit.ml.arch.tracerb7.efficientnet.EfficientEncoderB7.training">training</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="carvekit.ml.arch.tracerb7.efficientnet.EfficientNet" href="#carvekit.ml.arch.tracerb7.efficientnet.EfficientNet">EfficientNet</a></code></h4>
-<ul class="">
+<ul class="two-column">
+<li><code><a title="carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.call_super_init" href="#carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.call_super_init">call_super_init</a></code></li>
+<li><code><a title="carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.dump_patches" href="#carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.dump_patches">dump_patches</a></code></li>
 <li><code><a title="carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.extract_endpoints" href="#carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.extract_endpoints">extract_endpoints</a></code></li>
+<li><code><a title="carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.forward" href="#carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.forward">forward</a></code></li>
 <li><code><a title="carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.set_swish" href="#carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.set_swish">set_swish</a></code></li>
+<li><code><a title="carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.training" href="#carvekit.ml.arch.tracerb7.efficientnet.EfficientNet.training">training</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="carvekit.ml.arch.tracerb7.efficientnet.MBConvBlock" href="#carvekit.ml.arch.tracerb7.efficientnet.MBConvBlock">MBConvBlock</a></code></h4>
 <ul class="">
+<li><code><a title="carvekit.ml.arch.tracerb7.efficientnet.MBConvBlock.call_super_init" href="#carvekit.ml.arch.tracerb7.efficientnet.MBConvBlock.call_super_init">call_super_init</a></code></li>
+<li><code><a title="carvekit.ml.arch.tracerb7.efficientnet.MBConvBlock.dump_patches" href="#carvekit.ml.arch.tracerb7.efficientnet.MBConvBlock.dump_patches">dump_patches</a></code></li>
 <li><code><a title="carvekit.ml.arch.tracerb7.efficientnet.MBConvBlock.forward" href="#carvekit.ml.arch.tracerb7.efficientnet.MBConvBlock.forward">forward</a></code></li>
 <li><code><a title="carvekit.ml.arch.tracerb7.efficientnet.MBConvBlock.set_swish" href="#carvekit.ml.arch.tracerb7.efficientnet.MBConvBlock.set_swish">set_swish</a></code></li>
+<li><code><a title="carvekit.ml.arch.tracerb7.efficientnet.MBConvBlock.training" href="#carvekit.ml.arch.tracerb7.efficientnet.MBConvBlock.training">training</a></code></li>
 </ul>
 </li>
 </ul>

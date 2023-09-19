@@ -47,7 +47,10 @@ from PIL import Image
 
 from carvekit.ml.arch.tracerb7.efficientnet import EfficientEncoderB7
 from carvekit.ml.arch.tracerb7.tracer import TracerDecoder
-from carvekit.ml.files.models_loc import tracer_b7_pretrained, tracer_b7_carveset_finetuned
+from carvekit.ml.files.models_loc import (
+    tracer_b7_pretrained,
+    tracer_b7_carveset_finetuned,
+)
 from carvekit.utils.image_utils import load_image, convert_image
 from carvekit.utils.models_utils import get_precision_autocast, cast_network
 from carvekit.utils.pool_utils import thread_pool_processing, batch_generator
@@ -59,202 +62,13 @@ class TracerUniversalB7(TracerDecoder):
     &#34;&#34;&#34;TRACER B7 model interface&#34;&#34;&#34;
 
     def __init__(
-            self,
-            device=&#34;cpu&#34;,
-            input_image_size: Union[List[int], int] = 960,
-            batch_size: int = 1,
-            load_pretrained: bool = True,
-            fp16: bool = False,
-            model_path: Union[str, pathlib.Path] = None,
-    ):
-        &#34;&#34;&#34;
-        Initialize the TRACER model
-
-        Args:
-            device (Literal[cpu, cuda], default=cpu): processing device
-            input_image_size (Union[List[int], int], default=640): input image size
-            batch_size(int, default=4): the number of images that the neural network processes in one run
-            load_pretrained(bool, default=True): loading pretrained model
-            fp16 (bool, default=False): use fp16 precision
-            model_path (Union[str, pathlib.Path], default=None): path to the model
-            .. note:: REDO
-        &#34;&#34;&#34;
-        if model_path is None:
-            model_path = tracer_b7_carveset_finetuned()
-        super(TracerUniversalB7, self).__init__(
-            encoder=EfficientEncoderB7(),
-            rfb_channel=[32, 64, 128],
-            features_channels=[48, 80, 224, 640],
-        )
-
-        self.fp16 = fp16
-        self.device = device
-        self.batch_size = batch_size
-        if isinstance(input_image_size, list):
-            self.input_image_size = input_image_size[:2]
-        else:
-            self.input_image_size = (input_image_size, input_image_size)
-
-        self.transform = transforms.Compose(
-            [
-                transforms.ToTensor(),
-                transforms.Resize(self.input_image_size),
-                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-            ]
-        )
-        self.to(device)
-        if load_pretrained:
-            # TODO remove edge detector from weights. It doesn&#39;t work well with this model!
-            self.load_state_dict(
-                torch.load(model_path, map_location=self.device), strict=False
-            )
-        self.eval()
-
-    def data_preprocessing(self, data: PIL.Image.Image) -&gt; torch.FloatTensor:
-        &#34;&#34;&#34;
-        Transform input image to suitable data format for neural network
-
-        Args:
-            data (PIL.Image.Image): input image
-
-        Returns:
-            torch.FloatTensor: input for neural network
-
-        &#34;&#34;&#34;
-
-        return torch.unsqueeze(self.transform(data), 0).type(torch.FloatTensor)
-
-    @staticmethod
-    def data_postprocessing(
-            data: torch.tensor, original_image: PIL.Image.Image
-    ) -&gt; PIL.Image.Image:
-        &#34;&#34;&#34;
-        Transforms output data from neural network to suitable data
-        format for using with other components of this framework.
-
-        Args:
-            data (torch.Tensor): output data from neural network
-            original_image (PIL.Image.Image): input image which was used for predicted data
-
-        Returns:
-            PIL.Image.Image: Segmentation mask
-
-        &#34;&#34;&#34;
-        output = (data.type(torch.FloatTensor).detach().cpu().numpy() * 255.0).astype(
-            np.uint8
-        )
-        output = output.squeeze(0)
-        mask = Image.fromarray(output).convert(&#34;L&#34;)
-        mask = mask.resize(original_image.size, resample=Image.BILINEAR)
-        return mask
-
-    def __call__(
-            self, images: List[Union[str, pathlib.Path, PIL.Image.Image]]
-    ) -&gt; List[PIL.Image.Image]:
-        &#34;&#34;&#34;
-        Passes input images though neural network and returns segmentation masks as PIL.Image.Image instances
-
-        Args:
-            images (List[Union[str, pathlib.Path, PIL.Image.Image]]): input images
-
-        Returns:
-            List[PIL.Image.Image]: segmentation masks as for input images
-
-        &#34;&#34;&#34;
-        collect_masks = []
-        autocast, dtype = get_precision_autocast(device=self.device, fp16=self.fp16)
-        with autocast:
-            cast_network(self, dtype)
-            for image_batch in batch_generator(images, self.batch_size):
-                converted_images = thread_pool_processing(
-                    lambda x: convert_image(load_image(x)), image_batch
-                )
-                batches = torch.vstack(
-                    thread_pool_processing(self.data_preprocessing, converted_images)
-                )
-                with torch.no_grad():
-                    batches = batches.to(self.device)
-                    masks = super(TracerDecoder, self).__call__(batches)
-                    masks_cpu = masks.cpu()
-                    del batches, masks
-                masks = thread_pool_processing(
-                    lambda x: self.data_postprocessing(
-                        masks_cpu[x], converted_images[x]
-                    ),
-                    range(len(converted_images)),
-                )
-                collect_masks += masks
-
-        return collect_masks
-
-
-class TracerUniversalB7Pretrained(TracerUniversalB7):
-    &#34;&#34;&#34;TRACER B7 model interface&#34;&#34;&#34;
-
-    def __init__(self, device=&#34;cpu&#34;, input_image_size: Union[List[int], int] = 640, batch_size: int = 4,
-                 load_pretrained: bool = True, fp16: bool = False, model_path: Union[str, pathlib.Path] = None):
-        &#34;&#34;&#34;
-        Initialize the TRACER model
-
-        Args:
-            layers_cfg: neural network layers configuration
-            device: processing device
-            input_image_size: input image size
-            batch_size: the number of images that the neural network processes in one run
-            load_pretrained: loading pretrained model
-            fp16: use fp16 precision
-
-        &#34;&#34;&#34;
-        super().__init__(device, input_image_size, batch_size, load_pretrained, fp16, tracer_b7_pretrained())</code></pre>
-</details>
-</section>
-<section>
-</section>
-<section>
-</section>
-<section>
-</section>
-<section>
-<h2 class="section-title" id="header-classes">Classes</h2>
-<dl>
-<dt id="carvekit.ml.wrap.tracer_b7.TracerUniversalB7"><code class="flex name class">
-<span>class <span class="ident">TracerUniversalB7</span></span>
-<span>(</span><span>device='cpu', input_image_size: Union[List[int], int] = 960, batch_size: int = 1, load_pretrained: bool = True, fp16: bool = False, model_path: Union[str, pathlib.Path] = None)</span>
-</code></dt>
-<dd>
-<div class="desc"><p>TRACER B7 model interface</p>
-<p>Initialize the TRACER model</p>
-<h2 id="args">Args</h2>
-<dl>
-<dt><strong><code>device</code></strong> :&ensp;<code>Literal[cpu, cuda]</code>, default=<code>cpu</code></dt>
-<dd>processing device</dd>
-<dt><strong><code>input_image_size</code></strong> :&ensp;<code>Union[List[int], int]</code>, default=<code>640</code></dt>
-<dd>input image size</dd>
-<dt>batch_size(int, default=4): the number of images that the neural network processes in one run</dt>
-<dt>load_pretrained(bool, default=True): loading pretrained model</dt>
-<dt><strong><code>fp16</code></strong> :&ensp;<code>bool</code>, default=<code>False</code></dt>
-<dd>use fp16 precision</dd>
-<dt><strong><code>model_path</code></strong> :&ensp;<code>Union[str, pathlib.Path]</code>, default=<code>None</code></dt>
-<dd>path to the model</dd>
-</dl>
-<div class="admonition note">
-<p class="admonition-title">Note:&ensp;REDO</p>
-</div></div>
-<details class="source">
-<summary>
-<span>Expand source code</span>
-</summary>
-<pre><code class="python">class TracerUniversalB7(TracerDecoder):
-    &#34;&#34;&#34;TRACER B7 model interface&#34;&#34;&#34;
-
-    def __init__(
-            self,
-            device=&#34;cpu&#34;,
-            input_image_size: Union[List[int], int] = 960,
-            batch_size: int = 1,
-            load_pretrained: bool = True,
-            fp16: bool = False,
-            model_path: Union[str, pathlib.Path] = None,
+        self,
+        device=&#34;cpu&#34;,
+        input_image_size: Union[List[int], int] = 960,
+        batch_size: int = 1,
+        load_pretrained: bool = True,
+        fp16: bool = False,
+        model_path: Union[str, pathlib.Path] = None,
     ):
         &#34;&#34;&#34;
         Initialize the TRACER model
@@ -315,7 +129,7 @@ class TracerUniversalB7Pretrained(TracerUniversalB7):
 
     @staticmethod
     def data_postprocessing(
-            data: torch.tensor, original_image: PIL.Image.Image
+        data: torch.tensor, original_image: PIL.Image.Image
     ) -&gt; PIL.Image.Image:
         &#34;&#34;&#34;
         Transforms output data from neural network to suitable data
@@ -338,7 +152,210 @@ class TracerUniversalB7Pretrained(TracerUniversalB7):
         return mask
 
     def __call__(
-            self, images: List[Union[str, pathlib.Path, PIL.Image.Image]]
+        self, images: List[Union[str, pathlib.Path, PIL.Image.Image]]
+    ) -&gt; List[PIL.Image.Image]:
+        &#34;&#34;&#34;
+        Passes input images though neural network and returns segmentation masks as PIL.Image.Image instances
+
+        Args:
+            images (List[Union[str, pathlib.Path, PIL.Image.Image]]): input images
+
+        Returns:
+            List[PIL.Image.Image]: segmentation masks as for input images
+
+        &#34;&#34;&#34;
+        collect_masks = []
+        autocast, dtype = get_precision_autocast(device=self.device, fp16=self.fp16)
+        with autocast:
+            cast_network(self, dtype)
+            for image_batch in batch_generator(images, self.batch_size):
+                converted_images = thread_pool_processing(
+                    lambda x: convert_image(load_image(x)), image_batch
+                )
+                batches = torch.vstack(
+                    thread_pool_processing(self.data_preprocessing, converted_images)
+                )
+                with torch.no_grad():
+                    batches = batches.to(self.device)
+                    masks = super(TracerDecoder, self).__call__(batches)
+                    masks_cpu = masks.cpu()
+                    del batches, masks
+                masks = thread_pool_processing(
+                    lambda x: self.data_postprocessing(
+                        masks_cpu[x], converted_images[x]
+                    ),
+                    range(len(converted_images)),
+                )
+                collect_masks += masks
+
+        return collect_masks
+
+
+class TracerUniversalB7Pretrained(TracerUniversalB7):
+    &#34;&#34;&#34;TRACER B7 model interface&#34;&#34;&#34;
+
+    def __init__(
+        self,
+        device=&#34;cpu&#34;,
+        input_image_size: Union[List[int], int] = 640,
+        batch_size: int = 4,
+        load_pretrained: bool = True,
+        fp16: bool = False,
+        model_path: Union[str, pathlib.Path] = None,
+    ):
+        &#34;&#34;&#34;
+        Initialize the TRACER model
+
+        Args:
+            layers_cfg: neural network layers configuration
+            device: processing device
+            input_image_size: input image size
+            batch_size: the number of images that the neural network processes in one run
+            load_pretrained: loading pretrained model
+            fp16: use fp16 precision
+
+        &#34;&#34;&#34;
+        super().__init__(
+            device,
+            input_image_size,
+            batch_size,
+            load_pretrained,
+            fp16,
+            tracer_b7_pretrained(),
+        )</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="carvekit.ml.wrap.tracer_b7.TracerUniversalB7"><code class="flex name class">
+<span>class <span class="ident">TracerUniversalB7</span></span>
+<span>(</span><span>device='cpu', input_image_size: Union[List[int], int] = 960, batch_size: int = 1, load_pretrained: bool = True, fp16: bool = False, model_path: Union[str, pathlib.Path] = None)</span>
+</code></dt>
+<dd>
+<div class="desc"><p>TRACER B7 model interface</p>
+<p>Initialize the TRACER model</p>
+<h2 id="args">Args</h2>
+<dl>
+<dt><strong><code>device</code></strong> :&ensp;<code>Literal[cpu, cuda]</code>, default=<code>cpu</code></dt>
+<dd>processing device</dd>
+<dt><strong><code>input_image_size</code></strong> :&ensp;<code>Union[List[int], int]</code>, default=<code>960</code></dt>
+<dd>input image size</dd>
+<dt>batch_size(int, default=4): the number of images that the neural network processes in one run</dt>
+<dt>load_pretrained(bool, default=True): loading pretrained model</dt>
+<dt><strong><code>fp16</code></strong> :&ensp;<code>bool</code>, default=<code>False</code></dt>
+<dd>use fp16 precision</dd>
+<dt><strong><code>model_path</code></strong> :&ensp;<code>Union[str, pathlib.Path]</code>, default=<code>None</code></dt>
+<dd>path to the model</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note:&ensp;REDO</p>
+</div></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class TracerUniversalB7(TracerDecoder):
+    &#34;&#34;&#34;TRACER B7 model interface&#34;&#34;&#34;
+
+    def __init__(
+        self,
+        device=&#34;cpu&#34;,
+        input_image_size: Union[List[int], int] = 960,
+        batch_size: int = 1,
+        load_pretrained: bool = True,
+        fp16: bool = False,
+        model_path: Union[str, pathlib.Path] = None,
+    ):
+        &#34;&#34;&#34;
+        Initialize the TRACER model
+
+        Args:
+            device (Literal[cpu, cuda], default=cpu): processing device
+            input_image_size (Union[List[int], int], default=960): input image size
+            batch_size(int, default=4): the number of images that the neural network processes in one run
+            load_pretrained(bool, default=True): loading pretrained model
+            fp16 (bool, default=False): use fp16 precision
+            model_path (Union[str, pathlib.Path], default=None): path to the model
+            .. note:: REDO
+        &#34;&#34;&#34;
+        if model_path is None:
+            model_path = tracer_b7_carveset_finetuned()
+        super(TracerUniversalB7, self).__init__(
+            encoder=EfficientEncoderB7(),
+            rfb_channel=[32, 64, 128],
+            features_channels=[48, 80, 224, 640],
+        )
+
+        self.fp16 = fp16
+        self.device = device
+        self.batch_size = batch_size
+        if isinstance(input_image_size, list):
+            self.input_image_size = input_image_size[:2]
+        else:
+            self.input_image_size = (input_image_size, input_image_size)
+
+        self.transform = transforms.Compose(
+            [
+                transforms.ToTensor(),
+                transforms.Resize(self.input_image_size),
+                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+            ]
+        )
+        self.to(device)
+        if load_pretrained:
+            # TODO remove edge detector from weights. It doesn&#39;t work well with this model!
+            self.load_state_dict(
+                torch.load(model_path, map_location=self.device), strict=False
+            )
+        self.eval()
+
+    def data_preprocessing(self, data: PIL.Image.Image) -&gt; torch.FloatTensor:
+        &#34;&#34;&#34;
+        Transform input image to suitable data format for neural network
+
+        Args:
+            data (PIL.Image.Image): input image
+
+        Returns:
+            torch.FloatTensor: input for neural network
+
+        &#34;&#34;&#34;
+
+        return torch.unsqueeze(self.transform(data), 0).type(torch.FloatTensor)
+
+    @staticmethod
+    def data_postprocessing(
+        data: torch.tensor, original_image: PIL.Image.Image
+    ) -&gt; PIL.Image.Image:
+        &#34;&#34;&#34;
+        Transforms output data from neural network to suitable data
+        format for using with other components of this framework.
+
+        Args:
+            data (torch.Tensor): output data from neural network
+            original_image (PIL.Image.Image): input image which was used for predicted data
+
+        Returns:
+            PIL.Image.Image: Segmentation mask
+
+        &#34;&#34;&#34;
+        output = (data.type(torch.FloatTensor).detach().cpu().numpy() * 255.0).astype(
+            np.uint8
+        )
+        output = output.squeeze(0)
+        mask = Image.fromarray(output).convert(&#34;L&#34;)
+        mask = mask.resize(original_image.size, resample=Image.BILINEAR)
+        return mask
+
+    def __call__(
+        self, images: List[Union[str, pathlib.Path, PIL.Image.Image]]
     ) -&gt; List[PIL.Image.Image]:
         &#34;&#34;&#34;
         Passes input images though neural network and returns segmentation masks as PIL.Image.Image instances
@@ -385,10 +402,25 @@ class TracerUniversalB7Pretrained(TracerUniversalB7):
 <ul class="hlist">
 <li>carvekit.ml.wrap.tracer_b7.TracerUniversalB7Pretrained</li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="carvekit.ml.wrap.tracer_b7.TracerUniversalB7.call_super_init"><code class="name">var <span class="ident">call_super_init</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.wrap.tracer_b7.TracerUniversalB7.dump_patches"><code class="name">var <span class="ident">dump_patches</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.wrap.tracer_b7.TracerUniversalB7.training"><code class="name">var <span class="ident">training</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Static methods</h3>
 <dl>
 <dt id="carvekit.ml.wrap.tracer_b7.TracerUniversalB7.data_postprocessing"><code class="name flex">
-<span>def <span class="ident">data_postprocessing</span></span>(<span>data: <built-in method tensor of type object at 0x7fd04f331e60>, original_image: PIL.Image.Image) ‑> PIL.Image.Image</span>
+<span>def <span class="ident">data_postprocessing</span></span>(<span>data: <built-in method tensor of type object at 0x110e8f290>, original_image: PIL.Image.Image) ‑> PIL.Image.Image</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Transforms output data from neural network to suitable data
@@ -411,7 +443,7 @@ format for using with other components of this framework.</p>
 </summary>
 <pre><code class="python">@staticmethod
 def data_postprocessing(
-        data: torch.tensor, original_image: PIL.Image.Image
+    data: torch.tensor, original_image: PIL.Image.Image
 ) -&gt; PIL.Image.Image:
     &#34;&#34;&#34;
     Transforms output data from neural network to suitable data
@@ -500,8 +532,11 @@ def data_postprocessing(
 <li>
 <h4><code><a title="carvekit.ml.wrap.tracer_b7.TracerUniversalB7" href="#carvekit.ml.wrap.tracer_b7.TracerUniversalB7">TracerUniversalB7</a></code></h4>
 <ul class="">
+<li><code><a title="carvekit.ml.wrap.tracer_b7.TracerUniversalB7.call_super_init" href="#carvekit.ml.wrap.tracer_b7.TracerUniversalB7.call_super_init">call_super_init</a></code></li>
 <li><code><a title="carvekit.ml.wrap.tracer_b7.TracerUniversalB7.data_postprocessing" href="#carvekit.ml.wrap.tracer_b7.TracerUniversalB7.data_postprocessing">data_postprocessing</a></code></li>
 <li><code><a title="carvekit.ml.wrap.tracer_b7.TracerUniversalB7.data_preprocessing" href="#carvekit.ml.wrap.tracer_b7.TracerUniversalB7.data_preprocessing">data_preprocessing</a></code></li>
+<li><code><a title="carvekit.ml.wrap.tracer_b7.TracerUniversalB7.dump_patches" href="#carvekit.ml.wrap.tracer_b7.TracerUniversalB7.dump_patches">dump_patches</a></code></li>
+<li><code><a title="carvekit.ml.wrap.tracer_b7.TracerUniversalB7.training" href="#carvekit.ml.wrap.tracer_b7.TracerUniversalB7.training">training</a></code></li>
 </ul>
 </li>
 </ul>

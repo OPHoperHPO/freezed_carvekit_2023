@@ -74,6 +74,8 @@ class MLConfig(BaseModel):
     &#34;&#34;&#34;The size of the input image for the refine neural network.&#34;&#34;&#34;
     fp16: bool = False
     &#34;&#34;&#34;Use half precision for inference&#34;&#34;&#34;
+    trimap_filter_threshold: int = -1
+    &#34;&#34;&#34;Threshold for trimap filter&#34;&#34;&#34;
     trimap_dilation: int = 30
     &#34;&#34;&#34;Dilation size for trimap&#34;&#34;&#34;
     trimap_erosion: int = 5
@@ -239,6 +241,8 @@ allow <code>self</code> as a field name.</p></div>
     &#34;&#34;&#34;The size of the input image for the refine neural network.&#34;&#34;&#34;
     fp16: bool = False
     &#34;&#34;&#34;Use half precision for inference&#34;&#34;&#34;
+    trimap_filter_threshold: int = -1
+    &#34;&#34;&#34;Threshold for trimap filter&#34;&#34;&#34;
     trimap_dilation: int = 30
     &#34;&#34;&#34;Dilation size for trimap&#34;&#34;&#34;
     trimap_erosion: int = 5
@@ -326,11 +330,11 @@ allow <code>self</code> as a field name.</p></div>
 <dd>
 <div class="desc"></div>
 </dd>
-<dt id="carvekit.web.schemas.config.MLConfig.postprocessing_method"><code class="name">var <span class="ident">postprocessing_method</span> : Literal['fba', 'cascade_fba', 'none']</code></dt>
+<dt id="carvekit.web.schemas.config.MLConfig.postprocessing_method"><code class="name">var <span class="ident">postprocessing_method</span> : typing_extensions.Literal['fba', 'cascade_fba', 'none']</code></dt>
 <dd>
 <div class="desc"><p>Post-Processing Network</p></div>
 </dd>
-<dt id="carvekit.web.schemas.config.MLConfig.preprocessing_method"><code class="name">var <span class="ident">preprocessing_method</span> : Literal['none', 'stub', 'autoscene', 'auto']</code></dt>
+<dt id="carvekit.web.schemas.config.MLConfig.preprocessing_method"><code class="name">var <span class="ident">preprocessing_method</span> : typing_extensions.Literal['none', 'stub', 'autoscene', 'auto']</code></dt>
 <dd>
 <div class="desc"><p>Pre-processing Method</p></div>
 </dd>
@@ -342,7 +346,7 @@ allow <code>self</code> as a field name.</p></div>
 <dd>
 <div class="desc"><p>The size of the input image for the segmentation neural network.</p></div>
 </dd>
-<dt id="carvekit.web.schemas.config.MLConfig.segmentation_network"><code class="name">var <span class="ident">segmentation_network</span> : Literal['u2net', 'deeplabv3', 'basnet', 'tracer_b7', 'isnet']</code></dt>
+<dt id="carvekit.web.schemas.config.MLConfig.segmentation_network"><code class="name">var <span class="ident">segmentation_network</span> : typing_extensions.Literal['u2net', 'deeplabv3', 'basnet', 'tracer_b7', 'isnet']</code></dt>
 <dd>
 <div class="desc"><p>Segmentation Network</p></div>
 </dd>
@@ -353,6 +357,10 @@ allow <code>self</code> as a field name.</p></div>
 <dt id="carvekit.web.schemas.config.MLConfig.trimap_erosion"><code class="name">var <span class="ident">trimap_erosion</span> : int</code></dt>
 <dd>
 <div class="desc"><p>Erosion levels for trimap</p></div>
+</dd>
+<dt id="carvekit.web.schemas.config.MLConfig.trimap_filter_threshold"><code class="name">var <span class="ident">trimap_filter_threshold</span> : int</code></dt>
+<dd>
+<div class="desc"><p>Threshold for trimap filter</p></div>
 </dd>
 <dt id="carvekit.web.schemas.config.MLConfig.trimap_prob_threshold"><code class="name">var <span class="ident">trimap_prob_threshold</span> : int</code></dt>
 <dd>
@@ -560,6 +568,7 @@ allow <code>self</code> as a field name.</p></div>
 <li><code><a title="carvekit.web.schemas.config.MLConfig.segmentation_network" href="#carvekit.web.schemas.config.MLConfig.segmentation_network">segmentation_network</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.MLConfig.trimap_dilation" href="#carvekit.web.schemas.config.MLConfig.trimap_dilation">trimap_dilation</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.MLConfig.trimap_erosion" href="#carvekit.web.schemas.config.MLConfig.trimap_erosion">trimap_erosion</a></code></li>
+<li><code><a title="carvekit.web.schemas.config.MLConfig.trimap_filter_threshold" href="#carvekit.web.schemas.config.MLConfig.trimap_filter_threshold">trimap_filter_threshold</a></code></li>
 <li><code><a title="carvekit.web.schemas.config.MLConfig.trimap_prob_threshold" href="#carvekit.web.schemas.config.MLConfig.trimap_prob_threshold">trimap_prob_threshold</a></code></li>
 </ul>
 </li>

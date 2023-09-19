@@ -464,31 +464,7 @@ class ISNetDIS(nn.Module):
         d1 = self.side1(hx1d)
         d1 = _upsample_like(d1, x)
 
-        d2 = self.side2(hx2d)
-        d2 = _upsample_like(d2, x)
-
-        d3 = self.side3(hx3d)
-        d3 = _upsample_like(d3, x)
-
-        d4 = self.side4(hx4d)
-        d4 = _upsample_like(d4, x)
-
-        d5 = self.side5(hx5d)
-        d5 = _upsample_like(d5, x)
-
-        d6 = self.side6(hx6)
-        d6 = _upsample_like(d6, x)
-
-        # d0 = self.outconv(torch.cat((d1,d2,d3,d4,d5,d6),1))
-
-        return [
-            F.sigmoid(d1),
-            F.sigmoid(d2),
-            F.sigmoid(d3),
-            F.sigmoid(d4),
-            F.sigmoid(d5),
-            F.sigmoid(d6),
-        ], [hx1d, hx2d, hx3d, hx4d, hx5d, hx6]</code></pre>
+        return F.sigmoid(d1)</code></pre>
 </details>
 </section>
 <section>
@@ -624,31 +600,7 @@ evaluation mode.
         d1 = self.side1(hx1d)
         d1 = _upsample_like(d1, x)
 
-        d2 = self.side2(hx2d)
-        d2 = _upsample_like(d2, x)
-
-        d3 = self.side3(hx3d)
-        d3 = _upsample_like(d3, x)
-
-        d4 = self.side4(hx4d)
-        d4 = _upsample_like(d4, x)
-
-        d5 = self.side5(hx5d)
-        d5 = _upsample_like(d5, x)
-
-        d6 = self.side6(hx6)
-        d6 = _upsample_like(d6, x)
-
-        # d0 = self.outconv(torch.cat((d1,d2,d3,d4,d5,d6),1))
-
-        return [
-            F.sigmoid(d1),
-            F.sigmoid(d2),
-            F.sigmoid(d3),
-            F.sigmoid(d4),
-            F.sigmoid(d5),
-            F.sigmoid(d6),
-        ], [hx1d, hx2d, hx3d, hx4d, hx5d, hx6]</code></pre>
+        return F.sigmoid(d1)</code></pre>
 </details>
 <h3>Ancestors</h3>
 <ul class="hlist">
@@ -658,6 +610,21 @@ evaluation mode.
 <ul class="hlist">
 <li><a title="carvekit.ml.wrap.isnet.ISNet" href="../../wrap/isnet.html#carvekit.ml.wrap.isnet.ISNet">ISNet</a></li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="carvekit.ml.arch.isnet.isnet.ISNetDIS.call_super_init"><code class="name">var <span class="ident">call_super_init</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.isnet.isnet.ISNetDIS.dump_patches"><code class="name">var <span class="ident">dump_patches</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.isnet.isnet.ISNetDIS.training"><code class="name">var <span class="ident">training</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="carvekit.ml.arch.isnet.isnet.ISNetDIS.forward"><code class="name flex">
@@ -726,31 +693,7 @@ registered hooks while the latter silently ignores them.</p>
     d1 = self.side1(hx1d)
     d1 = _upsample_like(d1, x)
 
-    d2 = self.side2(hx2d)
-    d2 = _upsample_like(d2, x)
-
-    d3 = self.side3(hx3d)
-    d3 = _upsample_like(d3, x)
-
-    d4 = self.side4(hx4d)
-    d4 = _upsample_like(d4, x)
-
-    d5 = self.side5(hx5d)
-    d5 = _upsample_like(d5, x)
-
-    d6 = self.side6(hx6)
-    d6 = _upsample_like(d6, x)
-
-    # d0 = self.outconv(torch.cat((d1,d2,d3,d4,d5,d6),1))
-
-    return [
-        F.sigmoid(d1),
-        F.sigmoid(d2),
-        F.sigmoid(d3),
-        F.sigmoid(d4),
-        F.sigmoid(d5),
-        F.sigmoid(d6),
-    ], [hx1d, hx2d, hx3d, hx4d, hx5d, hx6]</code></pre>
+    return F.sigmoid(d1)</code></pre>
 </details>
 </dd>
 </dl>
@@ -812,6 +755,21 @@ evaluation mode.
 <ul class="hlist">
 <li>torch.nn.modules.module.Module</li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="carvekit.ml.arch.isnet.isnet.REBNCONV.call_super_init"><code class="name">var <span class="ident">call_super_init</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.isnet.isnet.REBNCONV.dump_patches"><code class="name">var <span class="ident">dump_patches</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.isnet.isnet.REBNCONV.training"><code class="name">var <span class="ident">training</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="carvekit.ml.arch.isnet.isnet.REBNCONV.forward"><code class="name flex">
@@ -926,6 +884,21 @@ evaluation mode.
 <ul class="hlist">
 <li>torch.nn.modules.module.Module</li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="carvekit.ml.arch.isnet.isnet.RSU4.call_super_init"><code class="name">var <span class="ident">call_super_init</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.isnet.isnet.RSU4.dump_patches"><code class="name">var <span class="ident">dump_patches</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.isnet.isnet.RSU4.training"><code class="name">var <span class="ident">training</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="carvekit.ml.arch.isnet.isnet.RSU4.forward"><code class="name flex">
@@ -1047,6 +1020,21 @@ evaluation mode.
 <ul class="hlist">
 <li>torch.nn.modules.module.Module</li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="carvekit.ml.arch.isnet.isnet.RSU4F.call_super_init"><code class="name">var <span class="ident">call_super_init</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.isnet.isnet.RSU4F.dump_patches"><code class="name">var <span class="ident">dump_patches</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.isnet.isnet.RSU4F.training"><code class="name">var <span class="ident">training</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="carvekit.ml.arch.isnet.isnet.RSU4F.forward"><code class="name flex">
@@ -1182,6 +1170,21 @@ evaluation mode.
 <ul class="hlist">
 <li>torch.nn.modules.module.Module</li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="carvekit.ml.arch.isnet.isnet.RSU5.call_super_init"><code class="name">var <span class="ident">call_super_init</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.isnet.isnet.RSU5.dump_patches"><code class="name">var <span class="ident">dump_patches</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.isnet.isnet.RSU5.training"><code class="name">var <span class="ident">training</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="carvekit.ml.arch.isnet.isnet.RSU5.forward"><code class="name flex">
@@ -1341,6 +1344,21 @@ evaluation mode.
 <ul class="hlist">
 <li>torch.nn.modules.module.Module</li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="carvekit.ml.arch.isnet.isnet.RSU6.call_super_init"><code class="name">var <span class="ident">call_super_init</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.isnet.isnet.RSU6.dump_patches"><code class="name">var <span class="ident">dump_patches</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.isnet.isnet.RSU6.training"><code class="name">var <span class="ident">training</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="carvekit.ml.arch.isnet.isnet.RSU6.forward"><code class="name flex">
@@ -1521,6 +1539,21 @@ evaluation mode.
 <ul class="hlist">
 <li>torch.nn.modules.module.Module</li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="carvekit.ml.arch.isnet.isnet.RSU7.call_super_init"><code class="name">var <span class="ident">call_super_init</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.isnet.isnet.RSU7.dump_patches"><code class="name">var <span class="ident">dump_patches</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.isnet.isnet.RSU7.training"><code class="name">var <span class="ident">training</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="carvekit.ml.arch.isnet.isnet.RSU7.forward"><code class="name flex">
@@ -1656,6 +1689,21 @@ evaluation mode.
 <ul class="hlist">
 <li>torch.nn.modules.module.Module</li>
 </ul>
+<h3>Class variables</h3>
+<dl>
+<dt id="carvekit.ml.arch.isnet.isnet.myrebnconv.call_super_init"><code class="name">var <span class="ident">call_super_init</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.isnet.isnet.myrebnconv.dump_patches"><code class="name">var <span class="ident">dump_patches</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+<dt id="carvekit.ml.arch.isnet.isnet.myrebnconv.training"><code class="name">var <span class="ident">training</span> : bool</code></dt>
+<dd>
+<div class="desc"></div>
+</dd>
+</dl>
 <h3>Methods</h3>
 <dl>
 <dt id="carvekit.ml.arch.isnet.isnet.myrebnconv.forward"><code class="name flex">
@@ -1700,49 +1748,73 @@ registered hooks while the latter silently ignores them.</p>
 <li>
 <h4><code><a title="carvekit.ml.arch.isnet.isnet.ISNetDIS" href="#carvekit.ml.arch.isnet.isnet.ISNetDIS">ISNetDIS</a></code></h4>
 <ul class="">
+<li><code><a title="carvekit.ml.arch.isnet.isnet.ISNetDIS.call_super_init" href="#carvekit.ml.arch.isnet.isnet.ISNetDIS.call_super_init">call_super_init</a></code></li>
+<li><code><a title="carvekit.ml.arch.isnet.isnet.ISNetDIS.dump_patches" href="#carvekit.ml.arch.isnet.isnet.ISNetDIS.dump_patches">dump_patches</a></code></li>
 <li><code><a title="carvekit.ml.arch.isnet.isnet.ISNetDIS.forward" href="#carvekit.ml.arch.isnet.isnet.ISNetDIS.forward">forward</a></code></li>
+<li><code><a title="carvekit.ml.arch.isnet.isnet.ISNetDIS.training" href="#carvekit.ml.arch.isnet.isnet.ISNetDIS.training">training</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="carvekit.ml.arch.isnet.isnet.REBNCONV" href="#carvekit.ml.arch.isnet.isnet.REBNCONV">REBNCONV</a></code></h4>
 <ul class="">
+<li><code><a title="carvekit.ml.arch.isnet.isnet.REBNCONV.call_super_init" href="#carvekit.ml.arch.isnet.isnet.REBNCONV.call_super_init">call_super_init</a></code></li>
+<li><code><a title="carvekit.ml.arch.isnet.isnet.REBNCONV.dump_patches" href="#carvekit.ml.arch.isnet.isnet.REBNCONV.dump_patches">dump_patches</a></code></li>
 <li><code><a title="carvekit.ml.arch.isnet.isnet.REBNCONV.forward" href="#carvekit.ml.arch.isnet.isnet.REBNCONV.forward">forward</a></code></li>
+<li><code><a title="carvekit.ml.arch.isnet.isnet.REBNCONV.training" href="#carvekit.ml.arch.isnet.isnet.REBNCONV.training">training</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="carvekit.ml.arch.isnet.isnet.RSU4" href="#carvekit.ml.arch.isnet.isnet.RSU4">RSU4</a></code></h4>
 <ul class="">
+<li><code><a title="carvekit.ml.arch.isnet.isnet.RSU4.call_super_init" href="#carvekit.ml.arch.isnet.isnet.RSU4.call_super_init">call_super_init</a></code></li>
+<li><code><a title="carvekit.ml.arch.isnet.isnet.RSU4.dump_patches" href="#carvekit.ml.arch.isnet.isnet.RSU4.dump_patches">dump_patches</a></code></li>
 <li><code><a title="carvekit.ml.arch.isnet.isnet.RSU4.forward" href="#carvekit.ml.arch.isnet.isnet.RSU4.forward">forward</a></code></li>
+<li><code><a title="carvekit.ml.arch.isnet.isnet.RSU4.training" href="#carvekit.ml.arch.isnet.isnet.RSU4.training">training</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="carvekit.ml.arch.isnet.isnet.RSU4F" href="#carvekit.ml.arch.isnet.isnet.RSU4F">RSU4F</a></code></h4>
 <ul class="">
+<li><code><a title="carvekit.ml.arch.isnet.isnet.RSU4F.call_super_init" href="#carvekit.ml.arch.isnet.isnet.RSU4F.call_super_init">call_super_init</a></code></li>
+<li><code><a title="carvekit.ml.arch.isnet.isnet.RSU4F.dump_patches" href="#carvekit.ml.arch.isnet.isnet.RSU4F.dump_patches">dump_patches</a></code></li>
 <li><code><a title="carvekit.ml.arch.isnet.isnet.RSU4F.forward" href="#carvekit.ml.arch.isnet.isnet.RSU4F.forward">forward</a></code></li>
+<li><code><a title="carvekit.ml.arch.isnet.isnet.RSU4F.training" href="#carvekit.ml.arch.isnet.isnet.RSU4F.training">training</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="carvekit.ml.arch.isnet.isnet.RSU5" href="#carvekit.ml.arch.isnet.isnet.RSU5">RSU5</a></code></h4>
 <ul class="">
+<li><code><a title="carvekit.ml.arch.isnet.isnet.RSU5.call_super_init" href="#carvekit.ml.arch.isnet.isnet.RSU5.call_super_init">call_super_init</a></code></li>
+<li><code><a title="carvekit.ml.arch.isnet.isnet.RSU5.dump_patches" href="#carvekit.ml.arch.isnet.isnet.RSU5.dump_patches">dump_patches</a></code></li>
 <li><code><a title="carvekit.ml.arch.isnet.isnet.RSU5.forward" href="#carvekit.ml.arch.isnet.isnet.RSU5.forward">forward</a></code></li>
+<li><code><a title="carvekit.ml.arch.isnet.isnet.RSU5.training" href="#carvekit.ml.arch.isnet.isnet.RSU5.training">training</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="carvekit.ml.arch.isnet.isnet.RSU6" href="#carvekit.ml.arch.isnet.isnet.RSU6">RSU6</a></code></h4>
 <ul class="">
+<li><code><a title="carvekit.ml.arch.isnet.isnet.RSU6.call_super_init" href="#carvekit.ml.arch.isnet.isnet.RSU6.call_super_init">call_super_init</a></code></li>
+<li><code><a title="carvekit.ml.arch.isnet.isnet.RSU6.dump_patches" href="#carvekit.ml.arch.isnet.isnet.RSU6.dump_patches">dump_patches</a></code></li>
 <li><code><a title="carvekit.ml.arch.isnet.isnet.RSU6.forward" href="#carvekit.ml.arch.isnet.isnet.RSU6.forward">forward</a></code></li>
+<li><code><a title="carvekit.ml.arch.isnet.isnet.RSU6.training" href="#carvekit.ml.arch.isnet.isnet.RSU6.training">training</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="carvekit.ml.arch.isnet.isnet.RSU7" href="#carvekit.ml.arch.isnet.isnet.RSU7">RSU7</a></code></h4>
 <ul class="">
+<li><code><a title="carvekit.ml.arch.isnet.isnet.RSU7.call_super_init" href="#carvekit.ml.arch.isnet.isnet.RSU7.call_super_init">call_super_init</a></code></li>
+<li><code><a title="carvekit.ml.arch.isnet.isnet.RSU7.dump_patches" href="#carvekit.ml.arch.isnet.isnet.RSU7.dump_patches">dump_patches</a></code></li>
 <li><code><a title="carvekit.ml.arch.isnet.isnet.RSU7.forward" href="#carvekit.ml.arch.isnet.isnet.RSU7.forward">forward</a></code></li>
+<li><code><a title="carvekit.ml.arch.isnet.isnet.RSU7.training" href="#carvekit.ml.arch.isnet.isnet.RSU7.training">training</a></code></li>
 </ul>
 </li>
 <li>
 <h4><code><a title="carvekit.ml.arch.isnet.isnet.myrebnconv" href="#carvekit.ml.arch.isnet.isnet.myrebnconv">myrebnconv</a></code></h4>
 <ul class="">
+<li><code><a title="carvekit.ml.arch.isnet.isnet.myrebnconv.call_super_init" href="#carvekit.ml.arch.isnet.isnet.myrebnconv.call_super_init">call_super_init</a></code></li>
+<li><code><a title="carvekit.ml.arch.isnet.isnet.myrebnconv.dump_patches" href="#carvekit.ml.arch.isnet.isnet.myrebnconv.dump_patches">dump_patches</a></code></li>
 <li><code><a title="carvekit.ml.arch.isnet.isnet.myrebnconv.forward" href="#carvekit.ml.arch.isnet.isnet.myrebnconv.forward">forward</a></code></li>
+<li><code><a title="carvekit.ml.arch.isnet.isnet.myrebnconv.training" href="#carvekit.ml.arch.isnet.isnet.myrebnconv.training">training</a></code></li>
 </ul>
 </li>
 </ul>

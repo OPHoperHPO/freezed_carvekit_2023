@@ -40,7 +40,7 @@ from collections import Counter
 from pathlib import Path
 
 from PIL import Image
-from typing import Union, List, Dict
+from typing import Union, List, Dict, Callable
 
 from carvekit.api.interface import Interface
 from carvekit.ml.wrap.basnet import BASNET
@@ -65,6 +65,7 @@ class AutoInterface(Interface):
     &#34;&#34;&#34;
     Interface with automatic scene and object classification for automated choice of statistically best processing pipeline
     &#34;&#34;&#34;
+
     def __init__(
         self,
         scene_classifier: SceneClassifier,
@@ -77,11 +78,34 @@ class AutoInterface(Interface):
         segmentation_device: str = &#34;cpu&#34;,
         postprocessing_device: str = &#34;cpu&#34;,
         fp16=False,
+        override_trimap_params: Callable = None,
     ):
         &#34;&#34;&#34;
+
+        Initializes High Level interface.
+
         Args:
-            scene_classifier: SceneClassifier instance
-            object_classifier: YoloV4_COCO instance
+            scene_classifier (object, default=SceneClassifier): Scene classifier
+            object_classifier (object, default=SimplifiedYoloV4): Object classifier
+            segmentation_batch_size (int, default=1): Segmentation batch size
+            refining_batch_size (int, default=1): Refining batch size
+            refining_image_size (int, default=900): Refining image size
+            postprocessing_batch_size (int, default=1): Postprocessing batch size
+            postprocessing_image_size (int, default=2048): Postprocessing image size
+            segmentation_device (str, default=&#34;cpu&#34;): Segmentation device
+            postprocessing_device (str, default=&#34;cpu&#34;): Postprocessing device
+            fp16 (bool, default=False): Use fp16
+            override_trimap_params (Callable, default=None): Override trimap params function
+
+
+        .. NOTE::
+            1. Changing seg_mask_size may cause an `out-of-memory` error if the value is too large, and it may also
+            result in reduced precision. I do not recommend changing this value. You can change `matting_mask_size` in
+            range from `(1024 to 4096)` to improve object edge refining quality, but it will cause extra large RAM and
+            video memory consume. Also, you can change batch size to accelerate background removal, but it also causes
+            extra large video memory consume, if value is too big.
+            2. Changing `trimap_prob_threshold`, `trimap_kernel_size`, `trimap_erosion_iters`, `filter_threshold` may improve object edge
+            refining quality. Please, check README.md for example of trimap params overriding.
         &#34;&#34;&#34;
         self.scene_classifier = scene_classifier
         self.object_classifier = object_classifier
@@ -93,6 +117,11 @@ class AutoInterface(Interface):
         self.segmentation_device = segmentation_device
         self.postprocessing_device = postprocessing_device
         self.fp16 = fp16
+
+        if override_trimap_params is None:
+            override_trimap_params = self.select_params_for_net
+        self.override_trimap_params = override_trimap_params
+
         super().__init__(
             seg_pipe=None, post_pipe=None, pre_pipe=None
         )  # just for compatibility with Interface class
@@ -128,10 +157,10 @@ class AutoInterface(Interface):
         elif net == ISNet:
             return {
                 &#34;trimap_generator&#34;: {
-                    &#34;prob_threshold&#34;: 231,
+                    &#34;prob_threshold&#34;: 100,
                     &#34;kernel_size&#34;: 30,
                     &#34;erosion_iters&#34;: 5,
-                    &#34;filter_threshold&#34;: 70
+                    &#34;filter_threshold&#34;: -1,
                 },
                 &#34;matting_module&#34;: {&#34;disable_noise_filter&#34;: True},
                 &#34;refining&#34;: {&#34;enabled&#34;: False, &#34;mask_binary_threshold&#34;: 128},
@@ -229,7 +258,6 @@ class AutoInterface(Interface):
                     &#34;net&#34;
                 ] = TracerUniversalB7  # It seems that the image is empty, but we will try to process it
 
-
     def __call__(self, images: List[Union[str, Path, Image.Image]]):
         &#34;&#34;&#34;
         Automatically detects the scene and selects the appropriate network for segmentation
@@ -300,7 +328,7 @@ class AutoInterface(Interface):
                 groups[net].append(image_info)
             for net, gimages_info in list(groups.items()):
                 # Configure custom pipeline for image group
-                config_params = self.select_params_for_net(net)
+                config_params = self.override_trimap_params(net)
                 trimap_generator = TrimapGenerator(**config_params[&#34;trimap_generator&#34;])
                 fba.disable_noise_filter = config_params[&#34;matting_module&#34;][
                     &#34;disable_noise_filter&#34;
@@ -355,17 +383,46 @@ class AutoInterface(Interface):
 <dl>
 <dt id="carvekit.api.autointerface.AutoInterface"><code class="flex name class">
 <span>class <span class="ident">AutoInterface</span></span>
-<span>(</span><span>scene_classifier: <a title="carvekit.ml.wrap.scene_classifier.SceneClassifier" href="../ml/wrap/scene_classifier.html#carvekit.ml.wrap.scene_classifier.SceneClassifier">SceneClassifier</a>, object_classifier: <a title="carvekit.ml.wrap.yolov4.SimplifiedYoloV4" href="../ml/wrap/yolov4.html#carvekit.ml.wrap.yolov4.SimplifiedYoloV4">SimplifiedYoloV4</a>, segmentation_batch_size: int = 1, refining_batch_size: int = 1, refining_image_size: int = 900, postprocessing_batch_size: int = 1, postprocessing_image_size: int = 2048, segmentation_device: str = 'cpu', postprocessing_device: str = 'cpu', fp16=False)</span>
+<span>(</span><span>scene_classifier: <a title="carvekit.ml.wrap.scene_classifier.SceneClassifier" href="../ml/wrap/scene_classifier.html#carvekit.ml.wrap.scene_classifier.SceneClassifier">SceneClassifier</a>, object_classifier: <a title="carvekit.ml.wrap.yolov4.SimplifiedYoloV4" href="../ml/wrap/yolov4.html#carvekit.ml.wrap.yolov4.SimplifiedYoloV4">SimplifiedYoloV4</a>, segmentation_batch_size: int = 1, refining_batch_size: int = 1, refining_image_size: int = 900, postprocessing_batch_size: int = 1, postprocessing_image_size: int = 2048, segmentation_device: str = 'cpu', postprocessing_device: str = 'cpu', fp16=False, override_trimap_params: Callable = None)</span>
 </code></dt>
 <dd>
 <div class="desc"><p>Interface with automatic scene and object classification for automated choice of statistically best processing pipeline</p>
+<p>Initializes High Level interface.</p>
 <h2 id="args">Args</h2>
 <dl>
-<dt><strong><code>scene_classifier</code></strong></dt>
-<dd>SceneClassifier instance</dd>
-<dt><strong><code>object_classifier</code></strong></dt>
-<dd>YoloV4_COCO instance</dd>
-</dl></div>
+<dt><strong><code>scene_classifier</code></strong> :&ensp;<code>object</code>, default=<code>SceneClassifier</code></dt>
+<dd>Scene classifier</dd>
+<dt><strong><code>object_classifier</code></strong> :&ensp;<code>object</code>, default=<code>SimplifiedYoloV4</code></dt>
+<dd>Object classifier</dd>
+<dt><strong><code>segmentation_batch_size</code></strong> :&ensp;<code>int</code>, default=<code>1</code></dt>
+<dd>Segmentation batch size</dd>
+<dt><strong><code>refining_batch_size</code></strong> :&ensp;<code>int</code>, default=<code>1</code></dt>
+<dd>Refining batch size</dd>
+<dt><strong><code>refining_image_size</code></strong> :&ensp;<code>int</code>, default=<code>900</code></dt>
+<dd>Refining image size</dd>
+<dt><strong><code>postprocessing_batch_size</code></strong> :&ensp;<code>int</code>, default=<code>1</code></dt>
+<dd>Postprocessing batch size</dd>
+<dt><strong><code>postprocessing_image_size</code></strong> :&ensp;<code>int</code>, default=<code>2048</code></dt>
+<dd>Postprocessing image size</dd>
+<dt>segmentation_device (str, default="cpu"): Segmentation device</dt>
+<dt>postprocessing_device (str, default="cpu"): Postprocessing device</dt>
+<dt><strong><code>fp16</code></strong> :&ensp;<code>bool</code>, default=<code>False</code></dt>
+<dd>Use fp16</dd>
+<dt><strong><code>override_trimap_params</code></strong> :&ensp;<code>Callable</code>, default=<code>None</code></dt>
+<dd>Override trimap params function</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ol>
+<li>Changing seg_mask_size may cause an <code>out-of-memory</code> error if the value is too large, and it may also
+result in reduced precision. I do not recommend changing this value. You can change <code>matting_mask_size</code> in
+range from <code>(1024 to 4096)</code> to improve object edge refining quality, but it will cause extra large RAM and
+video memory consume. Also, you can change batch size to accelerate background removal, but it also causes
+extra large video memory consume, if value is too big.</li>
+<li>Changing <code>trimap_prob_threshold</code>, <code>trimap_kernel_size</code>, <code>trimap_erosion_iters</code>, <code>filter_threshold</code> may improve object edge
+refining quality. Please, check README.md for example of trimap params overriding.</li>
+</ol>
+</div></div>
 <details class="source">
 <summary>
 <span>Expand source code</span>
@@ -374,6 +431,7 @@ class AutoInterface(Interface):
     &#34;&#34;&#34;
     Interface with automatic scene and object classification for automated choice of statistically best processing pipeline
     &#34;&#34;&#34;
+
     def __init__(
         self,
         scene_classifier: SceneClassifier,
@@ -386,11 +444,34 @@ class AutoInterface(Interface):
         segmentation_device: str = &#34;cpu&#34;,
         postprocessing_device: str = &#34;cpu&#34;,
         fp16=False,
+        override_trimap_params: Callable = None,
     ):
         &#34;&#34;&#34;
+
+        Initializes High Level interface.
+
         Args:
-            scene_classifier: SceneClassifier instance
-            object_classifier: YoloV4_COCO instance
+            scene_classifier (object, default=SceneClassifier): Scene classifier
+            object_classifier (object, default=SimplifiedYoloV4): Object classifier
+            segmentation_batch_size (int, default=1): Segmentation batch size
+            refining_batch_size (int, default=1): Refining batch size
+            refining_image_size (int, default=900): Refining image size
+            postprocessing_batch_size (int, default=1): Postprocessing batch size
+            postprocessing_image_size (int, default=2048): Postprocessing image size
+            segmentation_device (str, default=&#34;cpu&#34;): Segmentation device
+            postprocessing_device (str, default=&#34;cpu&#34;): Postprocessing device
+            fp16 (bool, default=False): Use fp16
+            override_trimap_params (Callable, default=None): Override trimap params function
+
+
+        .. NOTE::
+            1. Changing seg_mask_size may cause an `out-of-memory` error if the value is too large, and it may also
+            result in reduced precision. I do not recommend changing this value. You can change `matting_mask_size` in
+            range from `(1024 to 4096)` to improve object edge refining quality, but it will cause extra large RAM and
+            video memory consume. Also, you can change batch size to accelerate background removal, but it also causes
+            extra large video memory consume, if value is too big.
+            2. Changing `trimap_prob_threshold`, `trimap_kernel_size`, `trimap_erosion_iters`, `filter_threshold` may improve object edge
+            refining quality. Please, check README.md for example of trimap params overriding.
         &#34;&#34;&#34;
         self.scene_classifier = scene_classifier
         self.object_classifier = object_classifier
@@ -402,6 +483,11 @@ class AutoInterface(Interface):
         self.segmentation_device = segmentation_device
         self.postprocessing_device = postprocessing_device
         self.fp16 = fp16
+
+        if override_trimap_params is None:
+            override_trimap_params = self.select_params_for_net
+        self.override_trimap_params = override_trimap_params
+
         super().__init__(
             seg_pipe=None, post_pipe=None, pre_pipe=None
         )  # just for compatibility with Interface class
@@ -437,10 +523,10 @@ class AutoInterface(Interface):
         elif net == ISNet:
             return {
                 &#34;trimap_generator&#34;: {
-                    &#34;prob_threshold&#34;: 231,
+                    &#34;prob_threshold&#34;: 100,
                     &#34;kernel_size&#34;: 30,
                     &#34;erosion_iters&#34;: 5,
-                    &#34;filter_threshold&#34;: 70
+                    &#34;filter_threshold&#34;: -1,
                 },
                 &#34;matting_module&#34;: {&#34;disable_noise_filter&#34;: True},
                 &#34;refining&#34;: {&#34;enabled&#34;: False, &#34;mask_binary_threshold&#34;: 128},
@@ -538,7 +624,6 @@ class AutoInterface(Interface):
                     &#34;net&#34;
                 ] = TracerUniversalB7  # It seems that the image is empty, but we will try to process it
 
-
     def __call__(self, images: List[Union[str, Path, Image.Image]]):
         &#34;&#34;&#34;
         Automatically detects the scene and selects the appropriate network for segmentation
@@ -609,7 +694,7 @@ class AutoInterface(Interface):
                 groups[net].append(image_info)
             for net, gimages_info in list(groups.items()):
                 # Configure custom pipeline for image group
-                config_params = self.select_params_for_net(net)
+                config_params = self.override_trimap_params(net)
                 trimap_generator = TrimapGenerator(**config_params[&#34;trimap_generator&#34;])
                 fba.disable_noise_filter = config_params[&#34;matting_module&#34;][
                     &#34;disable_noise_filter&#34;
@@ -703,10 +788,10 @@ def select_params_for_net(net: Union[TracerUniversalB7, U2NET, DeepLabV3]):
     elif net == ISNet:
         return {
             &#34;trimap_generator&#34;: {
-                &#34;prob_threshold&#34;: 231,
+                &#34;prob_threshold&#34;: 100,
                 &#34;kernel_size&#34;: 30,
                 &#34;erosion_iters&#34;: 5,
-                &#34;filter_threshold&#34;: 70
+                &#34;filter_threshold&#34;: -1,
             },
             &#34;matting_module&#34;: {&#34;disable_noise_filter&#34;: True},
             &#34;refining&#34;: {&#34;enabled&#34;: False, &#34;mask_binary_threshold&#34;: 128},
