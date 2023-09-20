@@ -67,7 +67,7 @@ MODELS_URLS = {
     },
     "isnet-97-carveset.pth": {
         "repository": "Carve/isnet",
-        "revision": "ecc202372ed96c854deda908c1728d0b6c4aa4c7",
+        "revision": "1339c55402b1c835020a987a2dd7a710a69dc129",
         "filename": "isnet-97-carveset.pth",
     },
     "tracer-b7-carveset-finetuned.pth": {
@@ -104,8 +104,8 @@ MODELS_CHECKSUMS = {
     "4d7bf0022a27829f583a1a793b036adf801cb423e41a4831b830122",
     "isnet.pth": "e996b95c78aefe4573950ce1ed2eec20fa3c869381e9b5233c361a8e1dff09f"
     "844f6c054c9cfa55377ae16a4cf55e727926599df0b1b8af65de478eccfac4708",
-    "isnet-97-carveset.pth": "4962e2c929ca8998890b544e4d5061c8d6f036157b2eb682f834d1f4b6584ebf262e2"
-    "d69ba004909b037b14610e2b7eb9dc4d57e7c835aeb72832770a14da45f",
+    "isnet-97-carveset.pth": "5ec309274b8192b8077d02435feacb8a6c5affa374e1b162e1fa22b3d6978bc5c7"
+                             "18d822d714b81cd7e4af0cad999a69977f142d5e8bab7ab861ebe0e787f212",
     "tracer-b7-carveset-finetuned.pth": "e27886c4aa8db21a0ae9c65f2368c7f4fb19023bbf21911c45ba262244a6eeb0"
     "9f285559d740869a811aef92252dc93bc7ed804666b05d786b39d77285c33873",
     "cascadepsp_finetuned_carveset.pth": "3c0ded519d9a0daa7a6b03cf7daf2e383797809b88cafe402b70f3c212cca"

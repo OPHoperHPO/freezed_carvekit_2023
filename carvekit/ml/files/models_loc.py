@@ -30,7 +30,7 @@ def isnet_full_pretrained() -> pathlib.Path:
 def isnet_carveset_pretrained() -> pathlib.Path:
     """Returns isnet pretrained model location
     ISNet model finetuned on CarveSet with DUTS-HD.
-    Achieves 97% of F-Beta-Score on test set
+    Achieves 98% of F-Beta-Score on test set
 
     Returns:
         pathlib.Path to model location

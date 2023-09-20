@@ -186,7 +186,7 @@ class AutoInterface(Interface):
                     image_info["net"] = ISNet  # animals should be always in soft scenes
                 else:
                     # We have no idea what is in the image, so we will try to process it with universal model
-                    image_info["net"] = TracerUniversalB7
+                    image_info["net"] = ISNet
 
         elif scene == "soft":
             for image_info in images_info:
@@ -212,7 +212,7 @@ class AutoInterface(Interface):
                     image_info["net"] = ISNet
                 elif obj_counter["cars"] > 0:
                     # Cars case.
-                    image_info["net"] = ISNet
+                    image_info["net"] = TracerUniversalB7
                 elif obj_counter["animals"] > 0:
                     # Animals case
                     image_info["net"] = ISNet  # animals should be always in soft scenes
