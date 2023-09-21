@@ -60,9 +60,9 @@
 
 ## Лицензии
 1. RGB изображения
-   1. [Pexels License](https://www.pexels.com/ru-RU/license/)
-   2. [Unsplash License](https://unsplash.com/license)
-   3. [SOPG MIT License](https://huggingface.co/datasets/absinc/sopg#license)
+   1. [Pexels License](https://www.pexels.com/ru-RU/license/)  - `pexels` в таблицах
+   2. [Unsplash License](https://unsplash.com/license) - `unsplash` в таблицах
+   3. [SOPG MIT License](https://huggingface.co/datasets/absinc/sopg#license)  - `mit` в таблицах
 2. Разметка - [Apache License 2.0](https://github.com/OPHoperHPO/freezed_carvekit_2023/blob/master/LICENSE)
 
 Подробнее о лицензиях можно прочитать в [terms_of_use.pdf](terms_of_use.pdf).
