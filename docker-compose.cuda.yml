@@ -3,7 +3,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.cuda
-    image: anodev/carvekit:latest-cuda
     ports:
       - "5000:5000"  # 5000
     environment:
