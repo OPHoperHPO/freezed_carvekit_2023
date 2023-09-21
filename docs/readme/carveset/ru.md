@@ -57,8 +57,16 @@
 -   `carveset2/train.csv` - Таблица с путями и лицензиями для RGB изображений.
 -   `carveset2/val.csv` - Таблица с путями и лицензиями для RGB изображений.
 -   `carveset2/test.csv` - Таблица с путями и лицензиями для RGB изображений.
-## Скачать:
 
+## Лицензии
+1. RGB изображения
+   1. [Pexels License](https://www.pexels.com/ru-RU/license/)
+   2. [Unsplash License](https://unsplash.com/license)
+   3. [SOPG MIT License](https://huggingface.co/datasets/absinc/sopg#license)
+2. Разметка - [Apache License 2.0](https://github.com/OPHoperHPO/freezed_carvekit_2023/blob/master/LICENSE)
+
+Подробнее о лицензиях можно прочитать в [terms_of_use.pdf](terms_of_use.pdf).
+## Скачать:
 Набор данных предоставляется на [специальных условиях использования.](terms_of_use.pdf)
 Скачивая и используя набор данных, вы соглашаетесь с условиями использования.
 
