@@ -9,7 +9,7 @@
 
 
 **********************************************************************
-<p align="center"> <img align="center" width="512" height="288" src="./docs/readme/example.png"> </p>
+<p align="center"> <img align="center" src="./docs/readme/example.png"> </p>
 
 ## 📄 О проекте:
 Автоматизированное высококачественное удаление фона с изображения с использованием нейронных сетей
@@ -157,7 +157,7 @@ apt install libgl1 libglib2.0-0
 ### Удаление фона с предметов.
 [🏓 Игрушка](./docs/imgs/example_images/toy.jpg) [📱Смартфон](./docs/imgs/example_images/phone.jpg) [🍜 Тарелка](./docs/imgs/example_images/bowl.jpg) [🥾Туфли](./docs/imgs/example_images/boots.jpg)
 ### Удаление фона с животных
-[🐈 Кот](./docs/imgs/example_images/cat.jpg)
+[🐈 Кот](./docs/imgs/example_images/cat.jpg) [🐕 Собака](./docs/imgs/example_images/dog.jpg) 
 
 ## 🧰 Интеграция в код:  
 ### Взаимодействие с методом AutoInterface и настройка параметров Trimap.
