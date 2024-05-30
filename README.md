@@ -395,6 +395,8 @@ Options:
 > файлов в этой папке.
 
 > ### Важно:
+> С 30.05.2024 сборка Docker образа из России может быть затруднена в связи с ограничениями со стороны DockerHub. При сборке обязательно выполните настройку зеркал для Docker Registry, которые доступны из вашего региона. Список зеркал доступен в интернете. [Инструкция по настройке зеркал docker daemon](https://docs.docker.com/docker-hub/mirror/#configure-the-docker-daemon)
+>
 > При сборке контейнера могут появиться предупреждения вида
 > 
 > debconf: delaying package configuration, since apt-utils is not installed
