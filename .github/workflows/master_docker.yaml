@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Build the CPU Docker img
+    - name: Build the CPU Docker image
       run: docker build . --file Dockerfile.cpu --tag carvekit
     - name: Test CPU Docker image
       run: docker run --rm carvekit pytest
